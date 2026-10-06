@@ -13,6 +13,7 @@ import java.util.Optional;
 public interface EventRepository extends JpaRepository<Event, Long> {
 
     Optional<Event> findByEventCode(String eventCode);
+    boolean existsByEventCode(String eventCode);
 
     List<Event> findByStatusOrderByEventDateAsc(EventStatus status);
 
