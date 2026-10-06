@@ -26,6 +26,10 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
         TicketStatus status
     );
 
+    List<Ticket> findByUserEmailIgnoreCaseOrderByPurchaseDateDesc(
+        String email
+);
+
     @Query("""
         SELECT COUNT(t)
         FROM Ticket t
