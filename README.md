@@ -4,8 +4,7 @@
 - **Luis Jaime Martínez Monsalvo** — Código: 2023214025
 - **Angélica Sierra Zapata** — Código: 2023214030
 
-PulsePass es un proyecto académico enfocado en la capa de persistencia de una plataforma de eventos y venta de entradas. Permite representar venues, eventos, artistas, usuarios, perfiles y tickets, manteniendo la integridad de los datos mediante PostgreSQL, JPA y Flyway.
-
+PulsePass es un proyecto académico que implementa las capas de persistencia y servicios de una plataforma de eventos y venta de entradas. Permite gestionar venues, eventos, artistas, usuarios, perfiles y tickets, aplicando reglas de negocio mediante servicios transaccionales y utilizando PostgreSQL, Spring Data JPA, Flyway y MapStruct.
 ## Tecnologías utilizadas
 
 - Java 21
@@ -18,10 +17,16 @@ PulsePass es un proyecto académico enfocado en la capa de persistencia de una p
 - JUnit 5
 - Maven
 - Docker
+- MapStruct
+- Mockito
+- AssertJ
+
 
 ## Alcance del proyecto
 
-Este proyecto implementa únicamente la capa de persistencia. No incluye API REST, interfaz gráfica, autenticación, pagos ni capa de servicios.
+El proyecto implementa las capas de persistencia y servicios. Incluye repositories, DTOs, mappers, excepciones personalizadas, transacciones, reglas de negocio y pruebas unitarias.
+
+No incluye controladores REST, interfaz gráfica, autenticación, pasarela de pagos ni notificaciones.
 
 ## Modelo de dominio
 
@@ -160,7 +165,7 @@ Las pruebas verifican:
 El resultado final obtenido fue:
 
 ```text
-Tests run: 10, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 61, Failures: 0, Errors: 0, Skipped: 0
 BUILD SUCCESS
 ```
 
@@ -246,4 +251,6 @@ La compra tendría que ejecutarse dentro de una transacción y usar bloqueo opti
 
 ## Resultado
 
-El proyecto cumple con el modelo relacional solicitado, las migraciones Flyway, los repositories, las consultas requeridas y las pruebas de integración ejecutadas sobre PostgreSQL mediante Testcontainers.
+El proyecto cumple con la capa de persistencia y la capa de servicios solicitadas. Se implementaron interfaces Service, implementaciones transaccionales, DTOs mediante records, mapeo con MapStruct, excepciones personalizadas, reglas de negocio y pruebas unitarias con JUnit 5, Mockito y AssertJ.
+
+La ejecución final completó 61 pruebas sin fallos ni errores.
