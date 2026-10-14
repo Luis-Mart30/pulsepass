@@ -4,6 +4,7 @@ import com.pulsepass.dto.request.RegisterUserRequest;
 import com.pulsepass.dto.response.UserResponse;
 import com.pulsepass.exception.DuplicateResourceException;
 import com.pulsepass.exception.GlobalExceptionHandler;
+import com.pulsepass.service.AuthService;
 import com.pulsepass.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,29 +34,24 @@ class UserControllerTest {
     private MockMvc mockMvc;
 
     @MockitoBean
+    private AuthService authService;
+
+    @MockitoBean
     private UserService userService;
 
     @Test
     void shouldRegisterValidUser() throws Exception {
-        UserResponse response = new UserResponse(
-                1L,
-                "andrea",
-                "andrea@example.com",
-                true,
-                "Andrea",
-                "Martinez",
-                "3001234567",
-                "Santa Marta",
-                LocalDate.of(2000, 5, 10)
-        );
+        UserResponse response = createResponse();
 
-        when(userService.register(any(RegisterUserRequest.class)))
-                .thenReturn(response);
+        when(authService.register(
+                any(RegisterUserRequest.class)
+        )).thenReturn(response);
 
         String requestBody = """
                 {
                   "username": "andrea",
                   "email": "andrea@example.com",
+                  "password": "UnaClaveSegura2026!",
                   "firstName": "Andrea",
                   "lastName": "Martinez",
                   "phone": "3001234567",
@@ -76,17 +72,24 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.email")
                         .value("andrea@example.com"))
                 .andExpect(jsonPath("$.firstName").value("Andrea"))
-                .andExpect(jsonPath("$.active").value(true));
+                .andExpect(jsonPath("$.active").value(true))
+                .andExpect(jsonPath("$.password").doesNotExist())
+                .andExpect(jsonPath("$.passwordHash").doesNotExist());
 
-        verify(userService).register(any(RegisterUserRequest.class));
+        verify(authService).register(
+                any(RegisterUserRequest.class)
+        );
     }
 
     @Test
-    void shouldReturnBadRequestWhenEmailIsInvalid() throws Exception {
+    void shouldReturnBadRequestWhenEmailIsInvalid()
+            throws Exception {
+
         String requestBody = """
                 {
                   "username": "andrea",
                   "email": "correo-invalido",
+                  "password": "UnaClaveSegura2026!",
                   "firstName": "Andrea",
                   "lastName": "Martinez",
                   "phone": "3001234567",
@@ -108,21 +111,129 @@ class UserControllerTest {
                         .value("Validation failed"))
                 .andExpect(jsonPath("$.details.email").exists());
 
-        verify(userService, never())
-                .register(any(RegisterUserRequest.class));
+        verify(authService, never()).register(
+                any(RegisterUserRequest.class)
+        );
     }
 
     @Test
-    void shouldReturnConflictWhenUsernameIsDuplicated() throws Exception {
-        when(userService.register(any(RegisterUserRequest.class)))
-                .thenThrow(new DuplicateResourceException(
-                        "Username already exists: andrea"
-                ));
+    void shouldReturnBadRequestWhenPasswordIsMissing()
+            throws Exception {
 
         String requestBody = """
                 {
                   "username": "andrea",
                   "email": "andrea@example.com",
+                  "firstName": "Andrea",
+                  "lastName": "Martinez",
+                  "phone": "3001234567",
+                  "city": "Santa Marta",
+                  "birthDate": "2000-05-10"
+                }
+                """;
+
+        mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(
+                        MediaType.APPLICATION_JSON
+                ))
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message")
+                        .value("Validation failed"))
+                .andExpect(jsonPath("$.details.password").exists());
+
+        verify(authService, never()).register(
+                any(RegisterUserRequest.class)
+        );
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenPasswordIsTooShort()
+            throws Exception {
+
+        String requestBody = """
+                {
+                  "username": "andrea",
+                  "email": "andrea@example.com",
+                  "password": "Corta123",
+                  "firstName": "Andrea",
+                  "lastName": "Martinez",
+                  "phone": "3001234567",
+                  "city": "Santa Marta",
+                  "birthDate": "2000-05-10"
+                }
+                """;
+
+        mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(
+                        MediaType.APPLICATION_JSON
+                ))
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message")
+                        .value("Validation failed"))
+                .andExpect(jsonPath("$.details.password").exists());
+
+        verify(authService, never()).register(
+                any(RegisterUserRequest.class)
+        );
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenPasswordExceeds72Bytes()
+            throws Exception {
+
+        String password = "a".repeat(73);
+
+        String requestBody = """
+                {
+                  "username": "andrea",
+                  "email": "andrea@example.com",
+                  "password": "%s",
+                  "firstName": "Andrea",
+                  "lastName": "Martinez",
+                  "phone": "3001234567",
+                  "city": "Santa Marta",
+                  "birthDate": "2000-05-10"
+                }
+                """.formatted(password);
+
+        mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(
+                        MediaType.APPLICATION_JSON
+                ))
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message")
+                        .value("Validation failed"))
+                .andExpect(jsonPath("$.details.password").exists());
+
+        verify(authService, never()).register(
+                any(RegisterUserRequest.class)
+        );
+    }
+
+    @Test
+    void shouldReturnConflictWhenUsernameIsDuplicated()
+            throws Exception {
+
+        when(authService.register(
+                any(RegisterUserRequest.class)
+        )).thenThrow(new DuplicateResourceException(
+                "Username already exists: andrea"
+        ));
+
+        String requestBody = """
+                {
+                  "username": "andrea",
+                  "email": "andrea@example.com",
+                  "password": "UnaClaveSegura2026!",
                   "firstName": "Andrea",
                   "lastName": "Martinez",
                   "phone": "3001234567",
@@ -143,28 +254,24 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.message")
                         .value("Username already exists: andrea"));
 
-        verify(userService).register(any(RegisterUserRequest.class));
+        verify(authService).register(
+                any(RegisterUserRequest.class)
+        );
     }
 
     @Test
     void shouldReturnUserByEmail() throws Exception {
-        UserResponse response = new UserResponse(
-                1L,
-                "andrea",
-                "andrea@example.com",
-                true,
-                "Andrea",
-                "Martinez",
-                "3001234567",
-                "Santa Marta",
-                LocalDate.of(2000, 5, 10)
-        );
+        UserResponse response = createResponse();
 
-        when(userService.findByEmail("andrea@example.com"))
-                .thenReturn(response);
+        when(userService.findByEmail(
+                "andrea@example.com"
+        )).thenReturn(response);
 
         mockMvc.perform(get("/api/users/by-email")
-                        .param("email", "andrea@example.com"))
+                        .param(
+                                "email",
+                                "andrea@example.com"
+                        ))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(
                         MediaType.APPLICATION_JSON
@@ -172,24 +279,18 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.username").value("andrea"))
                 .andExpect(jsonPath("$.email")
                         .value("andrea@example.com"))
-                .andExpect(jsonPath("$.active").value(true));
+                .andExpect(jsonPath("$.active").value(true))
+                .andExpect(jsonPath("$.password").doesNotExist())
+                .andExpect(jsonPath("$.passwordHash").doesNotExist());
 
-        verify(userService).findByEmail("andrea@example.com");
+        verify(userService).findByEmail(
+                "andrea@example.com"
+        );
     }
 
     @Test
     void shouldReturnUserByUsername() throws Exception {
-        UserResponse response = new UserResponse(
-                1L,
-                "andrea",
-                "andrea@example.com",
-                true,
-                "Andrea",
-                "Martinez",
-                "3001234567",
-                "Santa Marta",
-                LocalDate.of(2000, 5, 10)
-        );
+        UserResponse response = createResponse();
 
         when(userService.findByUsername("andrea"))
                 .thenReturn(response);
@@ -204,8 +305,24 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.username").value("andrea"))
                 .andExpect(jsonPath("$.email")
                         .value("andrea@example.com"))
-                .andExpect(jsonPath("$.active").value(true));
+                .andExpect(jsonPath("$.active").value(true))
+                .andExpect(jsonPath("$.password").doesNotExist())
+                .andExpect(jsonPath("$.passwordHash").doesNotExist());
 
         verify(userService).findByUsername("andrea");
+    }
+
+    private UserResponse createResponse() {
+        return new UserResponse(
+                1L,
+                "andrea",
+                "andrea@example.com",
+                true,
+                "Andrea",
+                "Martinez",
+                "3001234567",
+                "Santa Marta",
+                LocalDate.of(2000, 5, 10)
+        );
     }
 }

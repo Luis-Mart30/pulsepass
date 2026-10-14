@@ -184,19 +184,20 @@ class UserServiceImplTest {
                 .toResponse(any(User.class));
     }
 
-    private RegisterUserRequest createRequest(
-            LocalDate birthDate
-    ) {
-        return new RegisterUserRequest(
-                "andrea",
-                "andrea@email.com",
-                "Andrea",
-                "Sierra",
-                "3001234567",
-                "Santa Marta",
-                birthDate
-        );
-    }
+   private RegisterUserRequest createRequest(
+        LocalDate birthDate
+) {
+    return new RegisterUserRequest(
+            "andrea",
+            "andrea@email.com",
+            "UnaClaveSegura2026!",
+            "Andrea",
+            "Sierra",
+            "3001234567",
+            "Santa Marta",
+            birthDate
+    );
+}
 
     private User createUser() {
         User user = new User();

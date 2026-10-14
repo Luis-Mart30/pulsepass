@@ -1,5 +1,6 @@
 package com.pulsepass.dto.request;
 
+import com.pulsepass.validation.ValidPassword;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,6 +15,10 @@ public record RegisterUserRequest(
         @NotBlank(message = "Email is required")
         @Email(message = "Email must be valid")
         String email,
+
+        @NotBlank(message = "Password is required")
+        @ValidPassword
+        String password,
 
         @NotBlank(message = "First name is required")
         String firstName,
