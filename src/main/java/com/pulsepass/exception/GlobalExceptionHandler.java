@@ -4,6 +4,7 @@ import com.pulsepass.dto.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -50,6 +51,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(response);
     }
 
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleAuthentication(
+            AuthenticationException exception
+    ) {
+        ErrorResponse response = buildResponse(
+                HttpStatus.UNAUTHORIZED,
+                "Invalid credentials.",
+                Map.of()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(response);
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFound(
             ResourceNotFoundException exception
@@ -60,7 +76,9 @@ public class GlobalExceptionHandler {
                 Map.of()
         );
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(response);
     }
 
     @ExceptionHandler(DuplicateResourceException.class)
@@ -73,7 +91,9 @@ public class GlobalExceptionHandler {
                 Map.of()
         );
 
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(response);
     }
 
     @ExceptionHandler(BusinessRuleException.class)
@@ -86,7 +106,9 @@ public class GlobalExceptionHandler {
                 Map.of()
         );
 
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(response);
     }
 
     @ExceptionHandler(Exception.class)
