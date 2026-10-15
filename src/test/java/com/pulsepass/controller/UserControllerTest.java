@@ -16,6 +16,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
 
+import com.pulsepass.security.CustomUserDetailsService;
+import com.pulsepass.security.JwtService;
+import com.pulsepass.service.AuthorizationService;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -32,6 +36,15 @@ class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+        @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private CustomUserDetailsService customUserDetailsService;
+
+    @MockitoBean
+    private AuthorizationService authorizationService;
 
     @MockitoBean
     private AuthService authService;
