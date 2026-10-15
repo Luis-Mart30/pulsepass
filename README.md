@@ -1,91 +1,71 @@
 # PulsePass
 
+Sistema académico para la gestión de eventos, artistas, escenarios, usuarios y entradas, desarrollado con Java, Spring Boot y PostgreSQL.
+
 ## Integrantes
 
-- **Luis Jaime Martínez Monsalvo** — Código: 2023214025
-- **Angélica Sierra Zapata** — Código: 2023214030
+- Luis Jaime Martínez Monsalvo — Código: 2023214025
+- Angelica Sierra Zapata — Código: 2023214030
 
-## Descripción
-
-PulsePass es un proyecto académico desarrollado con Java 21 y Spring Boot 4.1.1 para gestionar eventos, escenarios, artistas, usuarios y tickets.
-
-El proyecto implementa las capas de persistencia, servicios y controladores REST. La información se almacena en PostgreSQL, las migraciones se administran mediante Flyway y las reglas de negocio se ejecutan desde servicios transaccionales.
-
-La API REST permite consultar escenarios y artistas, crear y publicar eventos, registrar usuarios, comprar tickets y actualizar el estado de los tickets.
-
-## Tecnologías utilizadas
+## Tecnologías
 
 - Java 21
-- Spring Boot 4.1.1
-- Spring MVC
-- Jakarta Bean Validation
+- Spring Boot 4
+- Spring Web MVC
 - Spring Data JPA
-- Hibernate
+- Spring Security
+- JJWT
 - PostgreSQL
 - Flyway
 - MapStruct
-- Maven Wrapper
-- Docker Desktop
+- Maven
+- Docker
 - Testcontainers
 - JUnit 5
 - Mockito
 - AssertJ
 - MockMvc
 
-## Arquitectura del proyecto
+## Capas implementadas
 
-El proyecto utiliza una arquitectura organizada por capas:
+El proyecto contiene:
 
-- **Controller:** recibe solicitudes HTTP, valida los datos de entrada y devuelve respuestas HTTP.
-- **Service:** implementa las reglas de negocio y administra las transacciones.
-- **Repository:** permite consultar y almacenar información mediante Spring Data JPA.
-- **Domain:** contiene las entidades y enumeraciones del modelo.
-- **DTO:** define los objetos utilizados en las solicitudes y respuestas de la API.
-- **Mapper:** convierte entidades del dominio en DTOs y viceversa.
-- **Exception:** contiene las excepciones personalizadas y el manejador global de errores.
-
-Los controladores dependen únicamente de interfaces de servicio. No acceden directamente a repositories ni implementan reglas de negocio.
+- Capa de persistencia.
+- Capa de servicios.
+- Capa de controladores REST.
+- Capa de seguridad.
+- Validación de solicitudes.
+- Manejo uniforme de errores.
+- Pruebas unitarias.
+- Pruebas HTTP con MockMvc.
+- Pruebas de integración con PostgreSQL real mediante Testcontainers.
 
 ## Modelo de dominio
 
-El sistema contiene las siguientes entidades:
+El modelo contiene las siguientes entidades:
 
-- `Venue`: representa el lugar donde se realiza un evento.
-- `Event`: almacena la información de un evento.
-- `Artist`: representa a los artistas participantes.
-- `User`: contiene los datos principales de un usuario.
-- `UserProfile`: almacena la información personal del usuario.
-- `Ticket`: representa una entrada comprada para un evento.
+- `Venue`: escenario donde se realiza un evento.
+- `Event`: información de un evento.
+- `Artist`: artista que puede participar en eventos.
+- `User`: información principal del usuario.
+- `UserProfile`: información personal del usuario.
+- `Ticket`: entrada adquirida para un evento.
+- `UserCredential`: hash de la contraseña del usuario.
+- `UserRole`: rol asignado a un usuario.
 
-### Relaciones
+## Relaciones principales
 
-- Un `Venue` puede tener muchos `Event`.
-- Un `Event` pertenece a un único `Venue`.
-- Un `Event` puede tener varios `Artist`.
-- Un `Artist` puede participar en varios `Event`.
-- Un `User` puede tener un solo `UserProfile`.
-- Un `User` puede tener varios `Ticket`.
-- Un `Event` puede tener varios `Ticket`.
-- Cada `Ticket` pertenece a un `User` y a un `Event`.
+- Un `Venue` puede tener varios eventos.
+- Un `Event` pertenece a un `Venue`.
+- Un `Event` puede tener varios artistas.
+- Un `Artist` puede participar en varios eventos.
+- Un `User` tiene un perfil.
+- Un `User` puede tener varios tickets.
+- Un `Ticket` pertenece a un usuario y un evento.
+- Un `UserCredential` pertenece a un usuario.
+- Un usuario puede tener uno o varios roles persistidos.
 
-## Reglas de integridad
-
-PostgreSQL protege las reglas estructurales que siempre deben cumplirse:
-
-- Los códigos de venues, eventos y tickets son únicos.
-- El nombre artístico, el nombre de usuario y el correo electrónico son únicos.
-- La capacidad de un venue debe ser mayor que cero.
-- El precio de un ticket no puede ser negativo.
-- Un usuario no puede tener más de un perfil.
-- Un ticket debe estar relacionado con un usuario y un evento.
-- La relación entre eventos y artistas no permite asociaciones duplicadas.
-- Los valores enumerados se almacenan por nombre y no por posición.
-
-Las reglas que requieren decisiones de negocio se administran desde la capa Service, como publicar eventos, agregar artistas, comprar tickets, cancelar tickets y marcarlos como usados.
-
-## Migraciones con Flyway
-
-El esquema de la base de datos se administra mediante Flyway.
+## Migraciones Flyway
 
 ### V1__create_schema.sql
 
@@ -99,365 +79,466 @@ Crea las tablas principales:
 - `user_profiles`
 - `tickets`
 
-También crea las claves primarias, claves foráneas, restricciones `UNIQUE`, restricciones `CHECK` e índices.
-
 ### V2__insert_initial_artists.sql
 
-Inserta los siguientes artistas iniciales:
-
-- Solar Beat
-- Neon Waves
-- Caribbean Sound
-- Ocean Drive
-- Digital Pulse
+Inserta los artistas iniciales del sistema.
 
 ### V3__add_streaming_url_to_event.sql
 
-Agrega a la tabla `events` la columna opcional:
+Agrega la columna opcional `streaming_url` a los eventos.
 
-```sql
-streaming_url VARCHAR(500)
+### V4__security_credentials_roles.sql
+
+Agrega las tablas de seguridad:
+
+- `user_credentials`
+- `user_roles`
+
+La migración incluye:
+
+- Claves primarias.
+- Claves foráneas.
+- Eliminación en cascada.
+- Restricción de roles válidos.
+- Unicidad de cada combinación de usuario y rol.
+
+## Seguridad
+
+La seguridad está implementada mediante Spring Security y JWT firmado con JJWT.
+
+Características principales:
+
+- Autenticación sin estado.
+- Sin sesiones HTTP.
+- Sin autenticación básica.
+- Sin formulario de inicio de sesión.
+- Protección CSRF deshabilitada para la API REST stateless.
+- Contraseñas protegidas con BCrypt.
+- JWT firmado exclusivamente con HS256.
+- Clave JWT suministrada mediante variable de entorno.
+- Duración configurable.
+- Emisor configurable.
+- Identificador único `jti`.
+- Validación de `sub`, `iss`, `iat`, `exp` y `jti`.
+- Recarga del usuario y sus roles desde PostgreSQL en cada solicitud autenticada.
+- Rechazo inmediato de usuarios desactivados.
+- Respuestas JSON uniformes para `401` y `403`.
+- Protección contra acceso a recursos pertenecientes a otros usuarios.
+- CORS configurable mediante variable de entorno.
+- Identificador único por solicitud en `X-Request-ID`.
+- Registro seguro de accesos denegados y autenticaciones.
+- No se registran contraseñas, hashes ni tokens.
+
+## Roles
+
+### USER
+
+Puede:
+
+- Comprar tickets para su propia cuenta.
+- Consultar sus propios tickets.
+- Cancelar sus propios tickets.
+- Consultar sus propios datos.
+
+No puede:
+
+- Crear o publicar eventos.
+- Usar tickets.
+- Consultar información privada de otros usuarios.
+- Comprar tickets utilizando el correo de otro usuario.
+
+### STAFF
+
+Puede:
+
+- Consultar tickets pagados de un evento.
+- Marcar tickets como usados.
+- Consultar eventos no publicados cuando la operación lo permita.
+
+No obtiene automáticamente propiedad sobre datos personales de otros usuarios.
+
+### ADMIN
+
+Puede:
+
+- Crear eventos.
+- Publicar eventos.
+- Asociar artistas a eventos.
+- Consultar tickets pagados.
+- Marcar tickets como usados.
+- Consultar información expresamente autorizada.
+- Cancelar tickets cuando la regla de autorización lo permita.
+
+## Autenticación
+
+### Registrar usuario
+
+```http
+POST /api/users
+Content-Type: application/json
 ```
 
-Esta modificación se realizó mediante una migración independiente para no alterar una migración que ya podría haber sido aplicada.
-
-## Repositories
-
-Los repositories extienden `JpaRepository` y proporcionan las operaciones de persistencia y consulta.
-
-Se implementaron:
-
-- `VenueRepository`
-- `ArtistRepository`
-- `EventRepository`
-- `UserRepository`
-- `TicketRepository`
-
-## Consultas implementadas
-
-### Query Methods
-
-Los Query Methods se utilizan para consultas sencillas y fáciles de interpretar, por ejemplo:
-
-- Buscar un venue por su código.
-- Buscar un artista por su nombre artístico.
-- Buscar un evento por su código.
-- Buscar un usuario por correo sin diferenciar mayúsculas.
-- Listar eventos publicados ordenados por fecha.
-- Buscar eventos por el código del venue.
-- Buscar tickets por correo del usuario.
-- Buscar tickets por correo y estado.
-- Buscar tickets por evento y estado.
-- Consultar tickets de eventos futuros ordenados por fecha.
-
-### Consultas JPQL
-
-JPQL se utiliza cuando la consulta necesita recorrer varias relaciones, aplicar filtros combinados o realizar agregaciones:
-
-- Buscar eventos por artista.
-- Buscar eventos por ciudad y artista.
-- Recomendar eventos publicados por fecha, ciudad y texto del artista.
-- Contar tickets de un evento según su estado.
-
-No se utilizó SQL nativo para implementar las consultas del taller.
-
-## Capa de servicios
-
-La capa de servicios concentra las reglas de negocio y evita que los controladores accedan directamente a la persistencia.
-
-Se implementaron las siguientes interfaces y sus respectivas implementaciones:
-
-- `VenueService`
-- `ArtistService`
-- `EventService`
-- `UserService`
-- `TicketService`
-
-Los servicios utilizan DTOs para recibir y devolver información, excepciones personalizadas para representar errores y transacciones para proteger las operaciones que modifican datos.
-
-## DTOs
-
-### Solicitudes
-
-- `CreateEventRequest`
-- `PurchaseTicketRequest`
-- `RegisterUserRequest`
-
-### Respuestas
-
-- `VenueResponse`
-- `ArtistResponse`
-- `EventResponse`
-- `EventSummaryResponse`
-- `UserResponse`
-- `TicketResponse`
-- `ErrorResponse`
-
-Los DTOs están implementados mediante `record` y permiten separar la representación pública de la API de las entidades de persistencia.
-
-## API REST
-
-La API expone un total de 20 endpoints organizados en cinco controladores.
-
-### VenueController
-
-| Método | Endpoint | Descripción | Respuesta |
-|---|---|---|---|
-| `GET` | `/api/venues/{code}` | Busca un venue por su código. | `200 OK` |
-| `GET` | `/api/venues/active` | Lista los venues activos. | `200 OK` |
-
-### ArtistController
-
-| Método | Endpoint | Descripción | Respuesta |
-|---|---|---|---|
-| `GET` | `/api/artists/{id}` | Busca un artista por su identificador. | `200 OK` |
-| `GET` | `/api/artists/by-stage-name?stageName={stageName}` | Busca un artista por su nombre artístico. | `200 OK` |
-| `GET` | `/api/artists/active` | Lista los artistas activos. | `200 OK` |
-
-### EventController
-
-| Método | Endpoint | Descripción | Respuesta |
-|---|---|---|---|
-| `POST` | `/api/events` | Crea un evento. | `201 Created` |
-| `GET` | `/api/events/{eventCode}` | Busca un evento por su código. | `200 OK` |
-| `GET` | `/api/events/published` | Lista los eventos publicados. | `200 OK` |
-| `PATCH` | `/api/events/{eventCode}/publish` | Publica un evento. | `200 OK` |
-| `POST` | `/api/events/{eventCode}/artists/{artistId}` | Agrega un artista a un evento. | `200 OK` |
-| `GET` | `/api/events/by-artist?stageName={stageName}` | Busca eventos por nombre artístico. | `200 OK` |
-
-### UserController
-
-| Método | Endpoint | Descripción | Respuesta |
-|---|---|---|---|
-| `POST` | `/api/users` | Registra un usuario. | `201 Created` |
-| `GET` | `/api/users/by-email?email={email}` | Busca un usuario por su correo electrónico. | `200 OK` |
-| `GET` | `/api/users/by-username?username={username}` | Busca un usuario por su nombre de usuario. | `200 OK` |
-
-### TicketController
-
-| Método | Endpoint | Descripción | Respuesta |
-|---|---|---|---|
-| `POST` | `/api/tickets` | Compra un ticket. | `201 Created` |
-| `GET` | `/api/tickets/{ticketCode}` | Busca un ticket por su código. | `200 OK` |
-| `GET` | `/api/tickets/by-user?email={email}` | Lista los tickets de un usuario. | `200 OK` |
-| `GET` | `/api/events/{eventCode}/tickets/paid` | Lista los tickets pagados de un evento. | `200 OK` |
-| `PATCH` | `/api/tickets/{ticketCode}/cancel` | Cancela un ticket. | `200 OK` |
-| `PATCH` | `/api/tickets/{ticketCode}/use` | Marca un ticket como usado. | `200 OK` |
-
-## Validación de solicitudes
-
-Los cuerpos recibidos por los endpoints de creación utilizan `@Valid` y restricciones de Jakarta Bean Validation.
-
-Entre las validaciones implementadas se encuentran:
-
-- Campos obligatorios mediante `@NotBlank` y `@NotNull`.
-- Validación del formato del correo mediante `@Email`.
-- Validación de códigos y datos necesarios para crear eventos.
-- Validación de los datos requeridos para comprar tickets.
-- Validación de los datos necesarios para registrar usuarios.
-
-Cuando una solicitud no cumple las restricciones, la API devuelve `400 Bad Request` y no ejecuta el método correspondiente del servicio.
-
-## Manejo global de errores
-
-La clase `GlobalExceptionHandler`, anotada con `@RestControllerAdvice`, centraliza el manejo de errores de la API.
-
-| Situación | Estado HTTP |
-|---|---|
-| Solicitud inválida | `400 Bad Request` |
-| JSON mal formado | `400 Bad Request` |
-| Recurso inexistente | `404 Not Found` |
-| Recurso duplicado | `409 Conflict` |
-| Incumplimiento de una regla de negocio | `409 Conflict` |
-| Error inesperado | `500 Internal Server Error` |
-
-Las respuestas de error utilizan una estructura uniforme mediante `ErrorResponse`:
+Ejemplo:
 
 ```json
 {
-  "timestamp": "2026-10-09T21:00:00",
-  "status": 404,
-  "error": "Not Found",
-  "message": "Resource not found",
+  "username": "andrea",
+  "email": "andrea@example.com",
+  "password": "UnaClaveSegura2026!",
+  "firstName": "Andrea",
+  "lastName": "Martinez",
+  "phone": "3001234567",
+  "city": "Santa Marta",
+  "birthDate": "2000-05-10"
+}
+```
+
+El registro:
+
+1. Crea el usuario y su perfil.
+2. Genera un hash BCrypt de la contraseña.
+3. Guarda las credenciales.
+4. Asigna exclusivamente el rol inicial `USER`.
+5. Ejecuta todo el proceso dentro de una transacción.
+
+El registro no devuelve contraseña, hash ni JWT.
+
+### Iniciar sesión
+
+```http
+POST /api/auth/login
+Content-Type: application/json
+```
+
+Ejemplo:
+
+```json
+{
+  "identifier": "andrea",
+  "password": "UnaClaveSegura2026!"
+}
+```
+
+También es posible utilizar el correo como identificador.
+
+Respuesta:
+
+```json
+{
+  "accessToken": "JWT_FIRMADO",
+  "tokenType": "Bearer",
+  "expiresIn": 900
+}
+```
+
+Cuando las credenciales son incorrectas, la API devuelve un mensaje genérico y no indica si el usuario existe.
+
+### Consultar identidad autenticada
+
+```http
+GET /api/auth/me
+Authorization: Bearer JWT_FIRMADO
+```
+
+La respuesta contiene:
+
+- ID del usuario.
+- Nombre de usuario.
+- Correo.
+- Roles vigentes.
+
+No contiene contraseña ni hash.
+
+## Matriz de autorización
+
+| Método | Ruta | Anónimo | USER | STAFF | ADMIN |
+|---|---|---:|---:|---:|---:|
+| GET | `/api/venues/{code}` | Permitido | Permitido | Permitido | Permitido |
+| GET | `/api/venues/active` | Permitido | Permitido | Permitido | Permitido |
+| POST | `/api/events` | 401 | 403 | 403 | Permitido |
+| GET | `/api/events/{eventCode}` | Solo publicado | Solo publicado | Permitido | Permitido |
+| GET | `/api/events/published` | Permitido | Permitido | Permitido | Permitido |
+| PATCH | `/api/events/{eventCode}/publish` | 401 | 403 | 403 | Permitido |
+| POST | `/api/events/{eventCode}/artists/{artistId}` | 401 | 403 | 403 | Permitido |
+| GET | `/api/events/by-artist` | Solo publicados | Solo publicados | Permitido | Permitido |
+| GET | `/api/artists/{id}` | Permitido | Permitido | Permitido | Permitido |
+| GET | `/api/artists/by-stage-name` | Permitido | Permitido | Permitido | Permitido |
+| GET | `/api/artists/active` | Permitido | Permitido | Permitido | Permitido |
+| POST | `/api/users` | Permitido | Permitido | Permitido | Permitido |
+| GET | `/api/users/by-email` | 401 | Propio usuario | 403 | Permitido |
+| GET | `/api/users/by-username` | 401 | Propio usuario | 403 | Permitido |
+| POST | `/api/tickets` | 401 | Correo propio | 403 | 403 |
+| GET | `/api/tickets/{ticketCode}` | 401 | Ticket propio | Permitido | Permitido |
+| GET | `/api/tickets/by-user` | 401 | Correo propio | 403 | Permitido |
+| GET | `/api/events/{eventCode}/tickets/paid` | 401 | 403 | Permitido | Permitido |
+| PATCH | `/api/tickets/{ticketCode}/cancel` | 401 | Ticket propio | 403 | Permitido |
+| PATCH | `/api/tickets/{ticketCode}/use` | 401 | 403 | Permitido | Permitido |
+
+## Protección contra IDOR
+
+Las comprobaciones de propiedad no confían únicamente en el correo o código recibido en la solicitud.
+
+El sistema consulta PostgreSQL para comprobar:
+
+- ID persistido del usuario autenticado.
+- ID del propietario del ticket.
+- Usuario asociado al correo solicitado.
+- Usuario asociado al nombre de usuario solicitado.
+
+Esto evita que un usuario modifique el correo o código enviado para acceder a información de otra persona.
+
+## Estados HTTP de seguridad
+
+### 401 Unauthorized
+
+Se utiliza cuando:
+
+- No existe autenticación.
+- Falta el token.
+- El token está alterado.
+- El token está vencido.
+- El token no tiene claims obligatorios.
+- El emisor es incorrecto.
+- El usuario está inactivo.
+- Las credenciales son incorrectas.
+
+### 403 Forbidden
+
+Se utiliza cuando existe una identidad válida, pero no tiene permiso para realizar la operación.
+
+Ejemplos:
+
+- Un `USER` intenta crear un evento.
+- Un `USER` intenta utilizar un ticket.
+- Un usuario consulta un ticket ajeno.
+- Un usuario compra usando un correo ajeno.
+- Un usuario consulta los datos privados de otra persona.
+
+## ErrorResponse
+
+Los errores mantienen una estructura uniforme:
+
+```json
+{
+  "timestamp": "2026-10-14T13:00:00",
+  "status": 403,
+  "error": "Forbidden",
+  "message": "You do not have permission to access this resource",
   "details": {}
 }
 ```
 
-## Pruebas
+Los errores no incluyen:
 
-### Pruebas de persistencia
+- Stacktrace.
+- Contraseñas.
+- Hashes BCrypt.
+- Tokens JWT.
+- Información interna de autenticación.
 
-Las pruebas de integración utilizan una instancia real y temporal de PostgreSQL creada mediante Testcontainers.
+## Variables de entorno
 
-Estas pruebas verifican:
+El proyecto utiliza:
 
-- Aplicación correcta de las migraciones Flyway.
-- Validación del esquema por Hibernate.
-- Persistencia y búsqueda de entidades.
-- Relaciones entre venues, eventos, artistas, usuarios, perfiles y tickets.
-- Consultas derivadas de Spring Data.
-- Consultas JPQL con `JOIN`, `DISTINCT` y `COUNT`.
-- Restricciones de unicidad e integridad.
-- Rechazo de capacidades no positivas.
-- Rechazo de precios negativos.
-- Rechazo de un segundo perfil para el mismo usuario.
+| Variable | Descripción | Ejemplo |
+|---|---|---|
+| `DB_URL` | URL de PostgreSQL | `jdbc:postgresql://localhost:5432/pulsepass` |
+| `DB_USER` | Usuario de PostgreSQL | `postgres` |
+| `DB_PASSWORD` | Contraseña de PostgreSQL | `change-me` |
+| `PULSEPASS_JWT_ISSUER` | Emisor del JWT | `pulsepass-api` |
+| `PULSEPASS_JWT_SECRET_BASE64` | Clave Base64 de mínimo 32 bytes | Sin valor predeterminado |
+| `PULSEPASS_JWT_ACCESS_TOKEN_TTL` | Duración del JWT | `PT15M` |
+| `PULSEPASS_CORS_ALLOWED_ORIGINS` | Orígenes CORS permitidos | `http://localhost:3000` |
 
-### Pruebas de servicios
+El archivo `.env.example` contiene únicamente valores de ejemplo. No deben guardarse secretos reales en Git.
 
-Las pruebas unitarias de los servicios utilizan JUnit 5, Mockito y AssertJ.
+## Generar una clave JWT en PowerShell
 
-Estas pruebas verifican:
-
-- Resultados exitosos.
-- Recursos inexistentes.
-- Recursos duplicados.
-- Reglas de negocio.
-- Cambios de estado.
-- Interacciones con repositories y mappers.
-- Excepciones esperadas.
-
-### Pruebas de controladores
-
-Las pruebas de los controladores utilizan `@WebMvcTest`, `MockMvc` y `@MockitoBean`.
-
-Se implementaron:
-
-| Clase de prueba | Cantidad |
-|---|---:|
-| `VenueControllerTest` | 3 |
-| `ArtistControllerTest` | 4 |
-| `EventControllerTest` | 9 |
-| `UserControllerTest` | 5 |
-| `TicketControllerTest` | 11 |
-| **Total de pruebas de controladores** | **32** |
-
-Estas pruebas verifican:
-
-- Estado HTTP de la respuesta.
-- Tipo de contenido JSON.
-- Contenido de la respuesta mediante `jsonPath`.
-- Validación de solicitudes incorrectas.
-- Manejo de recursos inexistentes.
-- Manejo de recursos duplicados.
-- Manejo de reglas de negocio.
-- Invocación correcta de los servicios mediante `verify`.
-- Ausencia de llamadas al servicio cuando la solicitud es inválida mediante `verify(..., never())`.
-
-### Resultado general
-
-La ejecución completa del proyecto obtuvo:
-
-```text
-Tests run: 93, Failures: 0, Errors: 0, Skipped: 0
-BUILD SUCCESS
+```powershell
+$jwtBytes = New-Object byte[] 32
+$rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+$rng.GetBytes($jwtBytes)
+$env:PULSEPASS_JWT_SECRET_BASE64 = [Convert]::ToBase64String($jwtBytes)
+$rng.Dispose()
 ```
 
-## Configuración de la base de datos
+Comprobar la clave:
 
-La aplicación utiliza las siguientes variables de entorno:
-
-- `DB_URL`
-- `DB_USER`
-- `DB_PASSWORD`
-
-Si no se configuran, se utilizan los valores locales definidos en `application.yaml`:
-
-```text
-URL: jdbc:postgresql://localhost:5432/pulsepass
-Usuario: postgres
-Contraseña: postgres
+```powershell
+[Convert]::FromBase64String(
+    $env:PULSEPASS_JWT_SECRET_BASE64
+).Length
 ```
 
-Durante las pruebas de integración, Testcontainers crea automáticamente una instancia temporal de PostgreSQL. Por esta razón, no es necesario crear manualmente una base de datos para ejecutar las pruebas.
+El resultado debe ser:
 
-## Ejecución del proyecto
+```text
+32
+```
+
+La variable solo queda activa en la terminal actual.
+
+## Configuración CORS
+
+El origen permitido se configura mediante:
+
+```text
+PULSEPASS_CORS_ALLOWED_ORIGINS
+```
+
+Valor local predeterminado:
+
+```text
+http://localhost:3000
+```
+
+Para varios orígenes se utiliza una lista separada por comas:
+
+```text
+http://localhost:3000,http://localhost:5173
+```
+
+En producción deben utilizarse exclusivamente orígenes conocidos y HTTPS.
+
+## Trazabilidad
+
+Cada solicitud recibe el encabezado:
+
+```text
+X-Request-ID
+```
+
+Este identificador se utiliza en los registros de:
+
+- Autenticación exitosa.
+- Autenticación fallida.
+- Solicitudes sin autenticación.
+- Solicitudes con permisos insuficientes.
+
+No se registran credenciales ni tokens.
+
+## Ejecución
 
 ### Requisitos
 
-- Java 21
-- Docker Desktop en ejecución
-- Maven Wrapper incluido en el proyecto
+- Java 21.
+- Docker Desktop.
+- PostgreSQL para ejecutar la aplicación.
+- Maven Wrapper incluido.
 
-### Ejecutar todas las pruebas en Windows
+### Windows PowerShell
+
+Definir la clave JWT:
+
+```powershell
+$jwtBytes = New-Object byte[] 32
+$rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+$rng.GetBytes($jwtBytes)
+$env:PULSEPASS_JWT_SECRET_BASE64 = [Convert]::ToBase64String($jwtBytes)
+$rng.Dispose()
+```
+
+Ejecutar pruebas:
 
 ```powershell
 .\mvnw.cmd clean test
 ```
 
-### Compilar sin ejecutar las pruebas
-
-```powershell
-.\mvnw.cmd -DskipTests compile
-```
-
-### Ejecutar la aplicación en Windows
+Ejecutar la aplicación:
 
 ```powershell
 .\mvnw.cmd spring-boot:run
 ```
 
-### Ejecutar las pruebas en Linux o macOS
+### Linux o macOS
 
 ```bash
+export PULSEPASS_JWT_SECRET_BASE64="$(
+  openssl rand -base64 32
+)"
 ./mvnw clean test
 ```
 
-## Respuestas a las preguntas de la capa de controladores
+## Pruebas
 
-### 1. ¿Cuál es la responsabilidad de un Controller y cuál es la responsabilidad de un Service?
+El proyecto incluye:
 
-Un Controller recibe solicitudes HTTP, obtiene los parámetros, valida la estructura de los datos de entrada, llama al servicio correspondiente y construye la respuesta HTTP.
+- Pruebas de repositories.
+- Pruebas de servicios.
+- Pruebas de controladores.
+- Pruebas de validación.
+- Pruebas de JWT.
+- Pruebas del filtro Bearer.
+- Pruebas de roles.
+- Pruebas de propiedad.
+- Pruebas de respuestas `401` y `403`.
+- Pruebas de usuario inactivo.
+- Pruebas de JWT alterado y vencido.
+- Pruebas de registro transaccional.
+- Pruebas de BCrypt.
+- Pruebas de login contra PostgreSQL.
+- Pruebas de rollback.
+- Pruebas de integración con Testcontainers.
 
-Un Service implementa las reglas de negocio, coordina las operaciones necesarias y administra las transacciones. Esta separación permite que cada capa tenga una responsabilidad clara.
+Último resultado completo verificado:
 
-### 2. ¿Por qué un Controller no debe acceder directamente a un Repository?
+```text
+Tests run: 177, Failures: 0, Errors: 0, Skipped: 0
+BUILD SUCCESS
+```
 
-Porque el Controller debe encargarse únicamente de la comunicación HTTP. Si accediera directamente al Repository, las reglas de negocio quedarían mezcladas con la capa web y sería más difícil mantener, probar y reutilizar el código.
+## Comandos de verificación
 
-Por esta razón, los controladores de PulsePass dependen de interfaces Service y no utilizan repositories directamente.
+Compilar:
 
-### 3. ¿Cuál es la diferencia entre una validación estructural y una regla de negocio?
+```powershell
+.\mvnw.cmd "-DskipTests" clean compile
+```
 
-Una validación estructural comprueba que la solicitud tenga el formato requerido. Por ejemplo, verifica que un campo obligatorio no esté vacío o que un correo tenga un formato válido. Estas validaciones se realizan mediante Jakarta Bean Validation.
+Ejecutar todas las pruebas:
 
-Una regla de negocio depende del estado y las condiciones propias del sistema. Por ejemplo, impedir la publicación de un evento inválido, evitar registros duplicados o controlar los cambios de estado de un ticket. Estas reglas pertenecen a la capa Service.
+```powershell
+.\mvnw.cmd clean test
+```
 
-### 4. ¿Cuándo debe responder la API con 400, 404 o 409?
+Comprobar formato de Git:
 
-La API responde con `400 Bad Request` cuando la solicitud tiene datos inválidos o contiene un JSON mal formado.
+```powershell
+git diff --check
+```
 
-Responde con `404 Not Found` cuando el recurso solicitado no existe.
+Consultar estado:
 
-Responde con `409 Conflict` cuando existe un conflicto con el estado actual del sistema, como un recurso duplicado o el incumplimiento de una regla de negocio.
+```powershell
+git status
+```
 
-### 5. ¿Por qué las operaciones de creación responden con 201 en lugar de 200?
+## Limitaciones del MVP académico
 
-El estado `201 Created` indica específicamente que la solicitud fue procesada correctamente y produjo la creación de un nuevo recurso.
+No forman parte del alcance actual:
 
-Por esta razón, la creación de eventos, el registro de usuarios y la compra de tickets devuelven `201 Created`. Las consultas y actualizaciones que se completan correctamente devuelven `200 OK`.
+- Refresh tokens.
+- Cierre de sesión con lista de revocación.
+- Rotación automática de claves.
+- Autenticación multifactor.
+- Recuperación de contraseña.
+- Pasarela de pagos.
+- Interfaz gráfica.
+- Límite automático de intentos de login.
+- Protección distribuida contra fuerza bruta.
 
-### 6. ¿Por qué es conveniente utilizar una estructura uniforme para los errores?
+Para un ambiente real también deben utilizarse:
 
-Una estructura uniforme permite que los clientes de la API interpreten los errores de manera predecible. También facilita las pruebas, la depuración y la presentación de mensajes claros.
-
-En PulsePass, `ErrorResponse` incluye la fecha y hora, el código de estado, el tipo de error, el mensaje y los detalles de validación.
+- HTTPS.
+- Gestor de secretos.
+- Monitoreo centralizado.
+- Rotación periódica de claves.
+- Rate limiting.
+- Auditoría persistente.
+- Orígenes CORS explícitos.
 
 ## Resultado
 
-PulsePass implementa correctamente las capas de persistencia, servicios y controladores REST solicitadas.
+PulsePass implementa persistencia, servicios, controladores REST y seguridad stateless mediante Spring Security y JWT.
 
-El proyecto contiene:
-
-- Cinco controladores REST.
-- Veinte endpoints.
-- DTOs de solicitud y respuesta.
-- Validación de solicitudes.
-- Manejo global y uniforme de errores.
-- Servicios transaccionales.
-- Repositories con Query Methods y JPQL.
-- Migraciones con Flyway.
-- Pruebas de integración con PostgreSQL y Testcontainers.
-- Pruebas unitarias de servicios.
-- Treinta y dos pruebas de controladores con MockMvc.
-
-La ejecución final completó **93 pruebas sin fallos ni errores**.
+La aplicación protege las 20 operaciones heredadas utilizando autenticación, roles y propiedad de los recursos. Las credenciales se almacenan mediante BCrypt, los roles se consultan desde PostgreSQL y las respuestas de seguridad conservan un formato JSON uniforme.

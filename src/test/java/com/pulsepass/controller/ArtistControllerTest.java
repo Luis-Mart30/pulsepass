@@ -3,6 +3,8 @@ package com.pulsepass.controller;
 import com.pulsepass.dto.response.ArtistResponse;
 import com.pulsepass.exception.GlobalExceptionHandler;
 import com.pulsepass.exception.ResourceNotFoundException;
+import com.pulsepass.security.CustomUserDetailsService;
+import com.pulsepass.security.JwtService;
 import com.pulsepass.service.ArtistService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,12 @@ class ArtistControllerTest {
 
     @MockitoBean
     private ArtistService artistService;
+
+    @MockitoBean
+private JwtService jwtService;
+
+@MockitoBean
+private CustomUserDetailsService customUserDetailsService;
 
     @Test
     void shouldReturnArtistWhenIdExists() throws Exception {

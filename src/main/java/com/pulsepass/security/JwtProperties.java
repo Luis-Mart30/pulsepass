@@ -5,10 +5,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.time.Duration;
 import java.util.Base64;
 
-@ConfigurationProperties(prefix = "app.security.jwt")
+@ConfigurationProperties(prefix = "pulsepass.security.jwt")
 public record JwtProperties(
         String issuer,
-        Duration expiration,
+        Duration accessTokenTtl,
         String secretBase64
 ) {
 
@@ -19,11 +19,11 @@ public record JwtProperties(
             );
         }
 
-        if (expiration == null
-                || expiration.isZero()
-                || expiration.isNegative()) {
+        if (accessTokenTtl == null
+                || accessTokenTtl.isZero()
+                || accessTokenTtl.isNegative()) {
             throw new IllegalStateException(
-                    "JWT expiration must be positive"
+                    "JWT access token TTL must be positive"
             );
         }
 
@@ -36,7 +36,8 @@ public record JwtProperties(
         byte[] decodedSecret;
 
         try {
-            decodedSecret = Base64.getDecoder().decode(secretBase64);
+            decodedSecret = Base64.getDecoder()
+                    .decode(secretBase64);
         } catch (IllegalArgumentException exception) {
             throw new IllegalStateException(
                     "JWT secret must be valid Base64",
@@ -52,6 +53,6 @@ public record JwtProperties(
     }
 
     public long expirationSeconds() {
-        return expiration.toSeconds();
+        return accessTokenTtl.toSeconds();
     }
 }

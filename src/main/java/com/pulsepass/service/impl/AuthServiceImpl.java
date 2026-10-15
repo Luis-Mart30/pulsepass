@@ -13,9 +13,13 @@ import com.pulsepass.repository.UserCredentialRepository;
 import com.pulsepass.repository.UserRepository;
 import com.pulsepass.repository.UserRoleRepository;
 import com.pulsepass.security.JwtService;
+import com.pulsepass.security.RequestIdFilter;
 import com.pulsepass.security.SecurityPrincipal;
 import com.pulsepass.service.AuthService;
 import com.pulsepass.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,90 +32,149 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 @Service
-public class AuthServiceImpl implements AuthService {
+public class AuthServiceImpl
+        implements AuthService {
+
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(
+                    AuthServiceImpl.class
+            );
 
     private final UserService userService;
     private final UserRepository userRepository;
-    private final UserCredentialRepository userCredentialRepository;
-    private final UserRoleRepository userRoleRepository;
+    private final UserCredentialRepository
+            userCredentialRepository;
+    private final UserRoleRepository
+            userRoleRepository;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticationManager
+            authenticationManager;
     private final JwtService jwtService;
 
     public AuthServiceImpl(
             UserService userService,
             UserRepository userRepository,
-            UserCredentialRepository userCredentialRepository,
+            UserCredentialRepository
+                    userCredentialRepository,
             UserRoleRepository userRoleRepository,
             PasswordEncoder passwordEncoder,
-            AuthenticationManager authenticationManager,
+            AuthenticationManager
+                    authenticationManager,
             JwtService jwtService
     ) {
         this.userService = userService;
         this.userRepository = userRepository;
         this.userCredentialRepository =
                 userCredentialRepository;
-        this.userRoleRepository = userRoleRepository;
+        this.userRoleRepository =
+                userRoleRepository;
         this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
+        this.authenticationManager =
+                authenticationManager;
         this.jwtService = jwtService;
     }
 
     @Override
     @Transactional
-    public UserResponse register(RegisterUserRequest request) {
-        UserResponse response = userService.register(request);
+    public UserResponse register(
+            RegisterUserRequest request
+    ) {
+        UserResponse response =
+                userService.register(request);
 
-        User user = userRepository.findById(response.id())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Registered user could not be loaded."
-                ));
+        User user = userRepository
+                .findById(response.id())
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(
+                                "Registered user "
+                                        + "could not be loaded."
+                        )
+                );
 
-        UserCredential credential = new UserCredential(
-                user,
-                passwordEncoder.encode(request.password()),
-                LocalDateTime.now()
+        UserCredential credential =
+                new UserCredential(
+                        user,
+                        passwordEncoder.encode(
+                                request.password()
+                        ),
+                        LocalDateTime.now()
+                );
+
+        userCredentialRepository.save(
+                credential
         );
 
-        userCredentialRepository.save(credential);
+        UserRole initialRole =
+                new UserRole(
+                        user,
+                        Role.USER
+                );
 
-        UserRole initialRole = new UserRole(
-                user,
-                Role.USER
+        userRoleRepository.save(
+                initialRole
         );
-
-        userRoleRepository.save(initialRole);
 
         return response;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public AuthResponse login(LoginRequest request) {
+    public AuthResponse login(
+            LoginRequest request
+    ) {
         try {
             Authentication authentication =
-                    authenticationManager.authenticate(
-                            new UsernamePasswordAuthenticationToken(
-                                    request.identifier(),
-                                    request.password()
-                            )
-                    );
+                    authenticationManager
+                            .authenticate(
+                                    new UsernamePasswordAuthenticationToken(
+                                            request.identifier(),
+                                            request.password()
+                                    )
+                            );
 
             SecurityPrincipal principal =
-                    (SecurityPrincipal) authentication.getPrincipal();
+                    (SecurityPrincipal)
+                            authentication
+                                    .getPrincipal();
 
             String accessToken =
-                    jwtService.generateToken(principal);
+                    jwtService.generateToken(
+                            principal
+                    );
+
+            LOGGER.info(
+                    "Authentication succeeded: "
+                            + "requestId={}, userId={}",
+                    requestId(),
+                    principal.getUserId()
+            );
 
             return new AuthResponse(
                     accessToken,
                     "Bearer",
-                    jwtService.getExpirationSeconds()
+                    jwtService
+                            .getExpirationSeconds()
             );
         } catch (AuthenticationException exception) {
+            LOGGER.warn(
+                    "Authentication failed: "
+                            + "requestId={}",
+                    requestId()
+            );
+
             throw new BadCredentialsException(
                     "Invalid credentials."
             );
         }
+    }
+
+    private String requestId() {
+        String requestId = MDC.get(
+                RequestIdFilter.REQUEST_ID_MDC_KEY
+        );
+
+        return requestId == null
+                ? "unavailable"
+                : requestId;
     }
 }
