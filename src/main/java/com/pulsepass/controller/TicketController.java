@@ -6,6 +6,7 @@ import com.pulsepass.service.TicketService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,14 +29,30 @@ public class TicketController {
     }
 
     @PostMapping("/tickets")
+    @PreAuthorize("""
+            @authorizationService.canPurchaseForEmail(
+                authentication,
+                #request.userEmail()
+            )
+            """)
     public ResponseEntity<TicketResponse> purchase(
             @Valid @RequestBody PurchaseTicketRequest request
     ) {
-        TicketResponse response = ticketService.purchase(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        TicketResponse response =
+                ticketService.purchase(request);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 
     @GetMapping("/tickets/{ticketCode}")
+    @PreAuthorize("""
+            @authorizationService.canReadTicket(
+                authentication,
+                #ticketCode
+            )
+            """)
     public ResponseEntity<TicketResponse> findByCode(
             @PathVariable String ticketCode
     ) {
@@ -45,6 +62,12 @@ public class TicketController {
     }
 
     @GetMapping("/tickets/by-user")
+    @PreAuthorize("""
+            @authorizationService.canReadTicketsByEmail(
+                authentication,
+                #email
+            )
+            """)
     public ResponseEntity<List<TicketResponse>> findByUserEmail(
             @RequestParam String email
     ) {
@@ -54,7 +77,9 @@ public class TicketController {
     }
 
     @GetMapping("/events/{eventCode}/tickets/paid")
-    public ResponseEntity<List<TicketResponse>> findPaidTicketsByEvent(
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
+    public ResponseEntity<List<TicketResponse>>
+    findPaidTicketsByEvent(
             @PathVariable String eventCode
     ) {
         return ResponseEntity.ok(
@@ -63,6 +88,12 @@ public class TicketController {
     }
 
     @PatchMapping("/tickets/{ticketCode}/cancel")
+    @PreAuthorize("""
+            @authorizationService.canCancelTicket(
+                authentication,
+                #ticketCode
+            )
+            """)
     public ResponseEntity<TicketResponse> cancel(
             @PathVariable String ticketCode
     ) {
@@ -72,6 +103,7 @@ public class TicketController {
     }
 
     @PatchMapping("/tickets/{ticketCode}/use")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<TicketResponse> markAsUsed(
             @PathVariable String ticketCode
     ) {

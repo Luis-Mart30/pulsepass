@@ -2,10 +2,12 @@ package com.pulsepass.controller;
 
 import com.pulsepass.dto.request.RegisterUserRequest;
 import com.pulsepass.dto.response.UserResponse;
+import com.pulsepass.service.AuthService;
 import com.pulsepass.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,9 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/users")
 public class UserController {
 
+    private final AuthService authService;
     private final UserService userService;
 
-    public UserController(UserService userService) {
+    public UserController(
+            AuthService authService,
+            UserService userService
+    ) {
+        this.authService = authService;
         this.userService = userService;
     }
 
@@ -29,17 +36,31 @@ public class UserController {
     ) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(userService.register(request));
+                .body(authService.register(request));
     }
 
     @GetMapping("/by-email")
+    @PreAuthorize("""
+            @authorizationService.isSelfOrAdminByEmail(
+                authentication,
+                #email
+            )
+            """)
     public ResponseEntity<UserResponse> findByEmail(
             @RequestParam String email
     ) {
-        return ResponseEntity.ok(userService.findByEmail(email));
+        return ResponseEntity.ok(
+                userService.findByEmail(email)
+        );
     }
 
     @GetMapping("/by-username")
+    @PreAuthorize("""
+            @authorizationService.isSelfOrAdminByUsername(
+                authentication,
+                #username
+            )
+            """)
     public ResponseEntity<UserResponse> findByUsername(
             @RequestParam String username
     ) {

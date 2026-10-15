@@ -13,6 +13,7 @@ import java.util.Optional;
 public interface EventRepository extends JpaRepository<Event, Long> {
 
     Optional<Event> findByEventCode(String eventCode);
+
     boolean existsByEventCode(String eventCode);
 
     List<Event> findByStatusOrderByEventDateAsc(EventStatus status);
@@ -20,43 +21,52 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findByVenue_Code(String venueCode);
 
     @Query("""
-        SELECT DISTINCT e
-        FROM Event e
-        JOIN e.artists a
-        WHERE LOWER(a.stageName) = LOWER(:stageName)
-        ORDER BY e.eventDate ASC
-        """)
+            SELECT DISTINCT e
+            FROM Event e
+            JOIN e.artists a
+            WHERE LOWER(a.stageName) = LOWER(:stageName)
+            ORDER BY e.eventDate ASC
+            """)
     List<Event> findByArtistStageName(
-        @Param("stageName") String stageName
-    );
+            @Param("stageName") String stageName);
 
     @Query("""
-        SELECT DISTINCT e
-        FROM Event e
-        JOIN e.artists a
-        WHERE LOWER(e.venue.city) = LOWER(:city)
-          AND LOWER(a.stageName) = LOWER(:stageName)
-        ORDER BY e.eventDate ASC
-        """)
+            SELECT DISTINCT e
+            FROM Event e
+            JOIN e.artists a
+            WHERE LOWER(a.stageName) = LOWER(:stageName)
+              AND e.status = :status
+            ORDER BY e.eventDate ASC
+            """)
+    List<Event> findByArtistStageNameAndStatus(
+            @Param("stageName") String stageName,
+            @Param("status") EventStatus status);
+
+    @Query("""
+            SELECT DISTINCT e
+            FROM Event e
+            JOIN e.artists a
+            WHERE LOWER(e.venue.city) = LOWER(:city)
+              AND LOWER(a.stageName) = LOWER(:stageName)
+            ORDER BY e.eventDate ASC
+            """)
     List<Event> findByCityAndArtist(
-        @Param("city") String city,
-        @Param("stageName") String stageName
-    );
+            @Param("city") String city,
+            @Param("stageName") String stageName);
 
     @Query("""
-        SELECT DISTINCT e
-        FROM Event e
-        JOIN e.artists a
-        WHERE e.status = :status
-          AND e.eventDate > :afterDate
-          AND LOWER(e.venue.city) = LOWER(:city)
-          AND LOWER(a.stageName) LIKE LOWER(CONCAT('%', :artistText, '%'))
-        ORDER BY e.eventDate ASC
-        """)
+            SELECT DISTINCT e
+            FROM Event e
+            JOIN e.artists a
+            WHERE e.status = :status
+              AND e.eventDate > :afterDate
+              AND LOWER(e.venue.city) = LOWER(:city)
+              AND LOWER(a.stageName) LIKE LOWER(CONCAT('%', :artistText, '%'))
+            ORDER BY e.eventDate ASC
+            """)
     List<Event> findRecommendedEvents(
-        @Param("status") EventStatus status,
-        @Param("afterDate") LocalDateTime afterDate,
-        @Param("city") String city,
-        @Param("artistText") String artistText
-    );
+            @Param("status") EventStatus status,
+            @Param("afterDate") LocalDateTime afterDate,
+            @Param("city") String city,
+            @Param("artistText") String artistText);
 }
