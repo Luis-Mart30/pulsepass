@@ -497,4 +497,33 @@ Comando de restauración:
 
 Todos estos valores son secretos locales. No deben exportarse, incluirse en capturas ni subirse a Git.
 
+
+<!-- TRAZABILIDAD_IDS_PRD_INICIO -->
+
+## Correspondencia con los identificadores oficiales del PRD
+
+| Identificador PRD | Solicitud o solicitudes ejecutadas |
+|---|---|
+| `TC-AUTH-001` | USR-01 - Registrar USER_A - 201 |
+| `TC-AUTH-002` | AUTH-03 - Login USER_A - 200 |
+| `TC-AUTH-007` | AUTH-06 - Consultar identidad sin autenticación - 401 |
+| `TC-AUTH-014` | TC-SEC-001B - USER_A no crea eventos - 403 |
+| `TC-SEC-009` | TKT-05 - USER_B intenta leer ticket de USER_A - 403 |
+| `TC-SEC-011` | TKT-06 - USER_B intenta cancelar ticket de USER_A - 403 |
+| `TC-SEC-014` | TKT-11 - STAFF marca ticket como usado - 200 |
+| `TC-BIZ-001` | VEN-01 - Listar venues activos - 200; VEN-02 - Consultar venue por código - 200 |
+| `TC-BIZ-002` | ART-01 - Listar artistas activos - 200; ART-02 - Consultar artista por ID - 200; ART-03 - Consultar artista por nombre artístico - 200 |
+| `TC-BIZ-003` | EVT-01 - Crear evento como ADMIN - 201 |
+| `TC-BIZ-004` | EVT-04 - Publicar evento como ADMIN - 200; FLOW-C-06 - Consultar públicamente el evento recién publicado - 200 |
+| `TC-BIZ-006` | USR-01 - Registrar USER_A - 201; USR-02 - Registrar USER_B - 201; USR-06 - Registrar USER_A duplicado - 409 |
+| `TC-BIZ-007` | TKT-01 - USER_A compra ticket cancelable - 201; TKT-02 - USER_A compra ticket utilizable - 201 |
+| `TC-BIZ-008` | TKT-03 - USER_A lista sus tickets - 200; TKT-04 - USER_A consulta su ticket - 200 |
+| `TC-BIZ-009` | TKT-08 - STAFF lista tickets pagados del evento - 200 |
+| `TC-BIZ-011` | TKT-13 - Cancelar nuevamente ticket cancelado - 409 |
+| `TC-BIZ-012` | TKT-11 - STAFF marca ticket como usado - 200; TKT-12 - USER_A verifica ticket usado - 200 |
+
+Estas correspondencias no representan casos adicionales. Identifican las solicitudes ya ejecutadas que materializan cada caso mínimo de la guía.
+
+<!-- TRAZABILIDAD_IDS_PRD_FIN -->
+
 <!-- GUIA_E2E_COMPLEMENTO_FIN -->

@@ -52,7 +52,7 @@
                                                                    "type":  "noauth"
                                                                },
                                                       "url":  "{{baseUrl}}/api/venues/active",
-                                                      "description":  "ID: VEN-01\r\nObjetivo: Listar venues activos.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: ANONYMOUS.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 200.\r\nRevisión manual: Debe responder 200 y devolver únicamente venues activos.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens."
+                                                      "description":  "ID: VEN-01\r\nObjetivo: Listar venues activos.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: ANONYMOUS.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 200.\r\nRevisión manual: Debe responder 200 y devolver únicamente venues activos.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens.\r\nReferencia PRD: TC-BIZ-001."
                                                   },
                                       "response":  [
 
@@ -73,7 +73,7 @@
                                                                    "type":  "noauth"
                                                                },
                                                       "url":  "{{baseUrl}}/api/venues/{{venueCode}}",
-                                                      "description":  "ID: VEN-02\r\nObjetivo: Consultar venue por código.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: ANONYMOUS.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 200.\r\nRevisión manual: Debe responder 200 y devolver el venue solicitado.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens."
+                                                      "description":  "ID: VEN-02\r\nObjetivo: Consultar venue por código.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: ANONYMOUS.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 200.\r\nRevisión manual: Debe responder 200 y devolver el venue solicitado.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens.\r\nReferencia PRD: TC-BIZ-001."
                                                   },
                                       "response":  [
 
@@ -100,7 +100,7 @@
                                                                    "type":  "noauth"
                                                                },
                                                       "url":  "{{baseUrl}}/api/artists/active",
-                                                      "description":  "ID: ART-01\r\nObjetivo: Listar artistas activos.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: ANONYMOUS.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 200.\r\nRevisión manual: Debe responder 200 y devolver los artistas activos.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens."
+                                                      "description":  "ID: ART-01\r\nObjetivo: Listar artistas activos.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: ANONYMOUS.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 200.\r\nRevisión manual: Debe responder 200 y devolver los artistas activos.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens.\r\nReferencia PRD: TC-BIZ-002."
                                                   },
                                       "response":  [
 
@@ -121,7 +121,7 @@
                                                                    "type":  "noauth"
                                                                },
                                                       "url":  "{{baseUrl}}/api/artists/{{artistId}}",
-                                                      "description":  "ID: ART-02\r\nObjetivo: Consultar artista por ID.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: ANONYMOUS.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 200.\r\nRevisión manual: Debe responder 200 y devolver el artista solicitado.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens."
+                                                      "description":  "ID: ART-02\r\nObjetivo: Consultar artista por ID.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: ANONYMOUS.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 200.\r\nRevisión manual: Debe responder 200 y devolver el artista solicitado.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens.\r\nReferencia PRD: TC-BIZ-002."
                                                   },
                                       "response":  [
 
@@ -142,7 +142,7 @@
                                                                    "type":  "noauth"
                                                                },
                                                       "url":  "{{baseUrl}}/api/artists/by-stage-name?stageName={{artistStageName}}",
-                                                      "description":  "ID: ART-03\r\nObjetivo: Consultar artista por nombre artístico.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: ANONYMOUS.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 200.\r\nRevisión manual: Debe responder 200 y devolver el artista cuyo nombre es Solar Beat.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens."
+                                                      "description":  "ID: ART-03\r\nObjetivo: Consultar artista por nombre artístico.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: ANONYMOUS.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 200.\r\nRevisión manual: Debe responder 200 y devolver el artista cuyo nombre es Solar Beat.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens.\r\nReferencia PRD: TC-BIZ-002."
                                                   },
                                       "response":  [
 
@@ -174,7 +174,7 @@
                                                                    "type":  "noauth"
                                                                },
                                                       "url":  "{{baseUrl}}/api/users",
-                                                      "description":  "ID: USR-01\r\nObjetivo: Registrar USER_A.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: ANONYMOUS.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 201.\r\nRevisión manual: Registrar manualmente USER_A. No copiar contraseñas al repositorio.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens.",
+                                                      "description":  "ID: USR-01\r\nObjetivo: Registrar USER_A.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: ANONYMOUS.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 201.\r\nRevisión manual: Registrar manualmente USER_A. No copiar contraseñas al repositorio.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens.\r\nReferencia PRD: TC-AUTH-001, TC-BIZ-006.",
                                                       "body":  {
                                                                    "mode":  "raw",
                                                                    "raw":  "{\n  \"username\": \"{{userAUsername}}\",\n  \"email\": \"{{userAEmail}}\",\n  \"password\": \"{{userAPassword}}\",\n  \"firstName\": \"User\",\n  \"lastName\": \"Alpha\",\n  \"phone\": \"3000000001\",\n  \"city\": \"Santa Marta\",\n  \"birthDate\": \"2000-01-15\"\n}",
@@ -209,7 +209,7 @@
                                                                    "type":  "noauth"
                                                                },
                                                       "url":  "{{baseUrl}}/api/users",
-                                                      "description":  "ID: USR-02\r\nObjetivo: Registrar USER_B.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: ANONYMOUS.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 201.\r\nRevisión manual: Registrar manualmente USER_B.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens.",
+                                                      "description":  "ID: USR-02\r\nObjetivo: Registrar USER_B.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: ANONYMOUS.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 201.\r\nRevisión manual: Registrar manualmente USER_B.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens.\r\nReferencia PRD: TC-BIZ-006.",
                                                       "body":  {
                                                                    "mode":  "raw",
                                                                    "raw":  "{\n  \"username\": \"{{userBUsername}}\",\n  \"email\": \"{{userBEmail}}\",\n  \"password\": \"{{userBPassword}}\",\n  \"firstName\": \"User\",\n  \"lastName\": \"Beta\",\n  \"phone\": \"3000000002\",\n  \"city\": \"Santa Marta\",\n  \"birthDate\": \"2001-02-20\"\n}",
@@ -314,7 +314,7 @@
                                                                    "type":  "noauth"
                                                                },
                                                       "url":  "{{baseUrl}}/api/auth/login",
-                                                      "description":  "ID: AUTH-03\r\nObjetivo: Login USER_A.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: ANONYMOUS.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 200.\r\nRevisión manual: Ejecutar después de USR-01 y copiar accessToken en userAToken.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens.",
+                                                      "description":  "ID: AUTH-03\r\nObjetivo: Login USER_A.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: ANONYMOUS.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 200.\r\nRevisión manual: Ejecutar después de USR-01 y copiar accessToken en userAToken.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens.\r\nReferencia PRD: TC-AUTH-002.",
                                                       "body":  {
                                                                    "mode":  "raw",
                                                                    "raw":  "{\n  \"identifier\": \"{{userAUsername}}\",\n  \"password\": \"{{userAPassword}}\"\n}",
@@ -407,7 +407,7 @@
                                                                    "type":  "noauth"
                                                                },
                                                       "url":  "{{baseUrl}}/api/auth/me",
-                                                      "description":  "ID: AUTH-06\r\nObjetivo: Consultar identidad sin autenticación.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: ANONYMOUS.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 401.\r\nRevisión manual: Debe responder 401 cuando no se envía JWT.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens."
+                                                      "description":  "ID: AUTH-06\r\nObjetivo: Consultar identidad sin autenticación.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: ANONYMOUS.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 401.\r\nRevisión manual: Debe responder 401 cuando no se envía JWT.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens.\r\nReferencia PRD: TC-AUTH-007."
                                                   },
                                       "response":  [
 
@@ -1131,7 +1131,7 @@
                                                                               ]
                                                                },
                                                       "url":  "{{baseUrl}}/api/events",
-                                                      "description":  "ID: E2E-EVT-01\r\nObjetivo: crear el evento que será utilizado durante todo el flujo ADMIN.\r\nPrecondiciones: ADMIN autenticado, venue activo y newEventCode no utilizado.\r\nActor: ADMIN.\r\nEjecución: abrir la solicitud y pulsar Send.\r\nHTTP esperado: 201.\r\nRevisión manual: eventCode igual a newEventCode y status DRAFT.\r\nComprobación posterior: ejecutar FLOW-C-02 sobre el mismo eventCode.\r\nEvidencia: registrar HTTP, JSON y estado sin secretos.",
+                                                      "description":  "ID: E2E-EVT-01\r\nObjetivo: crear el evento que será utilizado durante todo el flujo ADMIN.\r\nPrecondiciones: ADMIN autenticado, venue activo y newEventCode no utilizado.\r\nActor: ADMIN.\r\nEjecución: abrir la solicitud y pulsar Send.\r\nHTTP esperado: 201.\r\nRevisión manual: eventCode igual a newEventCode y status DRAFT.\r\nComprobación posterior: ejecutar FLOW-C-02 sobre el mismo eventCode.\r\nEvidencia: registrar HTTP, JSON y estado sin secretos.\r\nReferencia PRD: TC-BIZ-003.",
                                                       "body":  {
                                                                    "mode":  "raw",
                                                                    "raw":  "{\r\n  \"eventCode\": \"{{newEventCode}}\",\r\n  \"name\": \"PulsePass E2E {{runId}}\",\r\n  \"description\": \"Evento creado durante la prueba manual.\",\r\n  \"category\": \"MUSIC\",\r\n  \"eventDate\": \"2035-09-20T19:00:00\",\r\n  \"minimumAge\": 18,\r\n  \"venueCode\": \"{{venueActiveCode}}\"\r\n}",
@@ -1266,7 +1266,7 @@
                                                                               ]
                                                                },
                                                       "url":  "{{baseUrl}}/api/events/{{newEventCode}}/publish",
-                                                      "description":  "ID: E2E-EVT-04\r\nObjetivo: publicar el mismo evento creado al inicio del flujo.\r\nPrecondiciones: newEventCode existe en DRAFT y ya tiene artista asociado.\r\nActor: ADMIN.\r\nEjecución: abrir la solicitud y pulsar Send.\r\nHTTP esperado: 200.\r\nRevisión manual: eventCode igual a newEventCode y status PUBLISHED.\r\nComprobación posterior: ejecutar FLOW-C-06 sin Bearer.\r\nEvidencia: registrar transición persistida."
+                                                      "description":  "ID: E2E-EVT-04\r\nObjetivo: publicar el mismo evento creado al inicio del flujo.\r\nPrecondiciones: newEventCode existe en DRAFT y ya tiene artista asociado.\r\nActor: ADMIN.\r\nEjecución: abrir la solicitud y pulsar Send.\r\nHTTP esperado: 200.\r\nRevisión manual: eventCode igual a newEventCode y status PUBLISHED.\r\nComprobación posterior: ejecutar FLOW-C-06 sin Bearer.\r\nEvidencia: registrar transición persistida.\r\nReferencia PRD: TC-BIZ-004."
                                                   },
                                       "response":  [
 
@@ -1287,7 +1287,7 @@
                                                                    "type":  "noauth"
                                                                },
                                                       "url":  "{{baseUrl}}/api/events/{{newEventCode}}",
-                                                      "description":  "ID: FLOW-C-06\r\nObjetivo: Consultar públicamente el evento recién publicado.\r\nPrecondiciones: E2E-EVT-04 publicó newEventCode.\r\nActor: ANONYMOUS.\r\nEjecución: abrir la solicitud y pulsar Send.\r\nHTTP esperado: 200.\r\nRevisión manual: status PUBLISHED, mismo venue y artista asociado.\r\nComprobación posterior: Ejecutar listados publicados y búsqueda por artista.\r\nEvidencia: registrar HTTP real, JSON o estado observado, resultado y observación sin secretos."
+                                                      "description":  "ID: FLOW-C-06\r\nObjetivo: Consultar públicamente el evento recién publicado.\r\nPrecondiciones: E2E-EVT-04 publicó newEventCode.\r\nActor: ANONYMOUS.\r\nEjecución: abrir la solicitud y pulsar Send.\r\nHTTP esperado: 200.\r\nRevisión manual: status PUBLISHED, mismo venue y artista asociado.\r\nComprobación posterior: Ejecutar listados publicados y búsqueda por artista.\r\nEvidencia: registrar HTTP real, JSON o estado observado, resultado y observación sin secretos.\r\nReferencia PRD: TC-BIZ-004."
                                                   },
                                       "response":  [
 
@@ -1389,7 +1389,7 @@
                                                                               ]
                                                                },
                                                       "url":  "{{baseUrl}}/api/tickets",
-                                                      "description":  "ID: E2E-TKT-01A\r\nObjetivo: comprar el ticket reservado para cancelación.\r\nPrecondiciones: USER_A autenticado y evento publicado con capacidad.\r\nActor: USER_A.\r\nEjecución: abrir la solicitud y pulsar Send.\r\nHTTP esperado: 201.\r\nRevisión manual: propietario USER_A, evento correcto y status PAID.\r\nVariable manual: copiar ticketCode a ticketCancelableCode.\r\nEvidencia: registrar HTTP, código y estado sin mostrar el JWT.",
+                                                      "description":  "ID: E2E-TKT-01A\r\nObjetivo: comprar el ticket reservado para cancelación.\r\nPrecondiciones: USER_A autenticado y evento publicado con capacidad.\r\nActor: USER_A.\r\nEjecución: abrir la solicitud y pulsar Send.\r\nHTTP esperado: 201.\r\nRevisión manual: propietario USER_A, evento correcto y status PAID.\r\nVariable manual: copiar ticketCode a ticketCancelableCode.\r\nEvidencia: registrar HTTP, código y estado sin mostrar el JWT.\r\nReferencia PRD: TC-BIZ-007.",
                                                       "body":  {
                                                                    "mode":  "raw",
                                                                    "raw":  "{\n  \"userEmail\": \"{{userAEmail}}\",\n  \"eventCode\": \"{{publishedEventCode}}\",\n  \"type\": \"GENERAL\"\n}",
@@ -1431,7 +1431,7 @@
                                                                               ]
                                                                },
                                                       "url":  "{{baseUrl}}/api/tickets",
-                                                      "description":  "ID: E2E-TKT-01B\r\nObjetivo: comprar un ticket diferente reservado para uso.\r\nPrecondiciones: USER_A autenticado y evento publicado con capacidad.\r\nActor: USER_A.\r\nEjecución: abrir la solicitud y pulsar Send.\r\nHTTP esperado: 201.\r\nRevisión manual: propietario USER_A, evento correcto y status PAID.\r\nVariable manual: copiar ticketCode a ticketUsableCode.\r\nEvidencia: registrar HTTP, código y estado sin mostrar el JWT.",
+                                                      "description":  "ID: E2E-TKT-01B\r\nObjetivo: comprar un ticket diferente reservado para uso.\r\nPrecondiciones: USER_A autenticado y evento publicado con capacidad.\r\nActor: USER_A.\r\nEjecución: abrir la solicitud y pulsar Send.\r\nHTTP esperado: 201.\r\nRevisión manual: propietario USER_A, evento correcto y status PAID.\r\nVariable manual: copiar ticketCode a ticketUsableCode.\r\nEvidencia: registrar HTTP, código y estado sin mostrar el JWT.\r\nReferencia PRD: TC-BIZ-007.",
                                                       "body":  {
                                                                    "mode":  "raw",
                                                                    "raw":  "{\n  \"userEmail\": \"{{userAEmail}}\",\n  \"eventCode\": \"{{publishedEventCode}}\",\n  \"type\": \"VIP\"\n}",
@@ -1468,7 +1468,7 @@
                                                                               ]
                                                                },
                                                       "url":  "{{baseUrl}}/api/tickets/by-user?email={{userAEmail}}",
-                                                      "description":  "ID: TKT-03\r\nObjetivo: USER_A lista sus tickets.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: USER_A.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 200.\r\nRevisión manual: Debe listar los tickets pertenecientes a USER_A.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens."
+                                                      "description":  "ID: TKT-03\r\nObjetivo: USER_A lista sus tickets.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: USER_A.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 200.\r\nRevisión manual: Debe listar los tickets pertenecientes a USER_A.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens.\r\nReferencia PRD: TC-BIZ-008."
                                                   },
                                       "response":  [
 
@@ -1496,7 +1496,7 @@
                                                                               ]
                                                                },
                                                       "url":  "{{baseUrl}}/api/tickets/{{ticketCancelableCode}}",
-                                                      "description":  "ID: TKT-04\r\nObjetivo: USER_A consulta su ticket.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: USER_A.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 200.\r\nRevisión manual: Debe devolver el ticket cancelable con estado PAID antes de cancelarlo.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens."
+                                                      "description":  "ID: TKT-04\r\nObjetivo: USER_A consulta su ticket.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: USER_A.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 200.\r\nRevisión manual: Debe devolver el ticket cancelable con estado PAID antes de cancelarlo.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens.\r\nReferencia PRD: TC-BIZ-008."
                                                   },
                                       "response":  [
 
@@ -1524,7 +1524,7 @@
                                                                               ]
                                                                },
                                                       "url":  "{{baseUrl}}/api/events/{{publishedEventCode}}/tickets/paid",
-                                                      "description":  "ID: TKT-08\r\nObjetivo: STAFF lista tickets pagados del evento.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: STAFF.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 200.\r\nRevisión manual: STAFF puede consultar tickets PAID del evento.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens."
+                                                      "description":  "ID: TKT-08\r\nObjetivo: STAFF lista tickets pagados del evento.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: STAFF.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 200.\r\nRevisión manual: STAFF puede consultar tickets PAID del evento.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens.\r\nReferencia PRD: TC-BIZ-009."
                                                   },
                                       "response":  [
 
@@ -1663,7 +1663,7 @@
                                                                               ]
                                                                },
                                                       "url":  "{{baseUrl}}/api/tickets/{{ticketUsableCode}}",
-                                                      "description":  "ID: TKT-05\r\nObjetivo: USER_B intenta leer ticket de USER_A.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: USER_B.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 403.\r\nRevisión manual: Debe responder 403 por propiedad horizontal.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens."
+                                                      "description":  "ID: TKT-05\r\nObjetivo: USER_B intenta leer ticket de USER_A.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: USER_B.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 403.\r\nRevisión manual: Debe responder 403 por propiedad horizontal.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens.\r\nReferencia PRD: TC-SEC-009."
                                                   },
                                       "response":  [
 
@@ -1691,7 +1691,7 @@
                                                                               ]
                                                                },
                                                       "url":  "{{baseUrl}}/api/tickets/{{ticketCancelableCode}}/cancel",
-                                                      "description":  "ID: TKT-06\r\nObjetivo: USER_B intenta cancelar ticket de USER_A.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: USER_B.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 403.\r\nRevisión manual: Debe responder 403 y no cambiar el estado del ticket.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens."
+                                                      "description":  "ID: TKT-06\r\nObjetivo: USER_B intenta cancelar ticket de USER_A.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: USER_B.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 403.\r\nRevisión manual: Debe responder 403 y no cambiar el estado del ticket.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens.\r\nReferencia PRD: TC-SEC-011."
                                                   },
                                       "response":  [
 
@@ -1850,7 +1850,7 @@
                                                                               ]
                                                                },
                                                       "url":  "{{baseUrl}}/api/events",
-                                                      "description":  "ID: TC-SEC-001B\r\nObjetivo: USER_A no crea eventos.\r\nPrecondiciones: USER_A autenticado y payload válido.\r\nActor: USER_A.\r\nEjecución: abrir la solicitud y pulsar Send.\r\nHTTP esperado: 403.\r\nRevisión manual: ErrorResponse 403, no un error 400 de validación.\r\nComprobación posterior: Consultar el código con ADMIN y confirmar que no se creó un recurso adicional.\r\nEvidencia: registrar HTTP real, JSON o estado observado, resultado y observación sin secretos.",
+                                                      "description":  "ID: TC-SEC-001B\r\nObjetivo: USER_A no crea eventos.\r\nPrecondiciones: USER_A autenticado y payload válido.\r\nActor: USER_A.\r\nEjecución: abrir la solicitud y pulsar Send.\r\nHTTP esperado: 403.\r\nRevisión manual: ErrorResponse 403, no un error 400 de validación.\r\nComprobación posterior: Consultar el código con ADMIN y confirmar que no se creó un recurso adicional.\r\nEvidencia: registrar HTTP real, JSON o estado observado, resultado y observación sin secretos.\r\nReferencia PRD: TC-AUTH-014.",
                                                       "body":  {
                                                                    "mode":  "raw",
                                                                    "raw":  "{\r\n  \"eventCode\": \"{{newEventCode}}\",\r\n  \"name\": \"PulsePass E2E {{runId}}\",\r\n  \"description\": \"Evento creado durante la prueba manual.\",\r\n  \"category\": \"MUSIC\",\r\n  \"eventDate\": \"2035-09-20T19:00:00\",\r\n  \"minimumAge\": 18,\r\n  \"venueCode\": \"{{venueActiveCode}}\"\r\n}",
@@ -2332,7 +2332,7 @@
                                                                    "type":  "noauth"
                                                                },
                                                       "url":  "{{baseUrl}}/api/users",
-                                                      "description":  "ID: USR-06\r\nObjetivo: Registrar USER_A duplicado.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: ANONYMOUS.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 409.\r\nRevisión manual: Debe responder 409 después de ejecutar correctamente USR-01.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens.",
+                                                      "description":  "ID: USR-06\r\nObjetivo: Registrar USER_A duplicado.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: ANONYMOUS.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 409.\r\nRevisión manual: Debe responder 409 después de ejecutar correctamente USR-01.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens.\r\nReferencia PRD: TC-BIZ-006.",
                                                       "body":  {
                                                                    "mode":  "raw",
                                                                    "raw":  "{\n  \"username\": \"{{userAUsername}}\",\n  \"email\": \"{{userAEmail}}\",\n  \"password\": \"{{userAPassword}}\",\n  \"firstName\": \"User\",\n  \"lastName\": \"Alpha\",\n  \"phone\": \"3000000001\",\n  \"city\": \"Santa Marta\",\n  \"birthDate\": \"2000-01-15\"\n}",
@@ -2949,7 +2949,7 @@
                                                                               ]
                                                                },
                                                       "url":  "{{baseUrl}}/api/tickets/{{ticketCancelableCode}}/cancel",
-                                                      "description":  "ID: TKT-13\r\nObjetivo: Cancelar nuevamente ticket cancelado.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: USER_A.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 409.\r\nRevisión manual: Debe responder 409 porque solo los tickets PAID pueden cancelarse.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens."
+                                                      "description":  "ID: TKT-13\r\nObjetivo: Cancelar nuevamente ticket cancelado.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: USER_A.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 409.\r\nRevisión manual: Debe responder 409 porque solo los tickets PAID pueden cancelarse.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens.\r\nReferencia PRD: TC-BIZ-011."
                                                   },
                                       "response":  [
 
@@ -2977,7 +2977,7 @@
                                                                               ]
                                                                },
                                                       "url":  "{{baseUrl}}/api/tickets/{{ticketUsableCode}}/use",
-                                                      "description":  "ID: TKT-11\r\nObjetivo: STAFF marca ticket como usado.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: STAFF.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 200.\r\nRevisión manual: Debe cambiar el estado del ticket de PAID a USED.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens."
+                                                      "description":  "ID: TKT-11\r\nObjetivo: STAFF marca ticket como usado.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: STAFF.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 200.\r\nRevisión manual: Debe cambiar el estado del ticket de PAID a USED.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens.\r\nReferencia PRD: TC-BIZ-012, TC-SEC-014."
                                                   },
                                       "response":  [
 
@@ -3005,7 +3005,7 @@
                                                                               ]
                                                                },
                                                       "url":  "{{baseUrl}}/api/tickets/{{ticketUsableCode}}",
-                                                      "description":  "ID: TKT-12\r\nObjetivo: USER_A verifica ticket usado.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: USER_A.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 200.\r\nRevisión manual: Debe devolver el estado USED.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens."
+                                                      "description":  "ID: TKT-12\r\nObjetivo: USER_A verifica ticket usado.\r\nPrecondiciones: API y PostgreSQL E2E activos, migraciones y fixtures cargados, entorno seleccionado y variables requeridas configuradas localmente.\r\nActor: USER_A.\r\nEjecución: Abrir esta solicitud en Postman y pulsar Send manualmente.\r\nHTTP esperado: 200.\r\nRevisión manual: Debe devolver el estado USED.\r\nEvidencia: Registrar fecha y hora, actor, ruta, datos no sensibles, HTTP obtenido, JSON o estado observado, resultado y observación; nunca incluir contraseñas ni tokens.\r\nReferencia PRD: TC-BIZ-012."
                                                   },
                                       "response":  [
 
