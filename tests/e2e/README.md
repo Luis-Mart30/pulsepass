@@ -171,9 +171,13 @@ docker cp `
 Ejecutarlo con contraseñas locales:
 
 ```powershell
-$adminPassword = "AdminPulse2026!"
-$staffPassword = "StaffPulse2026!"
-$inactivePassword = "InactivePulse2026!"
+$adminPasswordSecure = Read-Host "Contraseña local de ADMIN" -AsSecureString
+$staffPasswordSecure = Read-Host "Contraseña local de STAFF" -AsSecureString
+$inactivePasswordSecure = Read-Host "Contraseña local del usuario inactivo" -AsSecureString
+
+$adminPassword = [System.Net.NetworkCredential]::new("", $adminPasswordSecure).Password
+$staffPassword = [System.Net.NetworkCredential]::new("", $staffPasswordSecure).Password
+$inactivePassword = [System.Net.NetworkCredential]::new("", $inactivePasswordSecure).Password
 
 docker exec pulsepass-e2e-db `
     psql `
@@ -193,6 +197,9 @@ Después de cargar el seed:
 Remove-Variable adminPassword
 Remove-Variable staffPassword
 Remove-Variable inactivePassword
+Remove-Variable adminPasswordSecure
+Remove-Variable staffPasswordSecure
+Remove-Variable inactivePasswordSecure
 ```
 
 ## Importar en Postman
@@ -211,6 +218,7 @@ Completar únicamente en valores locales:
 - `inactivePassword`
 - `userAPassword`
 - `userBPassword`
+- `roleInjectionPassword`
 
 Después de cada login, copiar manualmente `accessToken` a:
 
@@ -218,6 +226,7 @@ Después de cada login, copiar manualmente `accessToken` a:
 - `staffToken`
 - `userAToken`
 - `userBToken`
+- `roleInjectionToken`
 
 No exportar tokens ni contraseñas.
 
@@ -398,3 +407,94 @@ La ejecución solo puede declararse aprobada cuando:
 - Los BLOCKED y NOT RUN están justificados.
 - No existen respuestas HTTP 500.
 - No se exportaron secretos.
+
+<!-- GUIA_E2E_COMPLEMENTO_INICIO -->
+
+## Matriz de cobertura de las 22 rutas
+
+| # | Método | Ruta | Acceso o regla principal |
+|---:|---|---|---|
+| 1 | GET | /api/venues/{code} | Público |
+| 2 | GET | /api/venues/active | Público |
+| 3 | GET | /api/artists/{id} | Público |
+| 4 | GET | /api/artists/by-stage-name | Público |
+| 5 | GET | /api/artists/active | Público |
+| 6 | POST | /api/users | Público; asigna USER |
+| 7 | GET | /api/users/by-email | Propietario o ADMIN |
+| 8 | GET | /api/users/by-username | Propietario o ADMIN |
+| 9 | POST | /api/events | ADMIN |
+| 10 | GET | /api/events/{eventCode} | Público si está publicado; STAFF o ADMIN para borradores |
+| 11 | GET | /api/events/published | Público |
+| 12 | PATCH | /api/events/{eventCode}/publish | ADMIN |
+| 13 | POST | /api/events/{eventCode}/artists/{artistId} | ADMIN |
+| 14 | GET | /api/events/by-artist | Público para eventos publicados |
+| 15 | POST | /api/tickets | USER para su propio correo |
+| 16 | GET | /api/tickets/{ticketCode} | Propietario, STAFF o ADMIN |
+| 17 | GET | /api/tickets/by-user | Propietario o ADMIN |
+| 18 | GET | /api/events/{eventCode}/tickets/paid | STAFF o ADMIN |
+| 19 | PATCH | /api/tickets/{ticketCode}/cancel | Propietario USER o ADMIN |
+| 20 | PATCH | /api/tickets/{ticketCode}/use | STAFF o ADMIN |
+| 21 | POST | /api/auth/login | Público |
+| 22 | GET | /api/auth/me | Usuario autenticado y activo |
+
+## Variables exigidas para la ejecución
+
+- baseUrl y runId.
+- userAEmail, userAUsername, userBEmail y userBUsername.
+- userAPassword y userBPassword únicamente como secretos locales.
+- adminIdentifier y staffIdentifier.
+- adminPassword y staffPassword únicamente como secretos locales.
+- userAToken, userBToken, adminToken y staffToken únicamente como secretos locales.
+- venueActiveCode, artistId y artistStageName.
+- publishedEventCode, draftEventCode y eventToPublishCode.
+- ticketCancelableCode y ticketUsableCode.
+- expectedIssuer, expectedTokenTtlSeconds y expectedForeignResourceStatus.
+
+Las contraseñas y los JWT permanecen vacíos en el entorno exportado y solo se completan localmente en Postman.
+
+## Procedimiento de casos de seguridad con cambio de estado
+
+### TC-SEC-006
+
+USER_B consulta a USER_A por correo con userBToken. El resultado esperado es HTTP 403 sin exposición de datos privados.
+
+### TC-AUTH-013
+
+1. Emitir roleInjectionToken mientras role_injection_e2e está activo.
+2. Desactivar el usuario en pulsepass_e2e conservando el JWT anterior.
+3. Ejecutar GET /api/auth/me y comprobar HTTP 401.
+4. Restaurar active = TRUE inmediatamente.
+
+Comando de desactivación:
+
+    docker exec pulsepass-e2e-db psql -U pulsepass_e2e -d pulsepass_e2e -c "UPDATE users SET active = FALSE WHERE username = 'role_injection_e2e';"
+
+Comando de restauración:
+
+    docker exec pulsepass-e2e-db psql -U pulsepass_e2e -d pulsepass_e2e -c "UPDATE users SET active = TRUE WHERE username = 'role_injection_e2e';"
+
+### TC-SEC-017
+
+1. Emitir staffToken mientras staff_e2e conserva STAFF.
+2. Retirar STAFF en pulsepass_e2e conservando el JWT anterior.
+3. Consultar los tickets pagados y comprobar HTTP 403.
+4. Restaurar inmediatamente el rol STAFF.
+
+Comando de revocación:
+
+    docker exec pulsepass-e2e-db psql -U pulsepass_e2e -d pulsepass_e2e -c "DELETE FROM user_roles WHERE user_id = (SELECT id FROM users WHERE username = 'staff_e2e') AND role = 'STAFF';"
+
+Comando de restauración:
+
+    docker exec pulsepass-e2e-db psql -U pulsepass_e2e -d pulsepass_e2e -c "INSERT INTO user_roles (user_id, role) SELECT id, 'STAFF' FROM users WHERE username = 'staff_e2e' ON CONFLICT DO NOTHING;"
+
+## Preparación de JWT especiales
+
+- tamperedToken: JWT válido con al menos un carácter de la firma alterado.
+- expiredToken: JWT correctamente firmado con exp anterior a la hora actual.
+- foreignIssuerToken: JWT con otra clave o issuer diferente de expectedIssuer.
+- invalidBearerToken: valor que no tenga la estructura válida de tres segmentos.
+
+Todos estos valores son secretos locales. No deben exportarse, incluirse en capturas ni subirse a Git.
+
+<!-- GUIA_E2E_COMPLEMENTO_FIN -->
