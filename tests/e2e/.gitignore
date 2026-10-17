@@ -1,0 +1,11 @@
+# Entornos locales con credenciales o tokens
+postman/*-local-secrets.postman_environment.json
+postman/*.private.postman_environment.json
+
+# Evidencias locales
+evidencias/
+screenshots/
+
+# Archivos temporales
+*.log
+*.tmp
