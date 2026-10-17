@@ -2,9 +2,9 @@
 
 ## Datos de la ejecución
 
-- Fecha: 16 de octubre de 2026
+- Fecha: 17 de octubre de 2026
 - Responsable: Luis Jaime Martínez Monsalvo
-- Rama: feature/e2e-catalogo-eventos-luis
+- Rama: fix/e2e-cumplimiento-guia-luis
 - Aplicación: http://localhost:8080
 - Base de datos: PostgreSQL 16 en pulsepass_e2e
 - Cliente: Postman
@@ -12,30 +12,34 @@
 - Entorno: PulsePass Local E2E
 - Ejecución: manual, solicitud por solicitud mediante Send
 
-## Resumen
+## Preparación verificada
+
+- Base de datos E2E reiniciada desde un estado limpio.
+- Migraciones de Flyway 1 a 4 ejecutadas correctamente.
+- Fixtures E2E cargados con ON_ERROR_STOP y transacción confirmada.
+- Colección importada con 96 solicitudes distribuidas en 10 carpetas.
+- Contraseñas y tokens configurados únicamente en el entorno local de Postman.
+- Carpetas ejecutadas manualmente desde 00 hasta 09 en el orden documentado.
+
+## Resumen final
 
 | Estado | Cantidad |
 |---|---:|
-| PASS | 46 |
+| PASS | 96 |
 | FAIL | 0 |
 | BLOCKED | 0 |
 | NOT RUN | 0 |
 
-## Incidencias operativas resueltas
+## Cobertura comprobada
 
-- Se agregaron al entorno local las variables userAUsername y userBUsername.
-- Se corrigieron valores locales de contraseñas que estaban vacíos.
-- Se renovaron manualmente tokens JWT al vencer su duración de 15 minutos.
-- Se agregó el token de USER_B antes de comprobar las respuestas 403.
-- Las solicitudes afectadas se repitieron y obtuvieron finalmente el resultado esperado.
-- Las incidencias fueron de configuración local de Postman y no defectos de la API.
+Se verificaron autenticación JWT, claims obligatorios, expiración, tokens alterados, autorización por roles, acceso anónimo, usuarios inactivos, propiedad y aislamiento de recursos, validaciones, reglas de negocio, persistencia de operaciones permitidas y ausencia de mutación después de operaciones denegadas.
+
+Las respuestas obtenidas cubrieron los códigos HTTP 200, 201, 400, 401, 403, 404 y 409. No se presentaron respuestas HTTP 500 durante la ejecución final.
+
+Los casos TC-SEC-004 y TC-AUTH-015 se documentaron conforme al comportamiento contractual comprobado: 403 para el borrador consultado anónimamente y 200 para el endpoint público con JWT inválido sin autenticar al actor.
 
 ## Resultado
 
-Las 46 solicitudes de la colección finalizaron con el código HTTP y el comportamiento esperado.
-
-Se comprobaron autenticación, autorización por roles, propiedad de recursos, reglas de negocio, persistencia de cambios permitidos y ausencia de mutación después de operaciones prohibidas.
-
-No se presentaron respuestas HTTP 500 durante la ejecución final válida.
+Las 96 solicitudes finalizaron con el código HTTP y el comportamiento esperado.
 
 Resultado general: PASS.

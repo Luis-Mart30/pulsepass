@@ -280,4 +280,119 @@ VALUES
         'USER'
     );
 
+
+-- FIXTURES_ADICIONALES_REGLAS_NEGOCIO_E2E
+
+INSERT INTO venues (
+    code,
+    name,
+    city,
+    address,
+    capacity,
+    active
+)
+VALUES (
+    'VEN-E2E-CAPACITY-ONE',
+    'PulsePass E2E Capacity One',
+    'Santa Marta',
+    'Calle E2E 1',
+    1,
+    TRUE
+)
+ON CONFLICT (code)
+DO UPDATE SET
+    name = EXCLUDED.name,
+    city = EXCLUDED.city,
+    address = EXCLUDED.address,
+    capacity = EXCLUDED.capacity,
+    active = EXCLUDED.active;
+
+INSERT INTO events (
+    event_code,
+    name,
+    description,
+    category,
+    status,
+    event_date,
+    minimum_age,
+    venue_id,
+    streaming_url
+)
+VALUES
+    (
+        'EVT-E2E-MINIMUM-AGE',
+        'PulsePass E2E Minimum Age',
+        'Published event with intentionally unreachable age.',
+        'CULTURE',
+        'PUBLISHED',
+        '2035-10-15 18:00:00',
+        99,
+        (
+            SELECT id
+            FROM venues
+            WHERE code = 'VEN-E2E-ACTIVE'
+        ),
+        NULL
+    ),
+    (
+        'EVT-E2E-SOLD-OUT',
+        'PulsePass E2E Sold Out',
+        'Published event with its only place occupied.',
+        'MUSIC',
+        'PUBLISHED',
+        '2035-11-15 18:00:00',
+        0,
+        (
+            SELECT id
+            FROM venues
+            WHERE code = 'VEN-E2E-CAPACITY-ONE'
+        ),
+        NULL
+    )
+ON CONFLICT (event_code)
+DO UPDATE SET
+    name = EXCLUDED.name,
+    description = EXCLUDED.description,
+    category = EXCLUDED.category,
+    status = EXCLUDED.status,
+    event_date = EXCLUDED.event_date,
+    minimum_age = EXCLUDED.minimum_age,
+    venue_id = EXCLUDED.venue_id,
+    streaming_url = EXCLUDED.streaming_url;
+
+INSERT INTO tickets (
+    ticket_code,
+    type,
+    price,
+    status,
+    purchase_date,
+    user_id,
+    event_id
+)
+VALUES (
+    'TCK-E2E-SOLD-OUT-SEED',
+    'GENERAL',
+    100000.00,
+    'PAID',
+    CURRENT_TIMESTAMP,
+    (
+        SELECT id
+        FROM users
+        WHERE username = 'admin_e2e'
+    ),
+    (
+        SELECT id
+        FROM events
+        WHERE event_code = 'EVT-E2E-SOLD-OUT'
+    )
+)
+ON CONFLICT (ticket_code)
+DO UPDATE SET
+    type = EXCLUDED.type,
+    price = EXCLUDED.price,
+    status = EXCLUDED.status,
+    purchase_date = EXCLUDED.purchase_date,
+    user_id = EXCLUDED.user_id,
+    event_id = EXCLUDED.event_id;
+
 COMMIT;
