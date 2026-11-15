@@ -77,6 +77,10 @@ describe('página de validación de ingreso', () => {
   it('muestra un ticket pagado como entrada válida', async () => {
     render(<ValidacionIngreso />)
 
+    expect(
+      screen.getByLabelText('Código del ticket'),
+    ).toHaveFocus()
+
     await buscarCodigo()
 
     expect(
@@ -88,6 +92,36 @@ describe('página de validación de ingreso', () => {
     expect(
       screen.getByRole('button', {
         name: 'Marcar como usado',
+      }),
+    ).toBeInTheDocument()
+  })
+
+  it('valida el código obligatorio sin ejecutar la consulta', async () => {
+    render(<ValidacionIngreso />)
+
+    await userEvent.setup().click(
+      screen.getByRole('button', {
+        name: 'Buscar ticket',
+      }),
+    )
+
+    expect(
+      await screen.findByText('Ingresa el código del ticket.'),
+    ).toBeInTheDocument()
+    expect(useTicket).toHaveBeenLastCalledWith('')
+  })
+
+  it('permite buscar el ticket con la tecla Enter', async () => {
+    render(<ValidacionIngreso />)
+
+    await userEvent.setup().type(
+      screen.getByLabelText('Código del ticket'),
+      'TKT-STAFF-001{Enter}',
+    )
+
+    expect(
+      screen.getByRole('heading', {
+        name: 'Entrada válida',
       }),
     ).toBeInTheDocument()
   })
@@ -193,6 +227,13 @@ describe('página de validación de ingreso', () => {
     ).toBeInTheDocument()
 
     expect(
+      screen.getByLabelText('Código del ticket'),
+    ).toHaveValue('')
+    expect(
+      screen.getByLabelText('Código del ticket'),
+    ).toHaveFocus()
+
+    expect(
       screen.getByRole('heading', {
         name: 'Entrada ya utilizada',
       }),
@@ -215,15 +256,40 @@ describe('página de validación de ingreso', () => {
     )
 
     expect(
-      await screen.findByText(
-        /el ticket ya fue utilizado o su estado cambió/i,
-      ),
+      await screen.findByText('El ticket ya fue usado'),
     ).toBeInTheDocument()
 
     expect(
       screen.getByRole('button', {
         name: 'Marcar como usado',
       }),
+    ).toBeInTheDocument()
+  })
+
+  it('muestra sin permisos para una respuesta 403', async () => {
+    vi.mocked(useTicket).mockImplementation((codigo) => ({
+      data: undefined,
+      isPending: false,
+      isError: codigo.length > 0,
+      error:
+        codigo.length > 0
+          ? new ApiError(403, 'Prohibido')
+          : null,
+    }) as unknown as ReturnType<typeof useTicket>)
+
+    render(<ValidacionIngreso />)
+
+    await buscarCodigo()
+
+    expect(
+      screen.getByRole('heading', {
+        name: 'Sin permisos',
+      }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'No tienes permisos para consultar este ticket.',
+      ),
     ).toBeInTheDocument()
   })
 })

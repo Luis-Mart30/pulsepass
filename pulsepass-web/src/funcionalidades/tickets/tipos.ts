@@ -34,9 +34,19 @@ export const CompraTicketSchema = z.object({
   type: TipoTicketSchema,
 })
 
+export const ValidacionIngresoSchema = z.object({
+  ticketCode: z
+    .string()
+    .trim()
+    .min(1, 'Ingresa el código del ticket.'),
+})
+
 export type TipoTicket = z.infer<typeof TipoTicketSchema>
 export type EstadoTicket = z.infer<typeof EstadoTicketSchema>
 export type Ticket = z.infer<typeof TicketSchema>
 export type CompraTicketDatos = z.infer<
   typeof CompraTicketSchema
+>
+export type ValidacionIngresoDatos = z.infer<
+  typeof ValidacionIngresoSchema
 >

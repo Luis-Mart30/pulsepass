@@ -1,13 +1,16 @@
-import {
-  useState,
-  type FormEvent,
-} from 'react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { Boton } from '../componentes/Boton'
 import {
   useMarcarTicketUsado,
   useTicket,
 } from '../funcionalidades/tickets/consultas'
-import type { Ticket } from '../funcionalidades/tickets/tipos'
+import {
+  ValidacionIngresoSchema,
+  type Ticket,
+  type ValidacionIngresoDatos,
+} from '../funcionalidades/tickets/tipos'
 import { ApiError } from '../lib/http'
 import {
   formatearPrecioCOP,
@@ -16,13 +19,25 @@ import {
 } from '../lib/formatos'
 
 export default function ValidacionIngreso() {
-  const [codigo, setCodigo] = useState('')
   const [codigoConsultado, setCodigoConsultado] =
     useState('')
-  const [errorValidacion, setErrorValidacion] =
-    useState<string | null>(null)
+  const [errorValidacion, setErrorValidacion] = useState<{
+    mensaje: string
+    tipo: 'advertencia' | 'error'
+  } | null>(null)
   const [ticketValidado, setTicketValidado] =
     useState<Ticket | null>(null)
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    setFocus,
+    formState: { errors },
+  } = useForm<ValidacionIngresoDatos>({
+    resolver: zodResolver(ValidacionIngresoSchema),
+    defaultValues: { ticketCode: '' },
+  })
 
   const consulta = useTicket(codigoConsultado)
   const ticketActual = ticketValidado ?? consulta.data
@@ -30,19 +45,17 @@ export default function ValidacionIngreso() {
     ticketActual?.eventCode ?? '',
   )
 
-  const buscarTicket = (evento: FormEvent<HTMLFormElement>) => {
-    evento.preventDefault()
-
-    const codigoLimpio = codigo.trim()
-
-    if (codigoLimpio.length === 0) {
-      return
-    }
-
+  const buscarTicket = (datos: ValidacionIngresoDatos) => {
     setErrorValidacion(null)
     setTicketValidado(null)
     uso.reset()
-    setCodigoConsultado(codigoLimpio)
+
+    if (datos.ticketCode === codigoConsultado) {
+      void consulta.refetch()
+      return
+    }
+
+    setCodigoConsultado(datos.ticketCode)
   }
 
   const validarIngreso = async () => {
@@ -57,17 +70,27 @@ export default function ValidacionIngreso() {
         ticketActual.ticketCode,
       )
       setTicketValidado(actualizado)
+      setValue('ticketCode', '')
+      setFocus('ticketCode')
     } catch (error: unknown) {
       if (error instanceof ApiError && error.status === 409) {
-        setErrorValidacion(
-          'El ticket ya fue utilizado o su estado cambió. Consulta nuevamente antes de permitir el ingreso.',
-        )
+        setErrorValidacion({
+          mensaje:
+            error.message.trim().length > 0
+              ? error.message
+              : 'El ticket ya fue utilizado o su estado cambió.',
+          tipo: 'advertencia',
+        })
         return
       }
 
-      setErrorValidacion(
-        'No fue posible validar el ingreso. Inténtalo nuevamente.',
-      )
+      setErrorValidacion({
+        mensaje:
+          error instanceof ApiError && error.status === 403
+            ? 'Sin permisos para validar este ticket.'
+            : 'No fue posible validar el ingreso. Inténtalo nuevamente.',
+        tipo: 'error',
+      })
     }
   }
 
@@ -94,8 +117,9 @@ export default function ValidacionIngreso() {
       </header>
 
       <form
-        onSubmit={buscarTicket}
+        onSubmit={handleSubmit(buscarTicket)}
         className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900"
+        noValidate
       >
         <label
           htmlFor="codigo-ticket"
@@ -108,23 +132,35 @@ export default function ValidacionIngreso() {
           <input
             id="codigo-ticket"
             type="text"
-            value={codigo}
-            onChange={(evento) => {
-              setCodigo(evento.target.value)
-              setErrorValidacion(null)
-            }}
             placeholder="Ejemplo: TKT-ABC-123"
             autoComplete="off"
+            autoFocus
+            aria-invalid={errors.ticketCode !== undefined}
+            aria-describedby={
+              errors.ticketCode === undefined
+                ? undefined
+                : 'codigo-ticket-error'
+            }
+            {...register('ticketCode', {
+              onChange: () => setErrorValidacion(null),
+            })}
             className="min-h-11 flex-1 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-200 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:focus:border-indigo-400 dark:focus:ring-indigo-950"
           />
 
-          <Boton
-            type="submit"
-            disabled={codigo.trim().length === 0}
-          >
+          <Boton type="submit">
             Buscar ticket
           </Boton>
         </div>
+
+        {errors.ticketCode?.message !== undefined ? (
+          <p
+            id="codigo-ticket-error"
+            role="alert"
+            className="mt-2 text-sm text-red-600 dark:text-red-400"
+          >
+            {errors.ticketCode.message}
+          </p>
+        ) : null}
       </form>
 
       {codigoConsultado.length > 0 && consulta.isPending && (
@@ -145,12 +181,18 @@ export default function ValidacionIngreso() {
             {consulta.error instanceof ApiError &&
             consulta.error.status === 404
               ? 'Ticket no encontrado'
+              : consulta.error instanceof ApiError &&
+                  consulta.error.status === 403
+                ? 'Sin permisos'
               : 'No pudimos consultar el ticket'}
           </h2>
           <p className="mt-2 text-sm text-red-700 dark:text-red-300">
             {consulta.error instanceof ApiError &&
             consulta.error.status === 404
               ? 'Verifica el código e inténtalo nuevamente.'
+              : consulta.error instanceof ApiError &&
+                  consulta.error.status === 403
+                ? 'No tienes permisos para consultar este ticket.'
               : 'Comprueba la conexión y vuelve a intentarlo.'}
           </p>
         </div>
@@ -294,9 +336,13 @@ export default function ValidacionIngreso() {
               {errorValidacion !== null && (
                 <div
                   role="alert"
-                  className="mt-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-200"
+                  className={
+                    errorValidacion.tipo === 'advertencia'
+                      ? 'mt-5 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200'
+                      : 'mt-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-200'
+                  }
                 >
-                  {errorValidacion}
+                  {errorValidacion.mensaje}
                 </div>
               )}
             </div>
