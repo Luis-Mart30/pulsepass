@@ -1,5 +1,11 @@
 import { MemoryRouter } from 'react-router'
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
@@ -159,7 +165,7 @@ describe('página Mis tickets', () => {
     })
   })
 
-  it('mantiene el modal abierto cuando la API responde 409', async () => {
+  it('muestra el motivo del 409 dentro del modal de cancelación', async () => {
     mutateAsync.mockRejectedValue(
       new ApiError(409, 'El ticket no puede cancelarse'),
     )
@@ -174,7 +180,9 @@ describe('página Mis tickets', () => {
     )
 
     expect(
-      await screen.findByText(/este ticket ya no puede cancelarse/i),
+      await within(screen.getByRole('dialog')).findByText(
+        'El ticket no puede cancelarse',
+      ),
     ).toBeInTheDocument()
 
     expect(

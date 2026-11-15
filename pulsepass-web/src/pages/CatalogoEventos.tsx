@@ -18,7 +18,7 @@ import { obtenerEtiquetaCategoria } from '../lib/formatos'
 import { crearRuta } from '../lib/rutas'
 
 const ParametrosCatalogoSchema = z.object({
-  q: z.string().trim().catch(''),
+  q: z.string().catch(''),
   categoria: CategoriaEventoSchema.optional().catch(undefined),
   artista: z.string().trim().catch(''),
 })
@@ -40,7 +40,7 @@ export default function CatalogoEventos() {
   const consultaEventos =
     filtros.artista.length > 0 ? consultaPorArtista : consultaPublicados
 
-  const textoNormalizado = filtros.q.toLocaleLowerCase('es-CO')
+  const textoNormalizado = filtros.q.trim().toLocaleLowerCase('es-CO')
   const eventosFiltrados = (consultaEventos.data ?? []).filter(
     (evento) =>
       (textoNormalizado.length === 0 ||
@@ -49,7 +49,7 @@ export default function CatalogoEventos() {
         evento.category === filtros.categoria),
   )
   const hayFiltros =
-    filtros.q.length > 0 ||
+    textoNormalizado.length > 0 ||
     filtros.categoria !== undefined ||
     filtros.artista.length > 0
 
@@ -60,10 +60,12 @@ export default function CatalogoEventos() {
     setParametros((actuales) => {
       const siguientes = new URLSearchParams(actuales)
 
-      if (valor.trim().length === 0) {
+      const valorParametro = nombre === 'q' ? valor : valor.trim()
+
+      if (valorParametro.length === 0) {
         siguientes.delete(nombre)
       } else {
-        siguientes.set(nombre, valor)
+        siguientes.set(nombre, valorParametro)
       }
 
       return siguientes

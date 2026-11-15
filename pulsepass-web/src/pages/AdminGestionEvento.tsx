@@ -106,7 +106,7 @@ export default function AdminGestionEvento() {
 
   if (evento.isError || evento.data === undefined) {
     return (
-      <main className="mx-auto max-w-4xl px-4 py-10">
+      <div className="mx-auto max-w-4xl px-4 py-10">
         <section
           role="alert"
           className="rounded-2xl border border-red-300 bg-red-50 p-6 text-red-800 dark:border-red-900 dark:bg-red-950 dark:text-red-200"
@@ -120,7 +120,7 @@ export default function AdminGestionEvento() {
             Reintentar
           </button>
         </section>
-      </main>
+      </div>
     )
   }
 
@@ -128,7 +128,7 @@ export default function AdminGestionEvento() {
   const puedePublicar = datos.status === 'DRAFT'
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
+    <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
       <header className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <Link
@@ -363,6 +363,6 @@ export default function AdminGestionEvento() {
           </div>
         </Modal>
       ) : null}
-    </main>
+    </div>
   )
 }

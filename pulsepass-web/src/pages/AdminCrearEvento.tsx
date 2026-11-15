@@ -122,7 +122,7 @@ export default function AdminCrearEvento() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6">
+    <div className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6">
       <header className="mb-8">
         <Link
           to={RUTAS.ADMIN_EVENTOS}
@@ -329,6 +329,6 @@ export default function AdminCrearEvento() {
           </Boton>
         </div>
       </form>
-    </main>
+    </div>
   )
 }

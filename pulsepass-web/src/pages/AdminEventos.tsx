@@ -64,7 +64,7 @@ export default function AdminEventos() {
     consulta.error instanceof ApiError && consulta.error.status === 404
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6">
+    <div className="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6">
       <header className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="font-semibold tracking-[0.2em] text-indigo-600 uppercase dark:text-indigo-400">
@@ -252,6 +252,6 @@ export default function AdminEventos() {
           Para consultar otros eventos, usa la búsqueda por código.
         </p>
       </section>
-    </main>
+    </div>
   )
 }

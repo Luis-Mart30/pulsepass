@@ -108,6 +108,36 @@ describe('flujo de compra de tickets', () => {
     } as unknown as ReturnType<typeof useTicket>)
   })
 
+  it.each([403, 404])(
+    'muestra Evento no disponible cuando la API responde %s',
+    (estado) => {
+      vi.mocked(useAuth).mockReturnValue({
+        sesion: { estado: 'anonimo' },
+        iniciarSesion: vi.fn(),
+        cerrarSesion: vi.fn(),
+        tieneRol: vi.fn(() => false),
+      })
+      vi.mocked(useEventoPorCodigo).mockReturnValue({
+        isPending: false,
+        isError: true,
+        error: new ApiError(estado, 'Detalle interno del evento'),
+      } as unknown as ReturnType<typeof useEventoPorCodigo>)
+
+      renderizarDetalleEvento()
+
+      expect(
+        screen.getByRole('heading', { name: 'Evento no disponible' }),
+      ).toBeInTheDocument()
+      expect(
+        screen.queryByText('Detalle interno del evento'),
+      ).not.toBeInTheDocument()
+      expect(screen.queryByText('Festival del Caribe')).not.toBeInTheDocument()
+      expect(
+        screen.getByRole('link', { name: 'Volver a eventos' }),
+      ).toHaveAttribute('href', '/eventos')
+    },
+  )
+
   it('envía al anónimo al login antes de comprar', async () => {
     const usuario = userEvent.setup()
 

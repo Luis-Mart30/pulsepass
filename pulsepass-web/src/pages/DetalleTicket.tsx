@@ -147,9 +147,7 @@ export default function DetalleTicket() {
       setModalAbierto(false)
     } catch (error: unknown) {
       if (error instanceof ApiError && error.status === 409) {
-        setMensajeCancelacion(
-          'Este ticket ya no puede cancelarse. Actualiza la información e inténtalo nuevamente.',
-        )
+        setMensajeCancelacion(error.message)
         return
       }
 

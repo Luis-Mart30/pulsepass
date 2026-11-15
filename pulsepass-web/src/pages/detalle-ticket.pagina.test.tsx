@@ -1,5 +1,5 @@
 import { MemoryRouter, Route, Routes } from 'react-router'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useAuth } from '../funcionalidades/auth/useAuth'
@@ -8,6 +8,7 @@ import {
   useTicket,
 } from '../funcionalidades/tickets/consultas'
 import type { Ticket } from '../funcionalidades/tickets/tipos'
+import { ApiError } from '../lib/http'
 import DetalleTicket from './DetalleTicket'
 
 vi.mock('../funcionalidades/auth/useAuth')
@@ -155,5 +156,20 @@ describe('página Detalle del ticket', () => {
     await waitFor(() => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     })
+  })
+
+  it('muestra el motivo del 409 dentro del modal de cancelación', async () => {
+    const usuario = userEvent.setup()
+    const motivo = 'Only PAID tickets can be cancelled.'
+    mutateAsync.mockRejectedValue(new ApiError(409, motivo))
+
+    renderizarDetalle()
+    await usuario.click(screen.getByRole('button', { name: 'Cancelar ticket' }))
+    const modal = screen.getByRole('dialog', { name: 'Cancelar ticket' })
+    await usuario.click(
+      within(modal).getByRole('button', { name: 'Confirmar cancelación' }),
+    )
+
+    expect(await within(modal).findByText(motivo)).toBeInTheDocument()
   })
 })

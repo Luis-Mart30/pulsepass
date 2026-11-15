@@ -199,6 +199,25 @@ describe('página Catálogo de eventos', () => {
     ).toBeInTheDocument()
   })
 
+  it('conserva los espacios al escribir y busca sin distinguir mayúsculas', async () => {
+    const usuario = userEvent.setup()
+    renderizarCatalogo()
+
+    const buscador = screen.getByRole('searchbox', {
+      name: 'Buscar por nombre',
+    })
+    await usuario.type(buscador, ' Tech Summit ')
+
+    expect(buscador).toHaveValue(' Tech Summit ')
+    expect(screen.getByTestId('ubicacion')).toHaveTextContent('q=+Tech+Summit+')
+    expect(
+      screen.getByRole('link', { name: 'Ver evento Tech Summit' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('link', { name: 'Ver evento Caribbean Music Fest' }),
+    ).not.toBeInTheDocument()
+  })
+
   it('ignora una categoría inválida recibida desde la URL', () => {
     renderizarCatalogo('/eventos?categoria=INVALIDA')
 

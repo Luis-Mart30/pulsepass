@@ -3,6 +3,8 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Rol } from '../funcionalidades/auth/tipos'
+import NoEncontrada from '../pages/NoEncontrada'
+import SinPermisos from '../pages/SinPermisos'
 import Layout from './Layout'
 
 const mocks = vi.hoisted(() => ({
@@ -59,6 +61,8 @@ function renderizarLayout(ruta = '/') {
           <Route path="mis-tickets" element={<h1>Mis tickets</h1>} />
           <Route path="staff/validacion" element={<h1>Validación</h1>} />
           <Route path="admin/eventos" element={<h1>Administración</h1>} />
+          <Route path="403" element={<SinPermisos />} />
+          <Route path="*" element={<NoEncontrada />} />
         </Route>
       </Routes>
     </MemoryRouter>,
@@ -68,6 +72,21 @@ function renderizarLayout(ruta = '/') {
 describe('Layout y navegación por rol', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+  })
+
+  it.each([
+    ['/403', 'No tienes permisos'],
+    ['/ruta-inexistente', 'Página no encontrada'],
+  ])('mantiene un único contenido principal en %s', (ruta, titulo) => {
+    configurarSesion(null)
+    renderizarLayout(ruta)
+
+    expect(screen.getAllByRole('main')).toHaveLength(1)
+    const contenido = screen.getByRole('main')
+    expect(contenido).toHaveAttribute('id', 'contenido')
+    expect(
+      within(contenido).getByRole('heading', { name: titulo }),
+    ).toBeInTheDocument()
   })
 
   it('muestra navegación pública para una sesión anónima', () => {

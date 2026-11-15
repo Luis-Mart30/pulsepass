@@ -121,18 +121,19 @@ export default function DetalleEvento() {
   }
 
   if (consulta.isError) {
-    const noEncontrado =
-      consulta.error instanceof ApiError && consulta.error.status === 404
+    const noDisponible =
+      consulta.error instanceof ApiError &&
+      (consulta.error.status === 403 || consulta.error.status === 404)
 
     return (
       <section className="mx-auto w-full max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-bold text-slate-950 dark:text-white">
-          {noEncontrado
-            ? 'Evento no encontrado'
+          {noDisponible
+            ? 'Evento no disponible'
             : 'No pudimos cargar el evento'}
         </h1>
         <p role="alert" className="mt-4 text-slate-600 dark:text-slate-300">
-          {noEncontrado
+          {noDisponible
             ? 'El evento solicitado no existe o no está disponible.'
             : 'Ocurrió un problema al consultar la información. Intenta nuevamente.'}
         </p>

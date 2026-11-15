@@ -3,7 +3,7 @@ import { RUTAS } from '../lib/rutas'
 
 export default function NoEncontrada() {
   return (
-    <main className="mx-auto grid w-full max-w-6xl flex-1 place-items-center px-4 py-16 sm:px-6">
+    <div className="mx-auto grid w-full max-w-6xl flex-1 place-items-center px-4 py-16 sm:px-6">
       <section
         className="grid w-full max-w-4xl items-center gap-10 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm md:grid-cols-2 md:p-12 dark:border-slate-800 dark:bg-slate-900"
         aria-labelledby="titulo-no-encontrada"
@@ -60,6 +60,6 @@ export default function NoEncontrada() {
           </svg>
         </div>
       </section>
-    </main>
+    </div>
   )
 }
