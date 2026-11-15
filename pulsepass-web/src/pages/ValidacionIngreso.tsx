@@ -1,7 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router'
+import { z } from 'zod'
 import { Boton } from '../componentes/Boton'
+import { Campo } from '../componentes/Campo'
 import {
   useMarcarTicketUsado,
   useTicket,
@@ -17,8 +20,19 @@ import {
   obtenerEtiquetaEstadoTicket,
   obtenerEtiquetaTipoTicket,
 } from '../lib/formatos'
+import { crearRuta } from '../lib/rutas'
+
+const BusquedaEventoSchema = z.object({
+  eventCode: z.string().trim().min(1, 'Ingresa el código del evento.'),
+})
 
 export default function ValidacionIngreso() {
+  const navigate = useNavigate()
+  const busquedaEvento = useForm<z.infer<typeof BusquedaEventoSchema>>({
+    resolver: zodResolver(BusquedaEventoSchema),
+    defaultValues: { eventCode: '' },
+  })
+
   const [codigoConsultado, setCodigoConsultado] = useState('')
   const [errorValidacion, setErrorValidacion] = useState<{
     mensaje: string
@@ -151,6 +165,29 @@ export default function ValidacionIngreso() {
             {errors.ticketCode.message}
           </p>
         ) : null}
+      </form>
+
+      <form
+        aria-label="Tickets pagados por evento"
+        className="mt-5 flex flex-col items-start gap-3 rounded-2xl border border-slate-200 bg-white p-6 sm:flex-row dark:border-slate-800 dark:bg-slate-900"
+        onSubmit={busquedaEvento.handleSubmit(({ eventCode }) =>
+          navigate(crearRuta.ticketsPagadosEvento(eventCode)),
+        )}
+        noValidate
+      >
+        <div className="w-full min-w-0 flex-1">
+          <Campo
+            id="codigo-evento-pagados"
+            etiqueta="Código del evento"
+            placeholder="Ejemplo: EVT-001"
+            autoComplete="off"
+            error={busquedaEvento.formState.errors.eventCode?.message}
+            {...busquedaEvento.register('eventCode')}
+          />
+        </div>
+        <Boton type="submit" variante="secundario" className="sm:mt-6">
+          Ver tickets pagados
+        </Boton>
       </form>
 
       {codigoConsultado.length > 0 && consulta.isPending && (

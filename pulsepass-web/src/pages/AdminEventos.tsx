@@ -4,7 +4,10 @@ import { useForm } from 'react-hook-form'
 import { Link } from 'react-router'
 import { z } from 'zod'
 import { Boton } from '../componentes/Boton'
-import { useEventoPorCodigo } from '../funcionalidades/eventos/consultas'
+import {
+  useEventoPorCodigo,
+  useEventosCreadosEnSesion,
+} from '../funcionalidades/eventos/consultas'
 import type { EstadoEvento } from '../funcionalidades/eventos/tipos'
 import { formatearFechaEvento, obtenerEtiquetaCategoria } from '../lib/formatos'
 import { ApiError } from '../lib/http'
@@ -37,6 +40,7 @@ const CLASES_ESTADO: Record<EstadoEvento, string> = {
 export default function AdminEventos() {
   const [codigoConsultado, setCodigoConsultado] = useState('')
   const consulta = useEventoPorCodigo(codigoConsultado)
+  const eventosCreados = useEventosCreadosEnSesion()
   const {
     register,
     handleSubmit,
@@ -202,6 +206,52 @@ export default function AdminEventos() {
           </Link>
         </article>
       ) : null}
+      <section className="mt-8" aria-labelledby="eventos-creados">
+        <h2
+          id="eventos-creados"
+          className="text-xl font-bold text-slate-950 dark:text-white"
+        >
+          Creados en esta sesión
+        </h2>
+        {eventosCreados.length === 0 ? (
+          <p className="mt-3 text-slate-600 dark:text-slate-300">
+            Aún no has creado eventos en esta sesión.
+          </p>
+        ) : (
+          <ul className="mt-4 space-y-3">
+            {eventosCreados.map((creado) => (
+              <li
+                key={creado.eventCode}
+                className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900"
+              >
+                <div className="min-w-0">
+                  <p className="font-semibold text-slate-950 dark:text-white">
+                    {creado.name}
+                  </p>
+                  <p className="text-sm break-all text-slate-600 dark:text-slate-300">
+                    {creado.eventCode}
+                  </p>
+                </div>
+                <span
+                  className={`rounded-full px-3 py-1 text-sm font-semibold ${CLASES_ESTADO[creado.status]}`}
+                >
+                  {ETIQUETAS_ESTADO[creado.status]}
+                </span>
+                <Link
+                  to={crearRuta.gestionEvento(creado.eventCode)}
+                  aria-label={`Gestionar ${creado.name} (${creado.eventCode})`}
+                  className="inline-flex min-h-11 items-center rounded-lg px-3 font-semibold text-indigo-700 underline focus-visible:outline-2 dark:text-indigo-300"
+                >
+                  Gestionar evento
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+        <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">
+          Para consultar otros eventos, usa la búsqueda por código.
+        </p>
+      </section>
     </main>
   )
 }

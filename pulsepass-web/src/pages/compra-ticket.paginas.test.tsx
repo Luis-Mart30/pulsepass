@@ -1,7 +1,8 @@
 import { MemoryRouter, Route, Routes } from 'react-router'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import type { Rol } from '../funcionalidades/auth/tipos'
 import { useAuth } from '../funcionalidades/auth/useAuth'
 import { useEventoPorCodigo } from '../funcionalidades/eventos/consultas'
 import type { Evento } from '../funcionalidades/eventos/tipos'
@@ -46,7 +47,7 @@ const ticket: Ticket = {
 
 const mutateAsync = vi.fn()
 
-function sesionAutenticada() {
+function sesionAutenticada(roles: Rol[] = ['USER']) {
   vi.mocked(useAuth).mockReturnValue({
     sesion: {
       estado: 'autenticado',
@@ -56,12 +57,14 @@ function sesionAutenticada() {
         id: 1,
         username: 'usuario',
         email: 'usuario@pulsepass.test',
-        roles: ['USER'],
+        roles,
       },
     },
     iniciarSesion: vi.fn(),
     cerrarSesion: vi.fn(),
-    tieneRol: vi.fn(() => true),
+    tieneRol: vi.fn((...solicitados: Rol[]) =>
+      solicitados.some((rol) => roles.includes(rol)),
+    ),
   })
 }
 
@@ -127,6 +130,42 @@ describe('flujo de compra de tickets', () => {
     expect(mutateAsync).not.toHaveBeenCalled()
   })
 
+  it.each(['STAFF', 'ADMIN'] as const)(
+    'muestra el detalle sin panel de compra para %s',
+    (rol) => {
+      sesionAutenticada([rol])
+      renderizarDetalleEvento()
+
+      expect(
+        screen.getByRole('heading', { name: 'Festival del Caribe' }),
+      ).toBeInTheDocument()
+      expect(
+        screen.queryByRole('region', { name: 'Compra tu entrada' }),
+      ).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('button', { name: 'Comprar entrada' }),
+      ).not.toBeInTheDocument()
+      expect(mutateAsync).not.toHaveBeenCalled()
+    },
+  )
+
+  it('informa que un evento agotado no admite compras', () => {
+    vi.mocked(useEventoPorCodigo).mockReturnValue({
+      data: { ...evento, status: 'SOLD_OUT' },
+      isPending: false,
+      isError: false,
+    } as unknown as ReturnType<typeof useEventoPorCodigo>)
+
+    renderizarDetalleEvento()
+
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Las entradas no están disponibles para este evento.',
+    )
+    expect(
+      screen.queryByRole('button', { name: 'Comprar entrada' }),
+    ).not.toBeInTheDocument()
+  })
+
   it('compra el tipo seleccionado y navega a confirmación', async () => {
     const usuario = userEvent.setup()
     mutateAsync.mockResolvedValue(ticket)
@@ -138,6 +177,15 @@ describe('flujo de compra de tickets', () => {
       screen.getByRole('button', {
         name: 'Comprar entrada',
       }),
+    )
+
+    const modal = screen.getByRole('dialog', { name: 'Confirmar compra' })
+    expect(modal).toHaveTextContent('Festival del Caribe')
+    expect(modal).toHaveTextContent('VIP')
+    expect(modal).toHaveTextContent('usuario@pulsepass.test')
+    expect(mutateAsync).not.toHaveBeenCalled()
+    await usuario.click(
+      within(modal).getByRole('button', { name: 'Confirmar' }),
     )
 
     await waitFor(() => {
@@ -153,10 +201,26 @@ describe('flujo de compra de tickets', () => {
     ).toBeInTheDocument()
   })
 
-  it('muestra el conflicto de disponibilidad dentro de la página', async () => {
+  it('permite cancelar la confirmación sin enviar la compra', async () => {
+    const usuario = userEvent.setup()
+    renderizarDetalleEvento()
+
+    const botonComprar = screen.getByRole('button', { name: 'Comprar entrada' })
+    await usuario.click(botonComprar)
+    const modal = screen.getByRole('dialog', { name: 'Confirmar compra' })
+    await usuario.click(within(modal).getByRole('button', { name: 'Cancelar' }))
+
+    expect(modal).not.toBeInTheDocument()
+    expect(botonComprar).toHaveFocus()
+    expect(mutateAsync).not.toHaveBeenCalled()
+  })
+
+  it('mantiene abierto el modal y muestra el motivo del conflicto', async () => {
     const usuario = userEvent.setup()
 
-    mutateAsync.mockRejectedValue(new ApiError(409, 'Sin disponibilidad'))
+    mutateAsync.mockRejectedValue(
+      new ApiError(409, 'El usuario no cumple la edad mínima.'),
+    )
 
     renderizarDetalleEvento()
 
@@ -166,9 +230,15 @@ describe('flujo de compra de tickets', () => {
       }),
     )
 
-    expect(
-      await screen.findByText(/la disponibilidad del evento cambió/i),
-    ).toBeInTheDocument()
+    const modal = screen.getByRole('dialog', { name: 'Confirmar compra' })
+    await usuario.click(
+      within(modal).getByRole('button', { name: 'Confirmar' }),
+    )
+
+    expect(await within(modal).findByRole('alert')).toHaveTextContent(
+      'El usuario no cumple la edad mínima.',
+    )
+    expect(modal).toBeInTheDocument()
   })
 
   it('muestra el resumen de la compra confirmada', () => {

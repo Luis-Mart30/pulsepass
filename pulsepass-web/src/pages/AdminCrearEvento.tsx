@@ -173,10 +173,13 @@ export default function AdminCrearEvento() {
             {...register('name')}
           />
 
-          <label className="space-y-1.5 sm:col-span-2">
-            <span className="block text-sm font-medium text-slate-700 dark:text-slate-200">
+          <div className="space-y-1.5 sm:col-span-2">
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium text-slate-700 dark:text-slate-200"
+            >
               Descripción
-            </span>
+            </label>
             <textarea
               id="description"
               rows={5}
@@ -199,15 +202,21 @@ export default function AdminCrearEvento() {
                 {errors.description.message}
               </p>
             ) : null}
-          </label>
+          </div>
 
-          <label className="space-y-1.5">
-            <span className="block text-sm font-medium text-slate-700 dark:text-slate-200">
+          <div className="space-y-1.5">
+            <label
+              htmlFor="category"
+              className="block text-sm font-medium text-slate-700 dark:text-slate-200"
+            >
               Categoría
-            </span>
+            </label>
             <select
               id="category"
               aria-invalid={errors.category !== undefined}
+              aria-describedby={
+                errors.category !== undefined ? 'category-error' : undefined
+              }
               className="min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 transition outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
               {...register('category')}
             >
@@ -217,7 +226,16 @@ export default function AdminCrearEvento() {
                 </option>
               ))}
             </select>
-          </label>
+            {errors.category !== undefined ? (
+              <p
+                id="category-error"
+                role="alert"
+                className="text-sm text-red-600 dark:text-red-400"
+              >
+                {errors.category.message}
+              </p>
+            ) : null}
+          </div>
 
           <Campo
             id="eventDate"
@@ -239,10 +257,13 @@ export default function AdminCrearEvento() {
             })}
           />
 
-          <label className="space-y-1.5">
-            <span className="block text-sm font-medium text-slate-700 dark:text-slate-200">
+          <div className="space-y-1.5">
+            <label
+              htmlFor="venueCode"
+              className="block text-sm font-medium text-slate-700 dark:text-slate-200"
+            >
               Sede
-            </span>
+            </label>
             <select
               id="venueCode"
               disabled={sedes.isPending || sedes.isError}
@@ -272,7 +293,7 @@ export default function AdminCrearEvento() {
                 {errors.venueCode.message}
               </p>
             ) : null}
-          </label>
+          </div>
         </div>
 
         {sedes.isError ? (

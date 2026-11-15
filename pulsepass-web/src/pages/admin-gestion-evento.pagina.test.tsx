@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { HttpResponse, http } from 'msw'
 import { MemoryRouter, Route, Routes } from 'react-router'
@@ -58,7 +58,67 @@ function configurarConsultas() {
   )
 }
 
+function responderConflicto(message: string) {
+  return HttpResponse.json(
+    {
+      timestamp: '2026-11-15T00:00:00Z',
+      status: 409,
+      error: 'Conflict',
+      message,
+      details: {},
+    },
+    { status: 409 },
+  )
+}
+
 describe('página Gestionar evento', () => {
+  it('muestra el 409 de publicación dentro del modal abierto', async () => {
+    configurarConsultas()
+    const mensaje = 'Only DRAFT events can be published.'
+    server.use(
+      http.patch('/api/events/FEST-2027/publish', () =>
+        responderConflicto(mensaje),
+      ),
+    )
+    const usuario = userEvent.setup()
+    renderizarPagina()
+
+    await usuario.click(
+      await screen.findByRole('button', { name: 'Publicar evento' }),
+    )
+    const modal = screen.getByRole('dialog', { name: '¿Publicar este evento?' })
+    await usuario.click(
+      within(modal).getByRole('button', { name: 'Confirmar publicación' }),
+    )
+
+    expect(await within(modal).findByRole('alert')).toHaveTextContent(mensaje)
+    expect(modal).toBeInTheDocument()
+    expect(
+      screen.queryByText('Evento publicado correctamente.'),
+    ).not.toBeInTheDocument()
+  })
+
+  it('muestra el motivo del 409 al asociar un artista duplicado', async () => {
+    configurarConsultas()
+    const mensaje = 'Artist is already associated with the event.'
+    server.use(
+      http.post('/api/events/FEST-2027/artists/8', () =>
+        responderConflicto(mensaje),
+      ),
+    )
+    const usuario = userEvent.setup()
+    renderizarPagina()
+
+    await screen.findByRole('option', { name: 'Solar Beat' })
+    await usuario.selectOptions(screen.getByLabelText('Agregar artista'), '8')
+    await usuario.click(screen.getByRole('button', { name: 'Asociar artista' }))
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(mensaje)
+    expect(
+      screen.queryByText('Artista asociado correctamente.'),
+    ).not.toBeInTheDocument()
+  })
+
   it('muestra el detalle administrativo del evento', async () => {
     configurarConsultas()
     renderizarPagina()
@@ -70,6 +130,9 @@ describe('página Gestionar evento', () => {
     ).toBeInTheDocument()
     expect(screen.getByText('Borrador')).toBeInTheDocument()
     expect(screen.getByText('Arena Central')).toBeInTheDocument()
+    expect(
+      screen.getByRole('link', { name: 'Ver tickets pagados' }),
+    ).toHaveAttribute('href', '/staff/eventos/FEST-2027/tickets')
     expect(
       screen.getByRole('button', {
         name: 'Publicar evento',

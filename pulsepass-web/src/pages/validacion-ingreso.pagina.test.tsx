@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter, Route, Routes, useParams } from 'react-router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   useMarcarTicketUsado,
@@ -54,6 +55,25 @@ async function buscarCodigo() {
   return usuario
 }
 
+function ResultadoEvento() {
+  const { eventCode } = useParams()
+  return <h1>Tickets pagados de {eventCode}</h1>
+}
+
+function renderizarPagina() {
+  return render(
+    <MemoryRouter initialEntries={['/staff/validacion']}>
+      <Routes>
+        <Route path="/staff/validacion" element={<ValidacionIngreso />} />
+        <Route
+          path="/staff/eventos/:eventCode/tickets"
+          element={<ResultadoEvento />}
+        />
+      </Routes>
+    </MemoryRouter>,
+  )
+}
+
 describe('página de validación de ingreso', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -66,8 +86,31 @@ describe('página de validación de ingreso', () => {
     } as unknown as ReturnType<typeof useMarcarTicketUsado>)
   })
 
+  it('valida el código del evento y permite abrir sus tickets pagados', async () => {
+    renderizarPagina()
+    const usuario = userEvent.setup()
+
+    await usuario.click(
+      screen.getByRole('button', { name: 'Ver tickets pagados' }),
+    )
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Ingresa el código del evento.',
+    )
+
+    await usuario.type(screen.getByLabelText('Código del evento'), ' EVT-001 ')
+    await usuario.click(
+      screen.getByRole('button', { name: 'Ver tickets pagados' }),
+    )
+
+    expect(
+      await screen.findByRole('heading', {
+        name: 'Tickets pagados de EVT-001',
+      }),
+    ).toBeInTheDocument()
+  })
+
   it('muestra un ticket pagado como entrada válida', async () => {
-    render(<ValidacionIngreso />)
+    renderizarPagina()
 
     expect(screen.getByLabelText('Código del ticket')).toHaveFocus()
 
@@ -87,7 +130,7 @@ describe('página de validación de ingreso', () => {
   })
 
   it('valida el código obligatorio sin ejecutar la consulta', async () => {
-    render(<ValidacionIngreso />)
+    renderizarPagina()
 
     await userEvent.setup().click(
       screen.getByRole('button', {
@@ -102,7 +145,7 @@ describe('página de validación de ingreso', () => {
   })
 
   it('permite buscar el ticket con la tecla Enter', async () => {
-    render(<ValidacionIngreso />)
+    renderizarPagina()
 
     await userEvent
       .setup()
@@ -121,7 +164,7 @@ describe('página de validación de ingreso', () => {
       status: 'USED',
     })
 
-    render(<ValidacionIngreso />)
+    renderizarPagina()
 
     await buscarCodigo()
 
@@ -148,7 +191,7 @@ describe('página de validación de ingreso', () => {
       status: 'CANCELLED',
     })
 
-    render(<ValidacionIngreso />)
+    renderizarPagina()
 
     await buscarCodigo()
 
@@ -172,7 +215,7 @@ describe('página de validación de ingreso', () => {
         }) as unknown as ReturnType<typeof useTicket>,
     )
 
-    render(<ValidacionIngreso />)
+    renderizarPagina()
 
     await buscarCodigo()
 
@@ -191,7 +234,7 @@ describe('página de validación de ingreso', () => {
 
     mutateAsync.mockResolvedValue(ticketUsado)
 
-    render(<ValidacionIngreso />)
+    renderizarPagina()
 
     const usuario = await buscarCodigo()
 
@@ -220,7 +263,7 @@ describe('página de validación de ingreso', () => {
   it('muestra el conflicto si el estado cambió al validar', async () => {
     mutateAsync.mockRejectedValue(new ApiError(409, 'El ticket ya fue usado'))
 
-    render(<ValidacionIngreso />)
+    renderizarPagina()
 
     const usuario = await buscarCodigo()
 
@@ -252,7 +295,7 @@ describe('página de validación de ingreso', () => {
         }) as unknown as ReturnType<typeof useTicket>,
     )
 
-    render(<ValidacionIngreso />)
+    renderizarPagina()
 
     await buscarCodigo()
 

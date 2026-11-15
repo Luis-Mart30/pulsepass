@@ -2,10 +2,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { HttpResponse, http } from 'msw'
-import { MemoryRouter, Route, Routes } from 'react-router'
+import { Link, MemoryRouter, Route, Routes } from 'react-router'
 import { describe, expect, it, vi } from 'vitest'
 import { server } from '../test/server'
 import AdminCrearEvento from './AdminCrearEvento'
+import AdminEventos from './AdminEventos'
 
 const sede = {
   id: 1,
@@ -32,8 +33,14 @@ function renderizarPagina() {
           <Route path="/admin/eventos/nuevo" element={<AdminCrearEvento />} />
           <Route
             path="/admin/eventos/:eventCode"
-            element={<p>Gestión del evento creado</p>}
+            element={
+              <>
+                <p>Gestión del evento creado</p>
+                <Link to="/admin/eventos">Volver a eventos</Link>
+              </>
+            }
           />
+          <Route path="/admin/eventos" element={<AdminEventos />} />
         </Routes>
       </QueryClientProvider>
     </MemoryRouter>,
@@ -98,7 +105,7 @@ describe('página Crear evento', () => {
     expect(await screen.findAllByRole('alert')).not.toHaveLength(0)
   })
 
-  it('crea el borrador y navega a su gestión', async () => {
+  it('crea el borrador y lo muestra en los eventos de la sesión', async () => {
     server.use(
       http.get('/api/venues/active', () => HttpResponse.json([sede])),
       http.post('/api/events', async ({ request }) => {
@@ -129,6 +136,61 @@ describe('página Crear evento', () => {
     expect(
       await screen.findByText('Gestión del evento creado'),
     ).toBeInTheDocument()
+
+    await usuario.click(screen.getByRole('link', { name: 'Volver a eventos' }))
+
+    expect(
+      screen.getByRole('region', { name: 'Creados en esta sesión' }),
+    ).toHaveTextContent('Borrador')
+    const gestionar = screen.getByRole('link', {
+      name: 'Gestionar Festival del Caribe (FEST-2027)',
+    })
+    expect(gestionar).toHaveAttribute('href', '/admin/eventos/FEST-2027')
+    await usuario.click(gestionar)
+    expect(screen.getByText('Gestión del evento creado')).toBeInTheDocument()
+  })
+
+  it('muestra los errores 400 del servidor en los campos correspondientes', async () => {
+    server.use(
+      http.get('/api/venues/active', () => HttpResponse.json([sede])),
+      http.post('/api/events', () =>
+        HttpResponse.json(
+          {
+            timestamp: '2026-11-15T00:00:00Z',
+            status: 400,
+            error: 'Bad Request',
+            message: 'Validation failed',
+            details: {
+              name: 'El nombre del evento no es válido.',
+              category: 'Revisa la categoria seleccionada.',
+              venueCode: 'Revisa la sede seleccionada.',
+            },
+          },
+          { status: 400 },
+        ),
+      ),
+    )
+
+    const usuario = await completarFormulario()
+    await usuario.click(
+      screen.getByRole('button', { name: 'Guardar borrador' }),
+    )
+
+    expect(
+      await screen.findByText('El nombre del evento no es válido.'),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByLabelText('Nombre del evento'),
+    ).toHaveAccessibleDescription('El nombre del evento no es válido.')
+    expect(screen.getByLabelText('Categoría')).toHaveAccessibleDescription(
+      'Revisa la categoria seleccionada.',
+    )
+    expect(screen.getByLabelText('Sede')).toHaveAccessibleDescription(
+      'Revisa la sede seleccionada.',
+    )
+    expect(
+      screen.queryByText('Gestión del evento creado'),
+    ).not.toBeInTheDocument()
   })
 
   it('muestra un mensaje cuando el código está duplicado', async () => {

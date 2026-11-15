@@ -1,5 +1,5 @@
 import { MemoryRouter, Route, Routes } from 'react-router'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
@@ -78,8 +78,19 @@ describe('tickets pagados de un evento', () => {
 
     expect(screen.getByText('Festival del Caribe')).toBeInTheDocument()
 
-    expect(screen.getByText('TKT-PAID-001')).toBeInTheDocument()
-    expect(screen.getByText('TKT-PAID-002')).toBeInTheDocument()
+    const tabla = within(
+      screen.getByRole('table', { name: 'Tickets pagados pendientes' }),
+    )
+    expect(tabla.getAllByRole('columnheader')).toHaveLength(6)
+    expect(tabla.getAllByRole('row')).toHaveLength(3)
+    expect(tabla.getByText('TKT-PAID-001')).toBeInTheDocument()
+    expect(tabla.getByText('TKT-PAID-002')).toBeInTheDocument()
+
+    const tarjetas = within(
+      screen.getByRole('region', { name: 'Tarjetas de tickets pagados' }),
+    )
+    expect(tarjetas.getByText('TKT-PAID-001')).toBeInTheDocument()
+    expect(tarjetas.getByText('TKT-PAID-002')).toBeInTheDocument()
 
     expect(screen.getByText('Pendientes de validación: 2')).toBeInTheDocument()
   })
@@ -117,32 +128,41 @@ describe('tickets pagados de un evento', () => {
     expect(refetch).toHaveBeenCalled()
   })
 
-  it('valida y retira el ticket de los pendientes', async () => {
-    const usuario = userEvent.setup()
+  it.each(['table', 'region'] as const)(
+    'valida y retira el ticket desde %s',
+    async (vista) => {
+      const usuario = userEvent.setup()
 
-    mutateAsync.mockResolvedValue({
-      ...tickets[0],
-      status: 'USED',
-    })
+      mutateAsync.mockResolvedValue({
+        ...tickets[0],
+        status: 'USED',
+      })
 
-    renderizarPagina()
+      renderizarPagina()
 
-    await usuario.click(
-      screen.getByRole('button', {
-        name: 'Validar ingreso de TKT-PAID-001',
-      }),
-    )
+      const nombre =
+        vista === 'table'
+          ? 'Tickets pagados pendientes'
+          : 'Tarjetas de tickets pagados'
+      await usuario.click(
+        within(screen.getByRole(vista, { name: nombre })).getByRole('button', {
+          name: 'Validar ingreso de TKT-PAID-001',
+        }),
+      )
 
-    expect(mutateAsync).toHaveBeenCalledWith('TKT-PAID-001')
+      expect(mutateAsync).toHaveBeenCalledWith('TKT-PAID-001')
 
-    expect(
-      await screen.findByText('Ticket TKT-PAID-001 validado correctamente.'),
-    ).toBeInTheDocument()
+      expect(
+        await screen.findByText('Ticket TKT-PAID-001 validado correctamente.'),
+      ).toBeInTheDocument()
 
-    expect(screen.queryByText('TKT-PAID-001')).not.toBeInTheDocument()
+      expect(screen.queryByText('TKT-PAID-001')).not.toBeInTheDocument()
 
-    expect(screen.getByText('Pendientes de validación: 1')).toBeInTheDocument()
-  })
+      expect(
+        screen.getByText('Pendientes de validación: 1'),
+      ).toBeInTheDocument()
+    },
+  )
 
   it('conserva el ticket cuando la validación responde 409', async () => {
     const usuario = userEvent.setup()
@@ -152,7 +172,7 @@ describe('tickets pagados de un evento', () => {
     renderizarPagina()
 
     await usuario.click(
-      screen.getByRole('button', {
+      within(screen.getByRole('table')).getByRole('button', {
         name: 'Validar ingreso de TKT-PAID-001',
       }),
     )
@@ -161,6 +181,8 @@ describe('tickets pagados de un evento', () => {
       await screen.findByText(/el ticket ya fue utilizado o su estado cambió/i),
     ).toBeInTheDocument()
 
-    expect(screen.getByText('TKT-PAID-001')).toBeInTheDocument()
+    expect(
+      within(screen.getByRole('table')).getByText('TKT-PAID-001'),
+    ).toBeInTheDocument()
   })
 })

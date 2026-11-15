@@ -11,7 +11,7 @@ import {
 import type { EstadoEvento } from '../funcionalidades/eventos/tipos'
 import { formatearFechaEvento, obtenerEtiquetaCategoria } from '../lib/formatos'
 import { ApiError } from '../lib/http'
-import { RUTAS } from '../lib/rutas'
+import { crearRuta, RUTAS } from '../lib/rutas'
 
 const ETIQUETAS_ESTADO: Record<EstadoEvento, string> = {
   DRAFT: 'Borrador',
@@ -70,9 +70,7 @@ export default function AdminGestionEvento() {
       setMensaje('Artista asociado correctamente.')
     } catch (error: unknown) {
       if (error instanceof ApiError && error.status === 409) {
-        setErrorAccion(
-          'El artista ya está asociado o el evento no admite este cambio.',
-        )
+        setErrorAccion(error.message)
         return
       }
 
@@ -90,9 +88,7 @@ export default function AdminGestionEvento() {
       setMensaje('Evento publicado correctamente.')
     } catch (error: unknown) {
       if (error instanceof ApiError && error.status === 409) {
-        setErrorAccion(
-          'El evento no cumple las condiciones para ser publicado.',
-        )
+        setErrorAccion(error.message)
         return
       }
 
@@ -152,9 +148,17 @@ export default function AdminGestionEvento() {
           </p>
         </div>
 
-        <span className="w-fit rounded-full bg-indigo-100 px-4 py-2 font-semibold text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300">
-          {ETIQUETAS_ESTADO[datos.status]}
-        </span>
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="w-fit rounded-full bg-indigo-100 px-4 py-2 font-semibold text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300">
+            {ETIQUETAS_ESTADO[datos.status]}
+          </span>
+          <Link
+            to={crearRuta.ticketsPagadosEvento(datos.eventCode)}
+            className="inline-flex min-h-11 items-center rounded-lg px-3 font-semibold text-indigo-700 underline focus-visible:outline-2 dark:text-indigo-300"
+          >
+            Ver tickets pagados
+          </Link>
+        </div>
       </header>
 
       {mensaje !== null ? (
@@ -166,7 +170,7 @@ export default function AdminGestionEvento() {
         </div>
       ) : null}
 
-      {errorAccion !== null ? (
+      {errorAccion !== null && !confirmarPublicacion ? (
         <div
           role="alert"
           className="mt-6 rounded-lg border border-red-300 bg-red-50 p-4 text-red-800 dark:border-red-900 dark:bg-red-950 dark:text-red-200"
@@ -308,7 +312,10 @@ export default function AdminGestionEvento() {
           <Boton
             type="button"
             disabled={!puedePublicar}
-            onClick={() => setConfirmarPublicacion(true)}
+            onClick={() => {
+              setErrorAccion(null)
+              setConfirmarPublicacion(true)
+            }}
             className="mt-6 w-full"
           >
             Publicar evento
@@ -327,10 +334,20 @@ export default function AdminGestionEvento() {
             El evento aparecerá inmediatamente en el catálogo público.
           </p>
 
+          {errorAccion !== null && (
+            <p
+              role="alert"
+              className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-800 dark:bg-red-950 dark:text-red-200"
+            >
+              {errorAccion}
+            </p>
+          )}
+
           <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
             <Boton
               type="button"
               variante="secundario"
+              disabled={publicar.isPending}
               onClick={() => setConfirmarPublicacion(false)}
             >
               Volver

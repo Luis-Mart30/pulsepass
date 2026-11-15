@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  skipToken,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import { TIEMPOS_CACHE } from '../../lib/query-client'
 import {
   agregarArtistaAEventoApi,
@@ -8,6 +13,22 @@ import {
   obtenerEventosPublicadosApi,
   publicarEventoApi,
 } from './api'
+
+import type { Evento } from './tipos'
+
+type EventoCreado = Pick<Evento, 'eventCode' | 'name' | 'status'>
+const eventosCreadosKey = ['eventos-creados-en-sesion'] as const
+
+export function useEventosCreadosEnSesion() {
+  return (
+    useQuery<EventoCreado[]>({
+      queryKey: eventosCreadosKey,
+      queryFn: skipToken,
+      initialData: [],
+      gcTime: Infinity,
+    }).data ?? []
+  )
+}
 
 export const clavesEventos = {
   todos: ['eventos'] as const,
@@ -51,6 +72,15 @@ export function useCrearEvento() {
     mutationFn: crearEventoApi,
     onSuccess: (evento) => {
       queryClient.setQueryData(clavesEventos.detalle(evento.eventCode), evento)
+      const { eventCode, name, status } = evento
+      queryClient.setQueryDefaults(eventosCreadosKey, { gcTime: Infinity })
+      queryClient.setQueryData<EventoCreado[]>(
+        eventosCreadosKey,
+        (eventos = []) => [
+          { eventCode, name, status },
+          ...eventos.filter((creado) => creado.eventCode !== eventCode),
+        ],
+      )
     },
   })
 }
@@ -62,6 +92,13 @@ export function usePublicarEvento() {
     mutationFn: publicarEventoApi,
     onSuccess: (evento) => {
       queryClient.setQueryData(clavesEventos.detalle(evento.eventCode), evento)
+      queryClient.setQueryData<EventoCreado[]>(eventosCreadosKey, (eventos) =>
+        eventos?.map((creado) =>
+          creado.eventCode === evento.eventCode
+            ? { ...creado, status: evento.status }
+            : creado,
+        ),
+      )
 
       void queryClient.invalidateQueries({
         queryKey: clavesEventos.publicados(),

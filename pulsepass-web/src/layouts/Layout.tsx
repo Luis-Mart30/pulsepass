@@ -113,7 +113,7 @@ export default function Layout() {
   ) : null
 
   return (
-    <div className="flex min-h-screen flex-col bg-white text-slate-950 dark:bg-slate-950 dark:text-white">
+    <div className="flex min-h-screen flex-col bg-white text-slate-950 max-sm:has-[[data-barra-compra-movil]]:pb-[calc(5rem+env(safe-area-inset-bottom))] dark:bg-slate-950 dark:text-white">
       <a
         href="#contenido"
         className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-white focus:p-3 focus:text-slate-950"

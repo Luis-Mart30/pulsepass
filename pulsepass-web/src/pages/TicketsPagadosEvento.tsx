@@ -1,14 +1,17 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { Boton } from '../componentes/Boton'
+import { Tabla } from '../componentes/Tabla'
 import {
   useMarcarTicketUsado,
   useTicketsPagados,
 } from '../funcionalidades/tickets/consultas'
+import type { Ticket } from '../funcionalidades/tickets/tipos'
 import { ApiError } from '../lib/http'
 import {
   formatearFechaCompra,
   formatearPrecioCOP,
+  obtenerEtiquetaEstadoTicket,
   obtenerEtiquetaTipoTicket,
 } from '../lib/formatos'
 import { RUTAS } from '../lib/rutas'
@@ -63,6 +66,20 @@ export default function TicketsPagadosEvento() {
       setCodigoProcesando(null)
     }
   }
+
+  const botonValidar = (ticket: Ticket) => (
+    <Boton
+      type="button"
+      className="w-full"
+      cargando={codigoProcesando === ticket.ticketCode}
+      textoCargando="Validando…"
+      disabled={codigoProcesando !== null}
+      aria-label={`Validar ingreso de ${ticket.ticketCode}`}
+      onClick={() => void validarTicket(ticket.ticketCode)}
+    >
+      Validar ingreso
+    </Boton>
+  )
 
   return (
     <section className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
@@ -158,14 +175,43 @@ export default function TicketsPagadosEvento() {
             </p>
           </div>
 
-          <div className="mt-5 grid gap-5">
+          <div className="mt-5 hidden overflow-hidden rounded-2xl border border-slate-200 bg-white md:block dark:border-slate-800 dark:bg-slate-900">
+            <Tabla
+              etiqueta="Tickets pagados pendientes"
+              filas={tickets}
+              claveFila={(ticket) => ticket.ticketCode}
+              columnas={[
+                { titulo: 'Código', contenido: (ticket) => ticket.ticketCode },
+                {
+                  titulo: 'Tipo',
+                  contenido: (ticket) => obtenerEtiquetaTipoTicket(ticket.type),
+                },
+                { titulo: 'Titular', contenido: (ticket) => ticket.userEmail },
+                {
+                  titulo: 'Precio',
+                  contenido: (ticket) => formatearPrecioCOP(ticket.price),
+                },
+                {
+                  titulo: 'Estado',
+                  contenido: (ticket) =>
+                    obtenerEtiquetaEstadoTicket(ticket.status),
+                },
+                { titulo: 'Acción', contenido: botonValidar },
+              ]}
+            />
+          </div>
+          <div
+            role="region"
+            aria-label="Tarjetas de tickets pagados"
+            className="mt-5 grid gap-5 md:hidden"
+          >
             {tickets.map((ticket) => (
               <article
                 key={ticket.ticketCode}
                 className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 dark:border-slate-800 dark:bg-slate-900"
               >
-                <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-                  <dl className="grid min-w-0 flex-1 gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="flex flex-col gap-6">
+                  <dl className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
                     <div>
                       <dt className="text-sm text-slate-500 dark:text-slate-400">
                         Código
@@ -197,6 +243,15 @@ export default function TicketsPagadosEvento() {
 
                     <div>
                       <dt className="text-sm text-slate-500 dark:text-slate-400">
+                        Estado
+                      </dt>
+                      <dd className="mt-1 font-semibold text-slate-950 dark:text-white">
+                        {obtenerEtiquetaEstadoTicket(ticket.status)}
+                      </dd>
+                    </div>
+
+                    <div>
+                      <dt className="text-sm text-slate-500 dark:text-slate-400">
                         Compra
                       </dt>
                       <dd className="mt-1 font-semibold text-slate-950 dark:text-white">
@@ -205,22 +260,7 @@ export default function TicketsPagadosEvento() {
                     </div>
                   </dl>
 
-                  <Boton
-                    type="button"
-                    className="w-full lg:w-auto lg:flex-shrink-0"
-                    cargando={codigoProcesando === ticket.ticketCode}
-                    textoCargando="Validando…"
-                    disabled={
-                      codigoProcesando !== null &&
-                      codigoProcesando !== ticket.ticketCode
-                    }
-                    aria-label={`Validar ingreso de ${ticket.ticketCode}`}
-                    onClick={() => {
-                      void validarTicket(ticket.ticketCode)
-                    }}
-                  >
-                    Validar ingreso
-                  </Boton>
+                  {botonValidar(ticket)}
                 </div>
               </article>
             ))}
