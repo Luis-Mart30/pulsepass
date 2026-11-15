@@ -6,6 +6,7 @@ import {
 import { http } from '../../lib/http'
 
 const EmailConsultaSchema = z.email()
+const UsernameConsultaSchema = z.string().trim().min(1)
 
 export function obtenerUsuarioPorEmailApi(
   email: string,
@@ -14,6 +15,17 @@ export function obtenerUsuarioPorEmailApi(
 
   return http(
     `/users/by-email?email=${encodeURIComponent(emailValidado)}`,
+    UsuarioRegistradoSchema,
+  )
+}
+
+export function obtenerUsuarioPorUsernameApi(
+  username: string,
+): Promise<UsuarioRegistrado> {
+  const usernameValidado = UsernameConsultaSchema.parse(username)
+
+  return http(
+    `/users/by-username?username=${encodeURIComponent(usernameValidado)}`,
     UsuarioRegistradoSchema,
   )
 }

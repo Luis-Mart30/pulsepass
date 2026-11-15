@@ -1,7 +1,10 @@
 import { Link } from 'react-router'
 import { Boton } from '../componentes/Boton'
 import { useAuth } from '../funcionalidades/auth/useAuth'
-import { useUsuarioPorEmail } from '../funcionalidades/usuarios/consultas'
+import {
+  useUsuarioPorEmail,
+  useUsuarioPorUsername,
+} from '../funcionalidades/usuarios/consultas'
 import { RUTAS } from '../lib/rutas'
 
 function formatearFecha(fecha: string): string {
@@ -25,8 +28,22 @@ export default function Cuenta() {
     sesion.estado === 'autenticado'
       ? sesion.usuario.email
       : ''
+  const username =
+    sesion.estado === 'autenticado'
+      ? sesion.usuario.username
+      : ''
 
-  const consultaUsuario = useUsuarioPorEmail(email)
+  const consultaEmail = useUsuarioPorEmail(email)
+  const consultaUsername = useUsuarioPorUsername(username)
+  const usuario =
+    consultaEmail.data ?? consultaUsername.data
+  const consultaPendiente =
+    usuario === undefined &&
+    (consultaEmail.isPending || consultaUsername.isPending)
+  const consultaConError =
+    usuario === undefined &&
+    consultaEmail.isError &&
+    consultaUsername.isError
 
   if (sesion.estado !== 'autenticado') {
     return (
@@ -36,7 +53,7 @@ export default function Cuenta() {
     )
   }
 
-  if (consultaUsuario.isPending) {
+  if (consultaPendiente) {
     return (
       <section
         className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6"
@@ -52,7 +69,7 @@ export default function Cuenta() {
     )
   }
 
-  if (consultaUsuario.isError) {
+  if (consultaConError) {
     return (
       <section className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
         <h1 className="text-3xl font-bold text-slate-950 dark:text-white">
@@ -68,7 +85,10 @@ export default function Cuenta() {
             type="button"
             variante="secundario"
             className="mt-4"
-            onClick={() => void consultaUsuario.refetch()}
+            onClick={() => {
+              void consultaEmail.refetch()
+              void consultaUsername.refetch()
+            }}
           >
             Reintentar
           </Boton>
@@ -77,7 +97,10 @@ export default function Cuenta() {
     )
   }
 
-  const usuario = consultaUsuario.data
+  if (usuario === undefined) {
+    return null
+  }
+
   const iniciales =
     `${usuario.firstName.charAt(0)}${usuario.lastName.charAt(0)}`.toUpperCase()
 

@@ -6,7 +6,10 @@ import {
   it,
   vi,
 } from 'vitest'
-import { obtenerUsuarioPorEmailApi } from './api'
+import {
+  obtenerUsuarioPorEmailApi,
+  obtenerUsuarioPorUsernameApi,
+} from './api'
 
 describe('API de usuarios', () => {
   const fetchMock = vi.fn<typeof fetch>()
@@ -94,6 +97,45 @@ describe('API de usuarios', () => {
       obtenerUsuarioPorEmailApi('correo-invalido'),
     ).toThrow()
 
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('obtiene el usuario por username codificado', async () => {
+    fetchMock.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          id: 3,
+          username: 'andrea prueba',
+          email: 'andrea@pulsepass.test',
+          active: true,
+          firstName: 'Andrea',
+          lastName: 'Ruiz',
+          phone: null,
+          city: 'Santa Marta',
+          birthDate: '1998-04-12',
+        }),
+        {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      ),
+    )
+
+    await expect(
+      obtenerUsuarioPorUsernameApi('andrea prueba'),
+    ).resolves.toMatchObject({
+      id: 3,
+      username: 'andrea prueba',
+    })
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/users/by-username?username=andrea%20prueba',
+      expect.any(Object),
+    )
+  })
+
+  it('rechaza un username vacío antes de consultar', () => {
+    expect(() => obtenerUsuarioPorUsernameApi('   ')).toThrow()
     expect(fetchMock).not.toHaveBeenCalled()
   })
 })

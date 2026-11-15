@@ -12,9 +12,11 @@ import Cuenta from './Cuenta'
 
 const mocks = vi.hoisted(() => ({
   cerrarSesion: vi.fn(),
-  refetch: vi.fn(),
+  refetchEmail: vi.fn(),
+  refetchUsername: vi.fn(),
   useAuth: vi.fn(),
   useUsuarioPorEmail: vi.fn(),
+  useUsuarioPorUsername: vi.fn(),
 }))
 
 vi.mock('../funcionalidades/auth/useAuth', () => ({
@@ -23,6 +25,7 @@ vi.mock('../funcionalidades/auth/useAuth', () => ({
 
 vi.mock('../funcionalidades/usuarios/consultas', () => ({
   useUsuarioPorEmail: mocks.useUsuarioPorEmail,
+  useUsuarioPorUsername: mocks.useUsuarioPorUsername,
 }))
 
 const sesionAutenticada = {
@@ -37,10 +40,25 @@ const sesionAutenticada = {
   },
 }
 
+const usuarioCompleto = {
+  id: 1,
+  username: 'andrea',
+  email: 'andrea@pulsepass.test',
+  active: true,
+  firstName: 'Andrea',
+  lastName: 'Ruiz',
+  phone: null,
+  city: 'Santa Marta',
+  birthDate: '1998-04-12',
+}
+
 describe('página Mi cuenta', () => {
   beforeEach(() => {
     mocks.cerrarSesion.mockReset()
-    mocks.refetch.mockReset()
+    mocks.refetchEmail.mockReset()
+    mocks.refetchUsername.mockReset()
+    mocks.useUsuarioPorEmail.mockReset()
+    mocks.useUsuarioPorUsername.mockReset()
 
     mocks.useAuth.mockReturnValue({
       sesion: sesionAutenticada,
@@ -55,7 +73,13 @@ describe('página Mi cuenta', () => {
       isPending: true,
       isError: false,
       data: undefined,
-      refetch: mocks.refetch,
+      refetch: mocks.refetchEmail,
+    })
+    mocks.useUsuarioPorUsername.mockReturnValue({
+      isPending: true,
+      isError: false,
+      data: undefined,
+      refetch: mocks.refetchUsername,
     })
 
     render(
@@ -74,7 +98,13 @@ describe('página Mi cuenta', () => {
       isPending: false,
       isError: true,
       data: undefined,
-      refetch: mocks.refetch,
+      refetch: mocks.refetchEmail,
+    })
+    mocks.useUsuarioPorUsername.mockReturnValue({
+      isPending: false,
+      isError: true,
+      data: undefined,
+      refetch: mocks.refetchUsername,
     })
 
     render(
@@ -87,25 +117,22 @@ describe('página Mi cuenta', () => {
       screen.getByRole('button', { name: 'Reintentar' }),
     )
 
-    expect(mocks.refetch).toHaveBeenCalledOnce()
+    expect(mocks.refetchEmail).toHaveBeenCalledOnce()
+    expect(mocks.refetchUsername).toHaveBeenCalledOnce()
   })
 
   it('muestra el perfil y permite cerrar sesión', async () => {
     mocks.useUsuarioPorEmail.mockReturnValue({
       isPending: false,
       isError: false,
-      data: {
-        id: 1,
-        username: 'andrea',
-        email: 'andrea@pulsepass.test',
-        active: true,
-        firstName: 'Andrea',
-        lastName: 'Ruiz',
-        phone: null,
-        city: 'Santa Marta',
-        birthDate: '1998-04-12',
-      },
-      refetch: mocks.refetch,
+      data: usuarioCompleto,
+      refetch: mocks.refetchEmail,
+    })
+    mocks.useUsuarioPorUsername.mockReturnValue({
+      isPending: false,
+      isError: false,
+      data: usuarioCompleto,
+      refetch: mocks.refetchUsername,
     })
 
     render(
@@ -130,5 +157,39 @@ describe('página Mi cuenta', () => {
     )
 
     expect(mocks.cerrarSesion).toHaveBeenCalledOnce()
+    expect(mocks.useUsuarioPorEmail).toHaveBeenCalledWith(
+      'andrea@pulsepass.test',
+    )
+    expect(mocks.useUsuarioPorUsername).toHaveBeenCalledWith(
+      'andrea',
+    )
+  })
+
+  it('usa la consulta por username si falla la consulta por email', () => {
+    mocks.useUsuarioPorEmail.mockReturnValue({
+      isPending: false,
+      isError: true,
+      data: undefined,
+      refetch: mocks.refetchEmail,
+    })
+    mocks.useUsuarioPorUsername.mockReturnValue({
+      isPending: false,
+      isError: false,
+      data: usuarioCompleto,
+      refetch: mocks.refetchUsername,
+    })
+
+    render(
+      <MemoryRouter>
+        <Cuenta />
+      </MemoryRouter>,
+    )
+
+    expect(screen.getByText('Andrea Ruiz')).toBeInTheDocument()
+    expect(
+      screen.queryByText(
+        'No fue posible cargar la información de la cuenta.',
+      ),
+    ).not.toBeInTheDocument()
   })
 })
