@@ -36,6 +36,17 @@ npm.cmd run dev
 ```
 
 El frontend se abre normalmente en `http://localhost:5173` y consume la API mediante la ruta `/api`.
+Antes de iniciar el backend, configura ese origen y una clave JWT válida en la
+misma terminal:
+
+```powershell
+$env:PULSEPASS_CORS_ALLOWED_ORIGINS = "http://localhost:5173"
+$jwtBytes = New-Object byte[] 32
+$rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+$rng.GetBytes($jwtBytes)
+$env:PULSEPASS_JWT_SECRET_BASE64 = [Convert]::ToBase64String($jwtBytes)
+$rng.Dispose()
+```
 
 ## Verificación
 
@@ -55,4 +66,6 @@ npm.cmd run build
 npm.cmd run lint
 ```
 
-La documentación específica del backend y del frontend se encuentra dentro de cada proyecto.
+La documentación específica del backend y del frontend se encuentra dentro de
+cada proyecto. El README del frontend incluye las variables, comandos, roles y
+rutas requeridas para la entrega.

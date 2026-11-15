@@ -1,75 +1,153 @@
-# React + TypeScript + Vite
+# PulsePass Web
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicación web de PulsePass para explorar eventos, comprar y gestionar
+entradas, validar ingresos y administrar eventos según el rol de la sesión.
 
-Currently, two official plugins are available:
+## Tecnologías
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React 19 y TypeScript en modo estricto.
+- Vite y Tailwind CSS.
+- React Router con rutas perezosas.
+- TanStack Query para estado del servidor y caché.
+- React Hook Form y Zod para formularios y validación.
+- Vitest, Testing Library y MSW para pruebas.
 
-## React Compiler
+## Requisitos
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Node.js 22.22 o posterior.
+- npm.
+- PulsePass API disponible en `http://localhost:8080`.
 
-## Expanding the ESLint configuration
+## Configuración
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+La única variable del frontend es:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+| Variable | Descripción | Valor local |
+|---|---|---|
+| `VITE_API_BASE_URL` | Base de las solicitudes HTTP | `/api` |
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+El archivo `.env.example` contiene el valor recomendado. Con `/api`, el
+servidor de desarrollo de Vite redirige las solicitudes al backend en el
+puerto `8080` mediante el proxy de `vite.config.ts`.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Para usar una API remota, crea un archivo `.env.local` —ignorado por Git— y
+define una URL completa:
 
+```dotenv
+VITE_API_BASE_URL=https://api.ejemplo.com/api
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+No se deben guardar secretos ni tokens en variables `VITE_*`, porque sus
+valores se incorporan al bundle del navegador.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Instalación y ejecución
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Desde `pulsepass-web` en Windows PowerShell:
 
+```powershell
+npm.cmd install
+npm.cmd run dev
 ```
+
+La aplicación queda disponible normalmente en `http://localhost:5173`.
+
+El backend debe permitir ese origen. En la terminal donde se inicia la API:
+
+```powershell
+$env:PULSEPASS_CORS_ALLOWED_ORIGINS = "http://localhost:5173"
+```
+
+## Comandos
+
+| Comando | Propósito |
+|---|---|
+| `npm.cmd run dev` | Servidor local con recarga automática |
+| `npm.cmd run build` | Comprobación TypeScript y build de producción |
+| `npm.cmd run preview` | Previsualización del build |
+| `npm.cmd test` | Suite completa de Vitest |
+| `npm.cmd run test:watch` | Pruebas en modo interactivo |
+| `npm.cmd run lint` | Análisis estático con ESLint |
+| `npm.cmd run format:check` | Verificación de formato con Prettier |
+
+## Roles de demostración
+
+La interfaz consume los roles entregados por `GET /api/auth/me`.
+
+| Rol | Capacidades principales |
+|---|---|
+| `USER` | Consultar su cuenta y sus tickets, comprar y cancelar entradas |
+| `STAFF` | Validar ingresos y consultar tickets pagados de un evento |
+| `ADMIN` | Buscar, crear, configurar y publicar eventos; también puede ejecutar operaciones de STAFF |
+
+Las credenciales no se almacenan en este repositorio. Las cuentas de
+demostración deben crearse o provisionarse en el entorno local del backend.
+Ocultar enlaces por rol mejora la experiencia, pero la autorización efectiva
+siempre corresponde a la API.
+
+## Rutas principales
+
+### Públicas y de autenticación
+
+| Ruta | Pantalla |
+|---|---|
+| `/` | Inicio |
+| `/eventos` | Catálogo de eventos |
+| `/eventos/:eventCode` | Detalle y compra de un evento |
+| `/artistas` | Artistas activos |
+| `/artistas/:id` | Detalle de artista |
+| `/sedes` | Sedes activas |
+| `/sedes/:code` | Detalle de sede |
+| `/login` | Inicio de sesión |
+| `/registro` | Registro |
+
+### Sesión autenticada
+
+| Ruta | Acceso |
+|---|---|
+| `/cuenta` | Cualquier sesión autenticada |
+| `/mis-tickets` | USER |
+| `/mis-tickets/:ticketCode` | USER |
+| `/compra/confirmacion/:ticketCode` | USER |
+| `/staff/validacion` | STAFF o ADMIN |
+| `/staff/eventos/:eventCode/tickets` | STAFF o ADMIN |
+| `/admin/eventos` | ADMIN |
+| `/admin/eventos/nuevo` | ADMIN |
+| `/admin/eventos/:eventCode` | ADMIN |
+| `/403` | Acceso sin permisos |
+| `*` | Página no encontrada |
+
+Excepto Inicio y el Layout, las páginas se cargan de forma perezosa desde la
+configuración de `src/app/router.tsx`.
+
+## Sesión y seguridad
+
+- El JWT se conserva en `sessionStorage`, nunca en `localStorage`.
+- Se envía únicamente en el encabezado `Authorization: Bearer`.
+- Una respuesta `401` elimina la sesión y la caché antes de volver al login.
+- Las respuestas externas se validan con Zod.
+- El frontend no implementa reglas de negocio: presenta los errores de la API.
+
+## Estructura
+
+```text
+src/
+├── app/               Router, guardas y raíz de la aplicación
+├── componentes/       UI reutilizable y accesible
+├── funcionalidades/   API, tipos Zod y consultas por dominio
+├── layouts/           Navegación y estructura compartida
+├── lib/               HTTP, rutas, formatos y Query Client
+├── pages/             Páginas y pruebas de interacción
+└── test/              Configuración de Vitest y MSW
+```
+
+## Verificación antes de entregar
+
+```powershell
+npm.cmd run build
+npm.cmd run lint
+npm.cmd test
+git diff --check
+git status
+```
+
+Los tests interceptan la red con MSW; no dependen de una API real.

@@ -348,7 +348,7 @@ El proyecto utiliza:
 | `PULSEPASS_JWT_ISSUER` | Emisor del JWT | `pulsepass-api` |
 | `PULSEPASS_JWT_SECRET_BASE64` | Clave Base64 de mínimo 32 bytes | Sin valor predeterminado |
 | `PULSEPASS_JWT_ACCESS_TOKEN_TTL` | Duración del JWT | `PT15M` |
-| `PULSEPASS_CORS_ALLOWED_ORIGINS` | Orígenes CORS permitidos | `http://localhost:3000` |
+| `PULSEPASS_CORS_ALLOWED_ORIGINS` | Orígenes CORS permitidos | `http://localhost:5173` |
 
 El archivo `.env.example` contiene únicamente valores de ejemplo. No deben guardarse secretos reales en Git.
 
@@ -386,16 +386,16 @@ El origen permitido se configura mediante:
 PULSEPASS_CORS_ALLOWED_ORIGINS
 ```
 
-Valor local predeterminado:
+Valor recomendado para ejecutar el frontend de Vite:
 
 ```text
-http://localhost:3000
+http://localhost:5173
 ```
 
 Para varios orígenes se utiliza una lista separada por comas:
 
 ```text
-http://localhost:3000,http://localhost:5173
+http://localhost:5173,http://localhost:3000
 ```
 
 En producción deben utilizarse exclusivamente orígenes conocidos y HTTPS.
