@@ -4,10 +4,12 @@ import clsx from 'clsx'
 interface BotonProps
   extends ComponentPropsWithoutRef<'button'> {
   cargando?: boolean
+  textoCargando?: string
 }
 
 export function Boton({
   cargando = false,
+  textoCargando = 'Cargando…',
   disabled,
   children,
   className,
@@ -28,7 +30,7 @@ export function Boton({
         className,
       )}
     >
-      {cargando ? 'Creando cuenta…' : children}
+      {cargando ? textoCargando : children}
     </button>
   )
 }

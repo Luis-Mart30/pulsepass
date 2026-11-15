@@ -322,6 +322,7 @@ export default function Registro() {
           <Boton
             type="submit"
             cargando={isSubmitting}
+            textoCargando="Creando cuenta…"
             className="w-full"
           >
             Crear cuenta
