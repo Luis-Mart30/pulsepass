@@ -1,8 +1,10 @@
 import {
   useMutation,
   useQuery,
+  useQueryClient,
 } from '@tanstack/react-query'
-import { queryClient } from '../../lib/query-client'
+import { clavesEventos } from '../eventos/consultas'
+import { TIEMPOS_CACHE } from '../../lib/query-client'
 import {
   cancelarTicketApi,
   comprarTicketApi,
@@ -17,7 +19,7 @@ export const clavesTickets = {
   porUsuario: (email: string) =>
     [...clavesTickets.todas, 'usuario', email] as const,
   detalle: (ticketCode: string) =>
-    [...clavesTickets.todas, 'detalle', ticketCode] as const,
+    ['ticket', ticketCode] as const,
   pagadosEvento: (eventCode: string) =>
     [...clavesTickets.todas, 'pagados', eventCode] as const,
 }
@@ -27,6 +29,7 @@ export function useMisTickets(email: string) {
     queryKey: clavesTickets.porUsuario(email),
     queryFn: () => obtenerTicketsPorUsuarioApi(email),
     enabled: email.trim().length > 0,
+    staleTime: TIEMPOS_CACHE.tickets,
   })
 }
 
@@ -35,6 +38,7 @@ export function useTicket(ticketCode: string) {
     queryKey: clavesTickets.detalle(ticketCode),
     queryFn: () => obtenerTicketPorCodigoApi(ticketCode),
     enabled: ticketCode.trim().length > 0,
+    staleTime: TIEMPOS_CACHE.tickets,
   })
 }
 
@@ -44,10 +48,13 @@ export function useTicketsPagados(eventCode: string) {
     queryFn: () =>
       obtenerTicketsPagadosPorEventoApi(eventCode),
     enabled: eventCode.trim().length > 0,
+    staleTime: TIEMPOS_CACHE.tickets,
   })
 }
 
 export function useComprarTicket(email: string) {
+  const queryClient = useQueryClient()
+
   return useMutation({
     mutationFn: comprarTicketApi,
     onSuccess: (ticket) => {
@@ -56,14 +63,19 @@ export function useComprarTicket(email: string) {
         ticket,
       )
 
-      return queryClient.invalidateQueries({
+      void queryClient.invalidateQueries({
         queryKey: clavesTickets.porUsuario(email),
+      })
+      void queryClient.invalidateQueries({
+        queryKey: clavesEventos.detalle(ticket.eventCode),
       })
     },
   })
 }
 
 export function useCancelarTicket(email: string) {
+  const queryClient = useQueryClient()
+
   return useMutation({
     mutationFn: cancelarTicketApi,
     onSuccess: (ticket) => {
@@ -72,14 +84,21 @@ export function useCancelarTicket(email: string) {
         ticket,
       )
 
-      return queryClient.invalidateQueries({
+      void queryClient.invalidateQueries({
         queryKey: clavesTickets.porUsuario(email),
+      })
+      void queryClient.invalidateQueries({
+        queryKey: clavesTickets.pagadosEvento(
+          ticket.eventCode,
+        ),
       })
     },
   })
 }
 
 export function useMarcarTicketUsado(eventCode: string) {
+  const queryClient = useQueryClient()
+
   return useMutation({
     mutationFn: marcarTicketUsadoApi,
     onSuccess: (ticket) => {

@@ -11,8 +11,7 @@ describe('claves de caché de eventos', () => {
 
   it('crea una clave independiente para cada evento', () => {
     expect(clavesEventos.detalle('CMF-2026')).toEqual([
-      'eventos',
-      'detalle',
+      'evento',
       'CMF-2026',
     ])
   })
