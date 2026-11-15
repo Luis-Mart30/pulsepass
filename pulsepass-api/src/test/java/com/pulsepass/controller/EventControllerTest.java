@@ -118,6 +118,21 @@ class EventControllerTest {
         }
 
         @Test
+        void findAllEventsShouldReturnOk() throws Exception {
+                when(eventService.findAllEvents())
+                                .thenReturn(List.of(eventSummary()));
+
+                mockMvc.perform(get("/api/events"))
+                                .andExpect(status().isOk())
+                                .andExpect(content().contentTypeCompatibleWith(
+                                                MediaType.APPLICATION_JSON))
+                                .andExpect(jsonPath("$[0].eventCode")
+                                                .value("CMF-2026"));
+
+                verify(eventService).findAllEvents();
+        }
+
+        @Test
         void findExistingEventShouldReturnOk() throws Exception {
                 when(eventService.findByCode("CMF-2026"))
                                 .thenReturn(eventResponse(EventStatus.DRAFT));

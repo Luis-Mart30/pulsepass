@@ -8,12 +8,15 @@ import {
   crearEventoApi,
   obtenerEventoPorCodigoApi,
   obtenerEventosPorArtistaApi,
+  obtenerTodosEventosApi,
   obtenerEventosPublicadosApi,
   publicarEventoApi,
 } from './api'
 
 export const clavesEventos = {
   todos: ['eventos'] as const,
+  administrables: () =>
+    [...clavesEventos.todos, 'administrables'] as const,
   publicados: () =>
     [...clavesEventos.todos, 'publicados'] as const,
   detalle: (codigo: string) =>
@@ -24,6 +27,13 @@ export const clavesEventos = {
       'artista',
       nombreArtistico,
     ] as const,
+}
+
+export function useTodosLosEventos() {
+  return useQuery({
+    queryKey: clavesEventos.administrables(),
+    queryFn: obtenerTodosEventosApi,
+  })
 }
 
 export function useEventosPublicados() {

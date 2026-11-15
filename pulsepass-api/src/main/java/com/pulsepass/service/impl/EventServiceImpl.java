@@ -76,6 +76,15 @@ public class EventServiceImpl implements EventService {
         }
 
         @Override
+        public List<EventSummaryResponse> findAllEvents() {
+                return eventRepository
+                                .findAllByOrderByEventDateAsc()
+                                .stream()
+                                .map(eventMapper::toSummaryResponse)
+                                .toList();
+        }
+
+        @Override
         public List<EventSummaryResponse> findPublishedEvents() {
                 return eventRepository
                                 .findByStatusOrderByEventDateAsc(

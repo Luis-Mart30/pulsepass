@@ -8,6 +8,12 @@ import {
   type ResumenEvento,
 } from './tipos'
 
+export async function obtenerTodosEventosApi(): Promise<
+  ResumenEvento[]
+> {
+  return http('/events', ListaResumenEventosSchema)
+}
+
 export async function obtenerEventosPublicadosApi(): Promise<
   ResumenEvento[]
 > {

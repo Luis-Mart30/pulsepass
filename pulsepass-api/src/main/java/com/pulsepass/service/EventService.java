@@ -12,6 +12,8 @@ public interface EventService {
 
     EventResponse findByCode(String eventCode);
 
+    List<EventSummaryResponse> findAllEvents();
+
     List<EventSummaryResponse> findPublishedEvents();
 
     EventResponse publish(String eventCode);

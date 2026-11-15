@@ -11,6 +11,7 @@ import {
   crearEventoApi,
   obtenerEventoPorCodigoApi,
   obtenerEventosPorArtistaApi,
+  obtenerTodosEventosApi,
   obtenerEventosPublicadosApi,
   publicarEventoApi,
 } from './api'
@@ -53,6 +54,24 @@ describe('API de eventos', () => {
       }),
     )
   }
+
+  it('obtiene todos los eventos para administración', async () => {
+    fetchMock.mockResolvedValue(
+      new Response(JSON.stringify([resumen]), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    )
+
+    await expect(obtenerTodosEventosApi()).resolves.toEqual([
+      resumen,
+    ])
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/events',
+      expect.any(Object),
+    )
+  })
 
   it('obtiene los eventos publicados', async () => {
     fetchMock.mockResolvedValue(
