@@ -381,24 +381,6 @@ class EventServiceImplTest {
     }
 
     @Test
-    void shouldReturnAllEventsOrderedByDate() {
-        Event event = createDraftEvent();
-        EventSummaryResponse summary = createSummary();
-
-        when(eventRepository.findAllByOrderByEventDateAsc())
-                .thenReturn(List.of(event));
-        when(eventMapper.toSummaryResponse(event))
-                .thenReturn(summary);
-
-        List<EventSummaryResponse> result =
-                eventService.findAllEvents();
-
-        assertThat(result).containsExactly(summary);
-        verify(eventRepository)
-                .findAllByOrderByEventDateAsc();
-    }
-
-    @Test
     void shouldReturnPublishedEvents() {
         Event event = createDraftEvent();
         event.setStatus(EventStatus.PUBLISHED);

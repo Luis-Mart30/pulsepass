@@ -48,14 +48,6 @@ public class EventController {
                 .body(response);
     }
 
-    @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<EventSummaryResponse>> findAll() {
-        return ResponseEntity.ok(
-                eventService.findAllEvents()
-        );
-    }
-
     @GetMapping("/{eventCode}")
     @PreAuthorize("""
             @authorizationService.canViewEvent(

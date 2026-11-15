@@ -1,39 +1,20 @@
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   agregarArtistaAEventoApi,
   crearEventoApi,
   obtenerEventoPorCodigoApi,
   obtenerEventosPorArtistaApi,
-  obtenerTodosEventosApi,
   obtenerEventosPublicadosApi,
   publicarEventoApi,
 } from './api'
 
 export const clavesEventos = {
   todos: ['eventos'] as const,
-  administrables: () =>
-    [...clavesEventos.todos, 'administrables'] as const,
-  publicados: () =>
-    [...clavesEventos.todos, 'publicados'] as const,
+  publicados: () => [...clavesEventos.todos, 'publicados'] as const,
   detalle: (codigo: string) =>
     [...clavesEventos.todos, 'detalle', codigo] as const,
   porArtista: (nombreArtistico: string) =>
-    [
-      ...clavesEventos.todos,
-      'artista',
-      nombreArtistico,
-    ] as const,
-}
-
-export function useTodosLosEventos() {
-  return useQuery({
-    queryKey: clavesEventos.administrables(),
-    queryFn: obtenerTodosEventosApi,
-  })
+    [...clavesEventos.todos, 'artista', nombreArtistico] as const,
 }
 
 export function useEventosPublicados() {
@@ -51,13 +32,10 @@ export function useEventoPorCodigo(codigo: string) {
   })
 }
 
-export function useEventosPorArtista(
-  nombreArtistico: string,
-) {
+export function useEventosPorArtista(nombreArtistico: string) {
   return useQuery({
     queryKey: clavesEventos.porArtista(nombreArtistico),
-    queryFn: () =>
-      obtenerEventosPorArtistaApi(nombreArtistico),
+    queryFn: () => obtenerEventosPorArtistaApi(nombreArtistico),
     enabled: nombreArtistico.trim().length > 0,
   })
 }
@@ -68,10 +46,7 @@ export function useCrearEvento() {
   return useMutation({
     mutationFn: crearEventoApi,
     onSuccess: (evento) => {
-      queryClient.setQueryData(
-        clavesEventos.detalle(evento.eventCode),
-        evento,
-      )
+      queryClient.setQueryData(clavesEventos.detalle(evento.eventCode), evento)
 
       void queryClient.invalidateQueries({
         queryKey: clavesEventos.todos,
@@ -86,10 +61,7 @@ export function usePublicarEvento() {
   return useMutation({
     mutationFn: publicarEventoApi,
     onSuccess: (evento) => {
-      queryClient.setQueryData(
-        clavesEventos.detalle(evento.eventCode),
-        evento,
-      )
+      queryClient.setQueryData(clavesEventos.detalle(evento.eventCode), evento)
 
       void queryClient.invalidateQueries({
         queryKey: clavesEventos.todos,
@@ -107,16 +79,10 @@ export function useAgregarArtistaAEvento() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({
-      codigo,
-      artistaId,
-    }: AgregarArtistaVariables) =>
+    mutationFn: ({ codigo, artistaId }: AgregarArtistaVariables) =>
       agregarArtistaAEventoApi(codigo, artistaId),
     onSuccess: (evento) => {
-      queryClient.setQueryData(
-        clavesEventos.detalle(evento.eventCode),
-        evento,
-      )
+      queryClient.setQueryData(clavesEventos.detalle(evento.eventCode), evento)
 
       void queryClient.invalidateQueries({
         queryKey: clavesEventos.todos,

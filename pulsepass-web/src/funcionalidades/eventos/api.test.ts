@@ -1,17 +1,9 @@
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   agregarArtistaAEventoApi,
   crearEventoApi,
   obtenerEventoPorCodigoApi,
   obtenerEventosPorArtistaApi,
-  obtenerTodosEventosApi,
   obtenerEventosPublicadosApi,
   publicarEventoApi,
 } from './api'
@@ -55,24 +47,6 @@ describe('API de eventos', () => {
     )
   }
 
-  it('obtiene todos los eventos para administración', async () => {
-    fetchMock.mockResolvedValue(
-      new Response(JSON.stringify([resumen]), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      }),
-    )
-
-    await expect(obtenerTodosEventosApi()).resolves.toEqual([
-      resumen,
-    ])
-
-    expect(fetchMock).toHaveBeenCalledWith(
-      '/api/events',
-      expect.any(Object),
-    )
-  })
-
   it('obtiene los eventos publicados', async () => {
     fetchMock.mockResolvedValue(
       new Response(JSON.stringify([resumen]), {
@@ -81,9 +55,7 @@ describe('API de eventos', () => {
       }),
     )
 
-    await expect(
-      obtenerEventosPublicadosApi(),
-    ).resolves.toEqual([resumen])
+    await expect(obtenerEventosPublicadosApi()).resolves.toEqual([resumen])
 
     expect(fetchMock).toHaveBeenCalledWith(
       '/api/events/published',
@@ -136,9 +108,7 @@ describe('API de eventos', () => {
       venueCode: 'VEN-SMR-01',
     } as const
 
-    await expect(crearEventoApi(datos)).resolves.toEqual(
-      evento,
-    )
+    await expect(crearEventoApi(datos)).resolves.toEqual(evento)
 
     expect(fetchMock).toHaveBeenCalledWith(
       '/api/events',

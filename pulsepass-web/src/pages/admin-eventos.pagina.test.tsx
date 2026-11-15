@@ -7,36 +7,23 @@ import { describe, expect, it } from 'vitest'
 import { server } from '../test/server'
 import AdminEventos from './AdminEventos'
 
-const eventos = [
-  {
-    id: 1,
-    eventCode: 'BORRADOR-01',
-    name: 'Festival en preparación',
-    category: 'MUSIC',
-    status: 'DRAFT',
-    eventDate: '2027-02-20T19:00:00',
-    minimumAge: 18,
-    venueCode: 'VEN-01',
-    venueName: 'Arena Central',
-  },
-  {
-    id: 2,
-    eventCode: 'PUBLICADO-01',
-    name: 'Concierto publicado',
-    category: 'ENTERTAINMENT',
-    status: 'PUBLISHED',
-    eventDate: '2027-03-10T20:00:00',
-    minimumAge: 12,
-    venueCode: 'VEN-02',
-    venueName: 'Teatro del Mar',
-  },
-] as const
+const evento = {
+  id: 1,
+  eventCode: 'BORRADOR-01',
+  name: 'Festival en preparación',
+  description: 'Festival musical',
+  category: 'MUSIC',
+  status: 'DRAFT',
+  eventDate: '2027-02-20T19:00:00',
+  minimumAge: 18,
+  venueCode: 'VEN-01',
+  venueName: 'Arena Central',
+  artists: [],
+} as const
 
 function renderizarPagina() {
   const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: { retry: false },
-    },
+    defaultOptions: { queries: { retry: false } },
   })
 
   return render(
@@ -49,81 +36,71 @@ function renderizarPagina() {
 }
 
 describe('página administrativa de eventos', () => {
-  it('muestra todos los eventos y su resumen', async () => {
+  it('busca un evento por su código', async () => {
     server.use(
-      http.get('/api/events', () => HttpResponse.json(eventos)),
+      http.get('/api/events/BORRADOR-01', () => HttpResponse.json(evento)),
     )
-
+    const usuario = userEvent.setup()
     renderizarPagina()
+
+    await usuario.type(
+      screen.getByRole('searchbox', { name: 'Código del evento' }),
+      'BORRADOR-01',
+    )
+    await usuario.click(screen.getByRole('button', { name: 'Buscar' }))
 
     expect(
       await screen.findByText('Festival en preparación'),
     ).toBeInTheDocument()
     expect(
-      screen.getByText('Concierto publicado'),
-    ).toBeInTheDocument()
-    expect(
-      screen.getByRole('link', { name: 'Crear evento' }),
-    ).toHaveAttribute('href', '/admin/eventos/nuevo')
+      screen.getByRole('link', { name: 'Gestionar evento' }),
+    ).toHaveAttribute('href', '/admin/eventos/BORRADOR-01')
   })
 
-  it('filtra los eventos por estado', async () => {
-    server.use(
-      http.get('/api/events', () => HttpResponse.json(eventos)),
-    )
-
+  it('valida el código obligatorio sin consultar la API', async () => {
     const usuario = userEvent.setup()
     renderizarPagina()
 
-    await screen.findByText('Festival en preparación')
-    await usuario.selectOptions(
-      screen.getByRole('combobox', { name: 'Estado' }),
-      'PUBLISHED',
-    )
+    await usuario.click(screen.getByRole('button', { name: 'Buscar' }))
 
     expect(
-      screen.queryByText('Festival en preparación'),
-    ).not.toBeInTheDocument()
-    expect(
-      screen.getByText('Concierto publicado'),
+      await screen.findByText('Ingresa el código del evento.'),
     ).toBeInTheDocument()
   })
 
-  it('busca por nombre, código o sede', async () => {
+  it('diferencia un evento inexistente de un error general', async () => {
     server.use(
-      http.get('/api/events', () => HttpResponse.json(eventos)),
-    )
-
-    const usuario = userEvent.setup()
-    renderizarPagina()
-
-    await screen.findByText('Festival en preparación')
-    await usuario.type(
-      screen.getByRole('searchbox', {
-        name: 'Buscar eventos',
-      }),
-      'Teatro del Mar',
-    )
-
-    expect(
-      screen.queryByText('Festival en preparación'),
-    ).not.toBeInTheDocument()
-    expect(
-      screen.getByText('Concierto publicado'),
-    ).toBeInTheDocument()
-  })
-
-  it('muestra el estado vacío', async () => {
-    server.use(
-      http.get('/api/events', () => HttpResponse.json([])),
-    )
-
-    renderizarPagina()
-
-    expect(
-      await screen.findByText(
-        'No hay eventos que coincidan con los filtros.',
+      http.get('/api/events/NO-EXISTE', () =>
+        HttpResponse.json(
+          {
+            timestamp: '2026-11-15T00:00:00Z',
+            status: 404,
+            error: 'Not Found',
+            message: 'Event not found',
+            details: {},
+          },
+          { status: 404 },
+        ),
       ),
-    ).toBeInTheDocument()
+    )
+    const usuario = userEvent.setup()
+    renderizarPagina()
+
+    await usuario.type(
+      screen.getByRole('searchbox', { name: 'Código del evento' }),
+      'NO-EXISTE',
+    )
+    await usuario.click(screen.getByRole('button', { name: 'Buscar' }))
+
+    expect(await screen.findByText('Evento no encontrado')).toBeInTheDocument()
+  })
+
+  it('mantiene disponible la creación de eventos', () => {
+    renderizarPagina()
+
+    expect(screen.getByRole('link', { name: 'Crear evento' })).toHaveAttribute(
+      'href',
+      '/admin/eventos/nuevo',
+    )
   })
 })

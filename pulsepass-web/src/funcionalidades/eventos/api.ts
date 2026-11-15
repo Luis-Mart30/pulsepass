@@ -8,25 +8,14 @@ import {
   type ResumenEvento,
 } from './tipos'
 
-export async function obtenerTodosEventosApi(): Promise<
-  ResumenEvento[]
-> {
-  return http('/events', ListaResumenEventosSchema)
-}
-
-export async function obtenerEventosPublicadosApi(): Promise<
-  ResumenEvento[]
-> {
+export async function obtenerEventosPublicadosApi(): Promise<ResumenEvento[]> {
   return http('/events/published', ListaResumenEventosSchema)
 }
 
 export async function obtenerEventoPorCodigoApi(
   codigo: string,
 ): Promise<Evento> {
-  return http(
-    `/events/${encodeURIComponent(codigo)}`,
-    EventoSchema,
-  )
+  return http(`/events/${encodeURIComponent(codigo)}`, EventoSchema)
 }
 
 export async function obtenerEventosPorArtistaApi(
@@ -42,9 +31,7 @@ export async function obtenerEventosPorArtistaApi(
   )
 }
 
-export async function crearEventoApi(
-  datos: CrearEventoDatos,
-): Promise<Evento> {
+export async function crearEventoApi(datos: CrearEventoDatos): Promise<Evento> {
   const datosValidados = CrearEventoSchema.parse(datos)
 
   return http('/events', EventoSchema, {
@@ -53,14 +40,10 @@ export async function crearEventoApi(
   })
 }
 
-export async function publicarEventoApi(
-  codigo: string,
-): Promise<Evento> {
-  return http(
-    `/events/${encodeURIComponent(codigo)}/publish`,
-    EventoSchema,
-    { method: 'PATCH' },
-  )
+export async function publicarEventoApi(codigo: string): Promise<Evento> {
+  return http(`/events/${encodeURIComponent(codigo)}/publish`, EventoSchema, {
+    method: 'PATCH',
+  })
 }
 
 export async function agregarArtistaAEventoApi(
