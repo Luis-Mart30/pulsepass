@@ -5,6 +5,7 @@ import {
   useParams,
 } from 'react-router'
 import { Boton } from '../componentes/Boton'
+import { Modal } from '../componentes/Modal'
 import { useArtistasActivos } from '../funcionalidades/artistas/consultas'
 import {
   useAgregarArtistaAEvento,
@@ -341,46 +342,35 @@ export default function AdminGestionEvento() {
       </div>
 
       {confirmarPublicacion ? (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4"
-          role="presentation"
+        <Modal
+          abierto
+          titulo="¿Publicar este evento?"
+          onCerrar={() => setConfirmarPublicacion(false)}
+          bloquearCierre={publicar.isPending}
         >
-          <section
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="titulo-publicar"
-            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-slate-900"
-          >
-            <h2
-              id="titulo-publicar"
-              className="text-xl font-bold text-slate-950 dark:text-white"
-            >
-              ¿Publicar este evento?
-            </h2>
-            <p className="mt-3 text-slate-600 dark:text-slate-300">
-              El evento aparecerá inmediatamente en el catálogo
-              público.
-            </p>
+          <p className="mt-3 text-slate-600 dark:text-slate-300">
+            El evento aparecerá inmediatamente en el catálogo
+            público.
+          </p>
 
-            <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-              <Boton
-                type="button"
-                variante="secundario"
-                onClick={() => setConfirmarPublicacion(false)}
-              >
-                Volver
-              </Boton>
-              <Boton
-                type="button"
-                cargando={publicar.isPending}
-                textoCargando="Publicando..."
-                onClick={() => void publicarEvento()}
-              >
-                Confirmar publicación
-              </Boton>
-            </div>
-          </section>
-        </div>
+          <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+            <Boton
+              type="button"
+              variante="secundario"
+              onClick={() => setConfirmarPublicacion(false)}
+            >
+              Volver
+            </Boton>
+            <Boton
+              type="button"
+              cargando={publicar.isPending}
+              textoCargando="Publicando..."
+              onClick={() => void publicarEvento()}
+            >
+              Confirmar publicación
+            </Boton>
+          </div>
+        </Modal>
       ) : null}
     </main>
   )

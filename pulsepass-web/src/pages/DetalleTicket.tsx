@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useParams } from 'react-router'
 import clsx from 'clsx'
 import { Boton } from '../componentes/Boton'
+import { Modal } from '../componentes/Modal'
 import { useAuth } from '../funcionalidades/auth/useAuth'
 import {
   useCancelarTicket,
@@ -47,76 +48,56 @@ function ModalCancelacion({
   alConfirmar,
 }: ModalCancelacionProps) {
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 px-4"
-      role="presentation"
-      onMouseDown={(evento) => {
-        if (
-          evento.target === evento.currentTarget &&
-          !cargando
-        ) {
-          alCerrar()
-        }
-      }}
+    <Modal
+      abierto
+      titulo="Cancelar ticket"
+      onCerrar={alCerrar}
+      bloquearCierre={cargando}
+      descripcionId="descripcion-cancelacion-detalle"
     >
-      <section
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="titulo-cancelacion-detalle"
-        aria-describedby="descripcion-cancelacion-detalle"
-        className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-700 dark:bg-slate-900"
+      <p
+        id="descripcion-cancelacion-detalle"
+        className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300"
       >
-        <h2
-          id="titulo-cancelacion-detalle"
-          className="text-xl font-bold text-slate-950 dark:text-white"
+        ¿Confirmas la cancelación del ticket{' '}
+        <strong>{ticket.ticketCode}</strong> para{' '}
+        <strong>{ticket.eventName}</strong>?
+      </p>
+
+      <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
+        Esta acción no se puede deshacer.
+      </p>
+
+      {mensajeError !== null && (
+        <div
+          role="alert"
+          className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-200"
         >
-          Cancelar ticket
-        </h2>
-
-        <p
-          id="descripcion-cancelacion-detalle"
-          className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300"
-        >
-          ¿Confirmas la cancelación del ticket{' '}
-          <strong>{ticket.ticketCode}</strong> para{' '}
-          <strong>{ticket.eventName}</strong>?
-        </p>
-
-        <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
-          Esta acción no se puede deshacer.
-        </p>
-
-        {mensajeError !== null && (
-          <div
-            role="alert"
-            className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-200"
-          >
-            {mensajeError}
-          </div>
-        )}
-
-        <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-          <Boton
-            type="button"
-            variante="secundario"
-            disabled={cargando}
-            onClick={alCerrar}
-          >
-            Volver
-          </Boton>
-
-          <Boton
-            type="button"
-            variante="peligro"
-            cargando={cargando}
-            textoCargando="Cancelando…"
-            onClick={alConfirmar}
-          >
-            Confirmar cancelación
-          </Boton>
+          {mensajeError}
         </div>
-      </section>
-    </div>
+      )}
+
+      <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+        <Boton
+          type="button"
+          variante="secundario"
+          disabled={cargando}
+          onClick={alCerrar}
+        >
+          Volver
+        </Boton>
+
+        <Boton
+          type="button"
+          variante="peligro"
+          cargando={cargando}
+          textoCargando="Cancelando…"
+          onClick={alConfirmar}
+        >
+          Confirmar cancelación
+        </Boton>
+      </div>
+    </Modal>
   )
 }
 
