@@ -1,10 +1,12 @@
-import { isRouteErrorResponse, useRouteError } from 'react-router'
+import { isRouteErrorResponse, Link, useRouteError } from 'react-router'
+import { Boton } from '../componentes/Boton'
+import { RUTAS } from '../lib/rutas'
 
 export default function ErrorPagina() {
   const error: unknown = useRouteError()
 
   const mensaje = isRouteErrorResponse(error)
-    ? `Error ${error.status}: ${error.statusText}`
+    ? `Error ${error.status} al cargar la página.`
     : 'Ocurrió un error inesperado al cargar la página.'
 
   return (
@@ -20,6 +22,17 @@ export default function ErrorPagina() {
         <p className="mt-4 text-slate-600 dark:text-slate-300" role="alert">
           {mensaje}
         </p>
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <Boton type="button" onClick={() => window.location.reload()}>
+            Reintentar
+          </Boton>
+          <Link
+            to={RUTAS.INICIO}
+            className="inline-flex min-h-11 items-center rounded-lg border border-slate-300 px-5 py-2.5 font-semibold text-slate-700 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+          >
+            Volver al inicio
+          </Link>
+        </div>
       </section>
     </main>
   )

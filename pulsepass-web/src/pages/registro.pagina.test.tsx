@@ -39,7 +39,7 @@ function renderizarRegistro() {
   )
 }
 
-async function completarFormulario() {
+async function completarFormulario(contrasena = 'Contraseña123') {
   const usuario = userEvent.setup()
 
   await usuario.type(screen.getByLabelText('Nombre de usuario'), 'andrea')
@@ -52,7 +52,7 @@ async function completarFormulario() {
   await usuario.type(screen.getByLabelText('Fecha de nacimiento'), '1998-04-12')
   await usuario.type(
     screen.getByLabelText('Contraseña (mín. 12 caracteres)'),
-    'Contraseña123',
+    contrasena,
   )
 
   return usuario
@@ -72,6 +72,20 @@ describe('página de registro', () => {
 
     expect(
       await screen.findByText('Ingresa un nombre de usuario'),
+    ).toBeInTheDocument()
+    expect(mocks.registrarUsuarioApi).not.toHaveBeenCalled()
+  })
+
+  it('rechaza una contraseña de 11 caracteres sin consultar la API', async () => {
+    renderizarRegistro()
+    const usuario = await completarFormulario('PulsePass12')
+
+    await usuario.click(screen.getByRole('button', { name: 'Crear cuenta' }))
+
+    expect(
+      await screen.findByText(
+        'La contraseña debe tener al menos 12 caracteres',
+      ),
     ).toBeInTheDocument()
     expect(mocks.registrarUsuarioApi).not.toHaveBeenCalled()
   })

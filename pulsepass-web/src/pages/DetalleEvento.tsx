@@ -1,11 +1,17 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
+import { useForm, useWatch } from 'react-hook-form'
 import { Link, useLocation, useNavigate, useParams } from 'react-router'
 import { Boton } from '../componentes/Boton'
 import { Modal } from '../componentes/Modal'
 import { useAuth } from '../funcionalidades/auth/useAuth'
 import { useEventoPorCodigo } from '../funcionalidades/eventos/consultas'
 import { useComprarTicket } from '../funcionalidades/tickets/consultas'
-import type { TipoTicket } from '../funcionalidades/tickets/tipos'
+import {
+  CompraTicketSchema,
+  type CompraTicketDatos,
+  type TipoTicket,
+} from '../funcionalidades/tickets/tipos'
 import { ApiError } from '../lib/http'
 import {
   formatearFechaEvento,
@@ -13,6 +19,8 @@ import {
   obtenerEtiquetaTipoTicket,
 } from '../lib/formatos'
 import { crearRuta, RUTAS } from '../lib/rutas'
+
+const SeleccionEntradaSchema = CompraTicketSchema.pick({ type: true })
 
 const opcionesTicket: Array<{
   tipo: TipoTicket
@@ -56,8 +64,16 @@ export default function DetalleEvento() {
     !tieneRol('STAFF', 'ADMIN')
   const mostrarPanelCompra = sesion.estado === 'anonimo' || puedeComprar
 
-  const [tipoSeleccionado, setTipoSeleccionado] =
-    useState<TipoTicket>('GENERAL')
+  const {
+    control,
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Pick<CompraTicketDatos, 'type'>>({
+    resolver: zodResolver(SeleccionEntradaSchema),
+    defaultValues: { type: 'GENERAL' },
+  })
+  const tipoSeleccionado = useWatch({ control, name: 'type' })
   const [confirmacionAbierta, setConfirmacionAbierta] = useState(false)
   const [errorCompra, setErrorCompra] = useState<string | null>(null)
 
@@ -77,7 +93,7 @@ export default function DetalleEvento() {
     setConfirmacionAbierta(true)
   }
 
-  const comprarEntrada = async () => {
+  const comprarEntrada = handleSubmit(async ({ type }) => {
     if (sesion.estado !== 'autenticado' || !puedeComprar || compra.isPending) {
       return
     }
@@ -87,7 +103,7 @@ export default function DetalleEvento() {
       const ticket = await compra.mutateAsync({
         userEmail: sesion.usuario.email,
         eventCode,
-        type: tipoSeleccionado,
+        type,
       })
 
       navigate(crearRuta.confirmacionCompra(ticket.ticketCode), {
@@ -105,7 +121,7 @@ export default function DetalleEvento() {
           : 'No fue posible completar la compra. Inténtalo nuevamente.',
       )
     }
-  }
+  })
 
   if (consulta.isPending) {
     return (
@@ -258,7 +274,12 @@ export default function DetalleEvento() {
               Las entradas no están disponibles para este evento.
             </div>
           ) : (
-            <>
+            <form
+              noValidate
+              onSubmit={(evento) =>
+                void handleSubmit(abrirConfirmacion)(evento)
+              }
+            >
               <p className="mt-2 text-slate-600 dark:text-slate-300">
                 Selecciona el tipo de entrada. El precio final será calculado de
                 forma segura por PulsePass.
@@ -277,12 +298,8 @@ export default function DetalleEvento() {
                     >
                       <input
                         type="radio"
-                        name="tipo-ticket"
+                        {...register('type')}
                         value={opcion.tipo}
-                        checked={tipoSeleccionado === opcion.tipo}
-                        onChange={() => {
-                          setTipoSeleccionado(opcion.tipo)
-                        }}
                         className="peer sr-only"
                       />
 
@@ -298,6 +315,14 @@ export default function DetalleEvento() {
                   ))}
                 </div>
               </fieldset>
+              {errors.type && (
+                <p
+                  role="alert"
+                  className="mt-2 text-sm text-red-700 dark:text-red-300"
+                >
+                  Selecciona un tipo de entrada válido.
+                </p>
+              )}
 
               {sesion.estado !== 'autenticado' && (
                 <p className="mt-5 text-sm text-slate-600 dark:text-slate-300">
@@ -309,17 +334,13 @@ export default function DetalleEvento() {
                 data-barra-compra-movil
                 className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] sm:static sm:mt-6 sm:border-0 sm:bg-transparent sm:p-0 dark:border-slate-700 dark:bg-slate-950 sm:dark:bg-transparent"
               >
-                <Boton
-                  type="button"
-                  className="w-full sm:w-auto"
-                  onClick={abrirConfirmacion}
-                >
+                <Boton type="submit" className="w-full sm:w-auto">
                   {sesion.estado === 'autenticado'
                     ? 'Comprar entrada'
                     : 'Iniciar sesión para comprar'}
                 </Boton>
               </div>
-            </>
+            </form>
           )}
         </section>
       )}
