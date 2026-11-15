@@ -1,5 +1,8 @@
 import { Link, useParams } from 'react-router'
+import { Boton } from '../componentes/Boton'
+import { TarjetaEvento } from '../componentes/eventos/TarjetaEvento'
 import { useArtistaPorId } from '../funcionalidades/artistas/consultas'
+import { useEventosPorArtista } from '../funcionalidades/eventos/consultas'
 import { ApiError } from '../lib/http'
 import { RUTAS } from '../lib/rutas'
 
@@ -10,6 +13,7 @@ export default function DetalleArtista() {
     Number.isInteger(idConvertido) && idConvertido > 0 ? idConvertido : null
 
   const consulta = useArtistaPorId(id)
+  const consultaEventos = useEventosPorArtista(consulta.data?.stageName ?? '')
 
   if (id === null) {
     return (
@@ -122,6 +126,50 @@ export default function DetalleArtista() {
           </dl>
         </div>
       </article>
+
+      <section className="mt-8" aria-labelledby="eventos-del-artista">
+        <h2
+          id="eventos-del-artista"
+          className="text-2xl font-bold text-slate-950 dark:text-white"
+        >
+          Próximos eventos de {artista.stageName}
+        </h2>
+
+        {consultaEventos.isPending ? (
+          <p role="status" className="mt-4 text-slate-600 dark:text-slate-300">
+            Cargando eventos…
+          </p>
+        ) : null}
+
+        {consultaEventos.isError ? (
+          <div className="mt-4 text-slate-600 dark:text-slate-300">
+            <p role="alert">No fue posible cargar los eventos del artista.</p>
+            <Boton
+              type="button"
+              variante="secundario"
+              className="mt-4"
+              onClick={() => void consultaEventos.refetch()}
+            >
+              Reintentar
+            </Boton>
+          </div>
+        ) : null}
+
+        {consultaEventos.isSuccess &&
+          (consultaEventos.data.length === 0 ? (
+            <p className="mt-4 text-slate-600 dark:text-slate-300">
+              Este artista aún no tiene eventos publicados.
+            </p>
+          ) : (
+            <ul className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {consultaEventos.data.map((evento) => (
+                <li key={evento.id}>
+                  <TarjetaEvento evento={evento} />
+                </li>
+              ))}
+            </ul>
+          ))}
+      </section>
     </section>
   )
 }

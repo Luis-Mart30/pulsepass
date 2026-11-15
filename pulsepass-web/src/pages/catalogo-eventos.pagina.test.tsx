@@ -2,7 +2,10 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, useLocation } from 'react-router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { useArtistasActivos } from '../funcionalidades/artistas/consultas'
+import {
+  useArtistaPorNombre,
+  useArtistasActivos,
+} from '../funcionalidades/artistas/consultas'
 import {
   useEventosPorArtista,
   useEventosPublicados,
@@ -10,6 +13,7 @@ import {
 import CatalogoEventos from './CatalogoEventos'
 
 vi.mock('../funcionalidades/artistas/consultas', () => ({
+  useArtistaPorNombre: vi.fn(),
   useArtistasActivos: vi.fn(),
 }))
 
@@ -18,6 +22,7 @@ vi.mock('../funcionalidades/eventos/consultas', () => ({
   useEventosPorArtista: vi.fn(),
 }))
 
+const useArtistaPorNombreMock = vi.mocked(useArtistaPorNombre)
 const useArtistasActivosMock = vi.mocked(useArtistasActivos)
 const useEventosPublicadosMock = vi.mocked(useEventosPublicados)
 const useEventosPorArtistaMock = vi.mocked(useEventosPorArtista)
@@ -65,6 +70,7 @@ function renderizarCatalogo(ruta = '/eventos') {
 describe('página Catálogo de eventos', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    useArtistaPorNombreMock.mockReturnValue({ data: undefined } as never)
 
     useArtistasActivosMock.mockReturnValue({
       isPending: false,
@@ -161,7 +167,16 @@ describe('página Catálogo de eventos', () => {
     )
   })
 
-  it('consulta los eventos del artista indicado en la URL', () => {
+  it('consulta el perfil y los eventos del artista indicado en la URL', () => {
+    useArtistaPorNombreMock.mockReturnValue({
+      data: {
+        id: 20,
+        stageName: 'Solar Beat',
+        country: 'Colombia',
+        genre: 'Electronic',
+        active: true,
+      },
+    } as never)
     useEventosPorArtistaMock.mockReturnValue({
       isPending: false,
       isError: false,
@@ -173,6 +188,10 @@ describe('página Catálogo de eventos', () => {
 
     expect(useEventosPublicadosMock).toHaveBeenCalledWith(false)
     expect(useEventosPorArtistaMock).toHaveBeenCalledWith('Solar Beat')
+    expect(useArtistaPorNombreMock).toHaveBeenCalledWith('Solar Beat')
+    expect(
+      screen.getByRole('link', { name: 'Ver perfil de Solar Beat' }),
+    ).toHaveAttribute('href', '/artistas/20')
     expect(
       screen.getByRole('link', {
         name: 'Ver evento Caribbean Music Fest',

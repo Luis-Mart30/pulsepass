@@ -1,8 +1,11 @@
-import { useSearchParams } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import { z } from 'zod'
 import { Boton } from '../componentes/Boton'
 import { TarjetaEvento } from '../componentes/eventos/TarjetaEvento'
-import { useArtistasActivos } from '../funcionalidades/artistas/consultas'
+import {
+  useArtistaPorNombre,
+  useArtistasActivos,
+} from '../funcionalidades/artistas/consultas'
 import {
   useEventosPorArtista,
   useEventosPublicados,
@@ -12,6 +15,7 @@ import {
   type CategoriaEvento,
 } from '../funcionalidades/eventos/tipos'
 import { obtenerEtiquetaCategoria } from '../lib/formatos'
+import { crearRuta } from '../lib/rutas'
 
 const ParametrosCatalogoSchema = z.object({
   q: z.string().trim().catch(''),
@@ -32,6 +36,7 @@ export default function CatalogoEventos() {
   const consultaPublicados = useEventosPublicados(filtros.artista.length === 0)
   const consultaPorArtista = useEventosPorArtista(filtros.artista)
   const consultaArtistas = useArtistasActivos()
+  const { data: artistaSeleccionado } = useArtistaPorNombre(filtros.artista)
   const consultaEventos =
     filtros.artista.length > 0 ? consultaPorArtista : consultaPublicados
 
@@ -146,6 +151,14 @@ export default function CatalogoEventos() {
               </option>
             ))}
           </select>
+          {artistaSeleccionado ? (
+            <Link
+              className="mt-2 inline-block text-sm text-violet-700 underline dark:text-violet-300"
+              to={crearRuta.detalleArtista(artistaSeleccionado.id)}
+            >
+              Ver perfil de {artistaSeleccionado.stageName}
+            </Link>
+          ) : null}
         </div>
 
         {hayFiltros ? (

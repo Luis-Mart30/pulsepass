@@ -1,11 +1,13 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   useArtistaPorId,
   useArtistasActivos,
 } from '../funcionalidades/artistas/consultas'
+import { useEventosPorArtista } from '../funcionalidades/eventos/consultas'
 import { ApiError } from '../lib/http'
 import DetalleArtista from './DetalleArtista'
 import ListaArtistas from './ListaArtistas'
@@ -14,6 +16,19 @@ vi.mock('../funcionalidades/artistas/consultas', () => ({
   useArtistasActivos: vi.fn(),
   useArtistaPorId: vi.fn(),
 }))
+
+vi.mock('../funcionalidades/eventos/consultas', () => ({
+  useEventosPorArtista: vi.fn(),
+}))
+
+const useEventosPorArtistaMock = vi.mocked(useEventosPorArtista)
+const artista = {
+  id: 20,
+  stageName: 'Mar Azul',
+  country: 'Colombia',
+  genre: 'Pop',
+  active: true,
+} as const
 
 const useArtistasActivosMock = vi.mocked(useArtistasActivos)
 const useArtistaPorIdMock = vi.mocked(useArtistaPorId)
@@ -53,6 +68,11 @@ function renderizarDetalle(ruta = '/artistas/20') {
 describe('páginas públicas de artistas', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    useArtistaPorIdMock.mockReturnValue({ data: artista } as never)
+    useEventosPorArtistaMock.mockReturnValue({
+      isSuccess: true,
+      data: [],
+    } as never)
   })
 
   it('muestra los artistas activos y enlaza al detalle', () => {
@@ -98,22 +118,34 @@ describe('páginas públicas de artistas', () => {
     ).toBeInTheDocument()
   })
 
-  it('muestra el detalle del artista', () => {
-    useArtistaPorIdMock.mockReturnValue({
-      isPending: false,
-      isError: false,
-      data: {
-        id: 20,
-        stageName: 'Mar Azul',
-        country: 'Colombia',
-        genre: 'Pop',
-        active: true,
-      },
+  it('muestra el perfil y enlaza los eventos asociados al nombre artístico', () => {
+    useEventosPorArtistaMock.mockReturnValue({
+      isSuccess: true,
+      data: [
+        {
+          id: 1,
+          eventCode: 'MAR-2026',
+          name: 'Festival del Mar',
+          category: 'MUSIC',
+          status: 'PUBLISHED',
+          eventDate: '2026-12-20T19:00:00',
+          minimumAge: 0,
+          venueCode: 'VEN-01',
+          venueName: 'Arena Central',
+        },
+      ],
     } as never)
 
     renderizarDetalle()
 
     expect(useArtistaPorIdMock).toHaveBeenCalledWith(20)
+    expect(useEventosPorArtistaMock).toHaveBeenCalledWith('Mar Azul')
+    expect(
+      screen.getByRole('heading', { name: 'Próximos eventos de Mar Azul' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('link', { name: 'Ver evento Festival del Mar' }),
+    ).toHaveAttribute('href', '/eventos/MAR-2026')
 
     expect(
       screen.getByRole('heading', { name: 'Mar Azul' }),
@@ -121,6 +153,45 @@ describe('páginas públicas de artistas', () => {
 
     expect(screen.getByText('Activo')).toBeInTheDocument()
     expect(screen.getByText('Colombia')).toBeInTheDocument()
+  })
+
+  it('informa cuando el artista no tiene eventos publicados', () => {
+    renderizarDetalle()
+
+    expect(
+      screen.getByText('Este artista aún no tiene eventos publicados.'),
+    ).toBeInTheDocument()
+  })
+
+  it('muestra la carga de eventos con el perfil visible', () => {
+    useEventosPorArtistaMock.mockReturnValue({ isPending: true } as never)
+
+    renderizarDetalle()
+
+    expect(
+      screen.getByRole('heading', { name: 'Mar Azul' }),
+    ).toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent('Cargando eventos…')
+  })
+
+  it('permite reintentar la consulta de eventos sin ocultar el perfil', async () => {
+    const usuario = userEvent.setup()
+    const refetch = vi.fn()
+    useEventosPorArtistaMock.mockReturnValue({
+      isError: true,
+      refetch,
+    } as never)
+
+    renderizarDetalle()
+
+    expect(
+      screen.getByRole('heading', { name: 'Mar Azul' }),
+    ).toBeInTheDocument()
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'No fue posible cargar los eventos del artista.',
+    )
+    await usuario.click(screen.getByRole('button', { name: 'Reintentar' }))
+    expect(refetch).toHaveBeenCalledOnce()
   })
 
   it('rechaza un identificador de ruta inválido', () => {
