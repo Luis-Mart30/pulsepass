@@ -61,9 +61,7 @@ export default function ConfirmacionCompra() {
           >
             ✓
           </div>
-          <h1 className="mt-5 text-3xl font-bold">
-            ¡Compra confirmada!
-          </h1>
+          <h1 className="mt-5 text-3xl font-bold">¡Compra confirmada!</h1>
           <p className="mt-2 text-emerald-50">
             Tu entrada ya está disponible en PulsePass.
           </p>
@@ -79,7 +77,7 @@ export default function ConfirmacionCompra() {
               <dt className="text-sm text-slate-500 dark:text-slate-400">
                 Código del ticket
               </dt>
-              <dd className="mt-1 break-all font-bold text-slate-950 dark:text-white">
+              <dd className="mt-1 font-bold break-all text-slate-950 dark:text-white">
                 {ticket.ticketCode}
               </dd>
             </div>

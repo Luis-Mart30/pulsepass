@@ -20,9 +20,7 @@ const FormularioEventoSchema = CrearEventoSchema.extend({
     .max(1000, 'La descripción no puede superar 1000 caracteres'),
 })
 
-type FormularioEventoDatos = z.infer<
-  typeof FormularioEventoSchema
->
+type FormularioEventoDatos = z.infer<typeof FormularioEventoSchema>
 
 const CATEGORIAS = [
   { valor: 'MUSIC', etiqueta: 'Música' },
@@ -43,21 +41,15 @@ const CAMPOS_EVENTO = new Set<keyof FormularioEventoDatos>([
   'venueCode',
 ])
 
-function esCampoEvento(
-  campo: string,
-): campo is keyof FormularioEventoDatos {
-  return CAMPOS_EVENTO.has(
-    campo as keyof FormularioEventoDatos,
-  )
+function esCampoEvento(campo: string): campo is keyof FormularioEventoDatos {
+  return CAMPOS_EVENTO.has(campo as keyof FormularioEventoDatos)
 }
 
 export default function AdminCrearEvento() {
   const navigate = useNavigate()
   const crearEvento = useCrearEvento()
   const sedes = useSedesActivas()
-  const [errorGeneral, setErrorGeneral] = useState<string | null>(
-    null,
-  )
+  const [errorGeneral, setErrorGeneral] = useState<string | null>(null)
 
   const {
     register,
@@ -77,9 +69,7 @@ export default function AdminCrearEvento() {
     },
   })
 
-  const enviar = async (
-    formulario: FormularioEventoDatos,
-  ): Promise<void> => {
+  const enviar = async (formulario: FormularioEventoDatos): Promise<void> => {
     setErrorGeneral(null)
 
     const datos: CrearEventoDatos = {
@@ -102,17 +92,15 @@ export default function AdminCrearEvento() {
         if (error.status === 400) {
           let detalleMapeado = false
 
-          Object.entries(error.details).forEach(
-            ([campo, mensaje]) => {
-              if (esCampoEvento(campo)) {
-                setError(campo, {
-                  type: 'server',
-                  message: mensaje,
-                })
-                detalleMapeado = true
-              }
-            },
-          )
+          Object.entries(error.details).forEach(([campo, mensaje]) => {
+            if (esCampoEvento(campo)) {
+              setError(campo, {
+                type: 'server',
+                message: mensaje,
+              })
+              detalleMapeado = true
+            }
+          })
 
           if (!detalleMapeado) {
             setErrorGeneral(
@@ -124,16 +112,12 @@ export default function AdminCrearEvento() {
         }
 
         if (error.status === 409) {
-          setErrorGeneral(
-            'Ya existe un evento registrado con ese código.',
-          )
+          setErrorGeneral('Ya existe un evento registrado con ese código.')
           return
         }
       }
 
-      setErrorGeneral(
-        'No fue posible crear el evento. Inténtalo nuevamente.',
-      )
+      setErrorGeneral('No fue posible crear el evento. Inténtalo nuevamente.')
     }
   }
 
@@ -146,7 +130,7 @@ export default function AdminCrearEvento() {
         >
           ← Volver a eventos
         </Link>
-        <p className="mt-6 font-semibold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400">
+        <p className="mt-6 font-semibold tracking-[0.2em] text-indigo-600 uppercase dark:text-indigo-400">
           Panel administrativo
         </p>
         <h1 className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">
@@ -202,7 +186,7 @@ export default function AdminCrearEvento() {
                   ? 'description-error'
                   : undefined
               }
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none transition focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 transition outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
               placeholder="Describe la experiencia del evento"
               {...register('description')}
             />
@@ -224,14 +208,11 @@ export default function AdminCrearEvento() {
             <select
               id="category"
               aria-invalid={errors.category !== undefined}
-              className="min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+              className="min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 transition outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
               {...register('category')}
             >
               {CATEGORIAS.map((categoria) => (
-                <option
-                  key={categoria.valor}
-                  value={categoria.valor}
-                >
+                <option key={categoria.valor} value={categoria.valor}>
                   {categoria.etiqueta}
                 </option>
               ))}
@@ -267,17 +248,13 @@ export default function AdminCrearEvento() {
               disabled={sedes.isPending || sedes.isError}
               aria-invalid={errors.venueCode !== undefined}
               aria-describedby={
-                errors.venueCode !== undefined
-                  ? 'venueCode-error'
-                  : undefined
+                errors.venueCode !== undefined ? 'venueCode-error' : undefined
               }
-              className="min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 outline-none transition focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+              className="min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 transition outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
               {...register('venueCode')}
             >
               <option value="">
-                {sedes.isPending
-                  ? 'Cargando sedes...'
-                  : 'Selecciona una sede'}
+                {sedes.isPending ? 'Cargando sedes...' : 'Selecciona una sede'}
               </option>
               {sedes.data?.map((sede) => (
                 <option key={sede.code} value={sede.code}>

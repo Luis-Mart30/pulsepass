@@ -1,9 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import {
-  borrarSesion,
-  guardarSesion,
-  leerSesion,
-} from './almacenamiento'
+import { borrarSesion, guardarSesion, leerSesion } from './almacenamiento'
 
 describe('almacenamiento de sesión', () => {
   beforeEach(() => {

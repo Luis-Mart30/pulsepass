@@ -15,11 +15,7 @@ export function debeReintentarConsulta(
   intentosFallidos: number,
   error: unknown,
 ): boolean {
-  if (
-    error instanceof ApiError &&
-    error.status >= 400 &&
-    error.status < 500
-  ) {
+  if (error instanceof ApiError && error.status >= 400 && error.status < 500) {
     return false
   }
 

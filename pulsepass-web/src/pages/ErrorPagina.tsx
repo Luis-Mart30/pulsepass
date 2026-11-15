@@ -1,7 +1,4 @@
-import {
-  isRouteErrorResponse,
-  useRouteError,
-} from 'react-router'
+import { isRouteErrorResponse, useRouteError } from 'react-router'
 
 export default function ErrorPagina() {
   const error: unknown = useRouteError()
@@ -12,10 +9,7 @@ export default function ErrorPagina() {
 
   return (
     <main className="grid min-h-screen place-items-center bg-slate-50 px-4 dark:bg-slate-950">
-      <section
-        className="max-w-lg text-center"
-        aria-labelledby="titulo-error"
-      >
+      <section className="max-w-lg text-center" aria-labelledby="titulo-error">
         <p className="font-semibold text-violet-600">PulsePass</p>
         <h1
           id="titulo-error"
@@ -23,10 +17,7 @@ export default function ErrorPagina() {
         >
           No pudimos cargar esta página
         </h1>
-        <p
-          className="mt-4 text-slate-600 dark:text-slate-300"
-          role="alert"
-        >
+        <p className="mt-4 text-slate-600 dark:text-slate-300" role="alert">
           {mensaje}
         </p>
       </section>

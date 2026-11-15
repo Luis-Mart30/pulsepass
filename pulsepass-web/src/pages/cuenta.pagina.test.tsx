@@ -1,13 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router'
-import {
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import Cuenta from './Cuenta'
 
 const mocks = vi.hoisted(() => ({
@@ -113,9 +107,9 @@ describe('página Mi cuenta', () => {
       </MemoryRouter>,
     )
 
-    await userEvent.setup().click(
-      screen.getByRole('button', { name: 'Reintentar' }),
-    )
+    await userEvent
+      .setup()
+      .click(screen.getByRole('button', { name: 'Reintentar' }))
 
     expect(mocks.refetchEmail).toHaveBeenCalledOnce()
     expect(mocks.refetchUsername).toHaveBeenCalledOnce()
@@ -160,9 +154,7 @@ describe('página Mi cuenta', () => {
     expect(mocks.useUsuarioPorEmail).toHaveBeenCalledWith(
       'andrea@pulsepass.test',
     )
-    expect(mocks.useUsuarioPorUsername).toHaveBeenCalledWith(
-      'andrea',
-    )
+    expect(mocks.useUsuarioPorUsername).toHaveBeenCalledWith('andrea')
   })
 
   it('usa la consulta por username si falla la consulta por email', () => {
@@ -187,9 +179,7 @@ describe('página Mi cuenta', () => {
 
     expect(screen.getByText('Andrea Ruiz')).toBeInTheDocument()
     expect(
-      screen.queryByText(
-        'No fue posible cargar la información de la cuenta.',
-      ),
+      screen.queryByText('No fue posible cargar la información de la cuenta.'),
     ).not.toBeInTheDocument()
   })
 })

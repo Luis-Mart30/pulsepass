@@ -9,7 +9,7 @@ export default function NoEncontrada() {
         aria-labelledby="titulo-no-encontrada"
       >
         <div>
-          <p className="text-sm font-bold uppercase tracking-[0.25em] text-violet-600 dark:text-violet-400">
+          <p className="text-sm font-bold tracking-[0.25em] text-violet-600 uppercase dark:text-violet-400">
             Error 404
           </p>
 
@@ -21,9 +21,8 @@ export default function NoEncontrada() {
           </h1>
 
           <p className="mt-5 text-lg leading-8 text-slate-600 dark:text-slate-300">
-            La dirección que visitaste no existe o pudo haber
-            cambiado. Puedes regresar al inicio o continuar
-            explorando los eventos.
+            La dirección que visitaste no existe o pudo haber cambiado. Puedes
+            regresar al inicio o continuar explorando los eventos.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">

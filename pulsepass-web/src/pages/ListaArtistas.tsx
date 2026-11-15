@@ -11,9 +11,7 @@ export default function ListaArtistas() {
         className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8"
         aria-live="polite"
       >
-        <p className="text-slate-600 dark:text-slate-300">
-          Cargando artistas…
-        </p>
+        <p className="text-slate-600 dark:text-slate-300">Cargando artistas…</p>
       </section>
     )
   }
@@ -36,7 +34,7 @@ export default function ListaArtistas() {
 
   return (
     <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      <p className="text-sm font-semibold uppercase tracking-wider text-violet-600">
+      <p className="text-sm font-semibold tracking-wider text-violet-600 uppercase">
         PulsePass
       </p>
       <h1 className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">

@@ -20,29 +20,25 @@ export const router = createBrowserRouter([
       {
         path: RUTAS.EVENTOS,
         lazy: async () => ({
-          Component: (await import('../pages/CatalogoEventos'))
-            .default,
+          Component: (await import('../pages/CatalogoEventos')).default,
         }),
       },
       {
         path: RUTAS.DETALLE_EVENTO,
         lazy: async () => ({
-          Component: (await import('../pages/DetalleEvento'))
-            .default,
+          Component: (await import('../pages/DetalleEvento')).default,
         }),
       },
       {
         path: RUTAS.ARTISTAS,
         lazy: async () => ({
-          Component: (await import('../pages/ListaArtistas'))
-            .default,
+          Component: (await import('../pages/ListaArtistas')).default,
         }),
       },
       {
         path: RUTAS.DETALLE_ARTISTA,
         lazy: async () => ({
-          Component: (await import('../pages/DetalleArtista'))
-            .default,
+          Component: (await import('../pages/DetalleArtista')).default,
         }),
       },
       {
@@ -89,23 +85,20 @@ export const router = createBrowserRouter([
               {
                 path: RUTAS.MIS_TICKETS,
                 lazy: async () => ({
-                  Component: (await import('../pages/MisTickets'))
-                    .default,
+                  Component: (await import('../pages/MisTickets')).default,
                 }),
               },
               {
                 path: RUTAS.DETALLE_TICKET,
                 lazy: async () => ({
-                  Component: (await import('../pages/DetalleTicket'))
-                    .default,
+                  Component: (await import('../pages/DetalleTicket')).default,
                 }),
               },
               {
                 path: RUTAS.CONFIRMACION_COMPRA,
                 lazy: async () => ({
-                  Component: (
-                    await import('../pages/ConfirmacionCompra')
-                  ).default,
+                  Component: (await import('../pages/ConfirmacionCompra'))
+                    .default,
                 }),
               },
             ],
@@ -116,17 +109,15 @@ export const router = createBrowserRouter([
               {
                 path: RUTAS.STAFF_VALIDACION,
                 lazy: async () => ({
-                  Component: (
-                    await import('../pages/ValidacionIngreso')
-                  ).default,
+                  Component: (await import('../pages/ValidacionIngreso'))
+                    .default,
                 }),
               },
               {
                 path: RUTAS.STAFF_TICKETS_EVENTO,
                 lazy: async () => ({
-                  Component: (
-                    await import('../pages/TicketsPagadosEvento')
-                  ).default,
+                  Component: (await import('../pages/TicketsPagadosEvento'))
+                    .default,
                 }),
               },
             ],
@@ -137,24 +128,21 @@ export const router = createBrowserRouter([
               {
                 path: RUTAS.ADMIN_EVENTOS,
                 lazy: async () => ({
-                  Component: (await import('../pages/AdminEventos'))
-                    .default,
+                  Component: (await import('../pages/AdminEventos')).default,
                 }),
               },
               {
                 path: RUTAS.ADMIN_CREAR_EVENTO,
                 lazy: async () => ({
-                  Component: (
-                    await import('../pages/AdminCrearEvento')
-                  ).default,
+                  Component: (await import('../pages/AdminCrearEvento'))
+                    .default,
                 }),
               },
               {
                 path: RUTAS.ADMIN_GESTION_EVENTO,
                 lazy: async () => ({
-                  Component: (
-                    await import('../pages/AdminGestionEvento')
-                  ).default,
+                  Component: (await import('../pages/AdminGestionEvento'))
+                    .default,
                 }),
               },
             ],

@@ -1,8 +1,5 @@
 import { z } from 'zod'
-import {
-  UsuarioRegistradoSchema,
-  type UsuarioRegistrado,
-} from '../auth/tipos'
+import { UsuarioRegistradoSchema, type UsuarioRegistrado } from '../auth/tipos'
 import { http } from '../../lib/http'
 
 const EmailConsultaSchema = z.email()

@@ -1,18 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import {
-  MemoryRouter,
-  Route,
-  Routes,
-  useLocation,
-} from 'react-router'
-import {
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ApiError } from '../lib/http'
 import Registro from './Registro'
 
@@ -53,20 +42,14 @@ function renderizarRegistro() {
 async function completarFormulario() {
   const usuario = userEvent.setup()
 
-  await usuario.type(
-    screen.getByLabelText('Nombre de usuario'),
-    'andrea',
-  )
+  await usuario.type(screen.getByLabelText('Nombre de usuario'), 'andrea')
   await usuario.type(
     screen.getByLabelText('Correo electrónico'),
     'andrea@pulsepass.test',
   )
   await usuario.type(screen.getByLabelText('Nombres'), 'Andrea')
   await usuario.type(screen.getByLabelText('Apellidos'), 'Ruiz')
-  await usuario.type(
-    screen.getByLabelText('Fecha de nacimiento'),
-    '1998-04-12',
-  )
+  await usuario.type(screen.getByLabelText('Fecha de nacimiento'), '1998-04-12')
   await usuario.type(
     screen.getByLabelText('Contraseña (mín. 12 caracteres)'),
     'Contraseña123',
@@ -85,9 +68,7 @@ describe('página de registro', () => {
 
     renderizarRegistro()
 
-    await usuario.click(
-      screen.getByRole('button', { name: 'Crear cuenta' }),
-    )
+    await usuario.click(screen.getByRole('button', { name: 'Crear cuenta' }))
 
     expect(
       await screen.findByText('Ingresa un nombre de usuario'),
@@ -111,9 +92,7 @@ describe('página de registro', () => {
     renderizarRegistro()
     const usuario = await completarFormulario()
 
-    await usuario.click(
-      screen.getByRole('button', { name: 'Crear cuenta' }),
-    )
+    await usuario.click(screen.getByRole('button', { name: 'Crear cuenta' }))
 
     expect(
       await screen.findByText('Cuenta creada, inicia sesión'),
@@ -137,16 +116,12 @@ describe('página de registro', () => {
     renderizarRegistro()
     const usuario = await completarFormulario()
 
-    await usuario.click(
-      screen.getByRole('button', { name: 'Crear cuenta' }),
-    )
+    await usuario.click(screen.getByRole('button', { name: 'Crear cuenta' }))
 
     expect(
       await screen.findByRole('alert', {
         name: '',
       }),
-    ).toHaveTextContent(
-      'El usuario o correo ya está registrado.',
-    )
+    ).toHaveTextContent('El usuario o correo ya está registrado.')
   })
 })

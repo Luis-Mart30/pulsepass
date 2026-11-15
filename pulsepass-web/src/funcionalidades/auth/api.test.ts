@@ -1,19 +1,6 @@
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
-import {
-  establecerManejador401,
-  establecerTokenHttp,
-} from '../../lib/http'
-import {
-  iniciarSesionApi,
-  obtenerUsuarioAutenticadoApi,
-} from './api'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { establecerManejador401, establecerTokenHttp } from '../../lib/http'
+import { iniciarSesionApi, obtenerUsuarioAutenticadoApi } from './api'
 
 describe('API de autenticación', () => {
   const fetchMock = vi.fn<typeof fetch>()
@@ -105,9 +92,7 @@ describe('API de autenticación', () => {
 
     establecerTokenHttp('jwt-de-prueba')
 
-    await expect(
-      obtenerUsuarioAutenticadoApi(),
-    ).resolves.toMatchObject({
+    await expect(obtenerUsuarioAutenticadoApi()).resolves.toMatchObject({
       id: 1,
       username: 'admin_e2e',
       roles: ['ADMIN'],

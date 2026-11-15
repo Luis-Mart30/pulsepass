@@ -57,12 +57,7 @@ describe('Modal', () => {
     const onCerrar = vi.fn()
 
     render(
-      <Modal
-        abierto
-        titulo="Procesando"
-        onCerrar={onCerrar}
-        bloquearCierre
-      >
+      <Modal abierto titulo="Procesando" onCerrar={onCerrar} bloquearCierre>
         <button type="button" disabled>
           Guardando
         </button>

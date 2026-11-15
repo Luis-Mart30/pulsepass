@@ -1,17 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, screen } from '@testing-library/react'
-import {
-  MemoryRouter,
-  Route,
-  Routes,
-} from 'react-router'
-import {
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
+import { MemoryRouter, Route, Routes } from 'react-router'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   useArtistaPorId,
   useArtistasActivos,
@@ -25,9 +15,7 @@ vi.mock('../funcionalidades/artistas/consultas', () => ({
   useArtistaPorId: vi.fn(),
 }))
 
-const useArtistasActivosMock = vi.mocked(
-  useArtistasActivos,
-)
+const useArtistasActivosMock = vi.mocked(useArtistasActivos)
 const useArtistaPorIdMock = vi.mocked(useArtistaPorId)
 
 function crearQueryClient() {
@@ -55,10 +43,7 @@ function renderizarDetalle(ruta = '/artistas/20') {
     <QueryClientProvider client={crearQueryClient()}>
       <MemoryRouter initialEntries={[ruta]}>
         <Routes>
-          <Route
-            path="/artistas/:id"
-            element={<DetalleArtista />}
-          />
+          <Route path="/artistas/:id" element={<DetalleArtista />} />
         </Routes>
       </MemoryRouter>
     </QueryClientProvider>,
@@ -91,9 +76,10 @@ describe('páginas públicas de artistas', () => {
       screen.getByRole('heading', { name: 'Mar Azul' }),
     ).toBeInTheDocument()
 
-    expect(
-      screen.getByRole('link', { name: 'Ver artista' }),
-    ).toHaveAttribute('href', '/artistas/20')
+    expect(screen.getByRole('link', { name: 'Ver artista' })).toHaveAttribute(
+      'href',
+      '/artistas/20',
+    )
 
     expect(screen.getByText('Colombia')).toBeInTheDocument()
   })
@@ -108,9 +94,7 @@ describe('páginas públicas de artistas', () => {
     renderizarLista()
 
     expect(
-      screen.getByText(
-        'No hay artistas activos disponibles en este momento.',
-      ),
+      screen.getByText('No hay artistas activos disponibles en este momento.'),
     ).toBeInTheDocument()
   })
 
@@ -155,9 +139,7 @@ describe('páginas públicas de artistas', () => {
     ).toBeInTheDocument()
 
     expect(
-      screen.getByText(
-        'El identificador del artista no es válido.',
-      ),
+      screen.getByText('El identificador del artista no es válido.'),
     ).toBeInTheDocument()
   })
 

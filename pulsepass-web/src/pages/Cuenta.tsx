@@ -10,11 +10,7 @@ import { RUTAS } from '../lib/rutas'
 function formatearFecha(fecha: string): string {
   const [anio, mes, dia] = fecha.split('-')
 
-  if (
-    anio === undefined ||
-    mes === undefined ||
-    dia === undefined
-  ) {
+  if (anio === undefined || mes === undefined || dia === undefined) {
     return fecha
   }
 
@@ -24,26 +20,18 @@ function formatearFecha(fecha: string): string {
 export default function Cuenta() {
   const { sesion, cerrarSesion } = useAuth()
 
-  const email =
-    sesion.estado === 'autenticado'
-      ? sesion.usuario.email
-      : ''
+  const email = sesion.estado === 'autenticado' ? sesion.usuario.email : ''
   const username =
-    sesion.estado === 'autenticado'
-      ? sesion.usuario.username
-      : ''
+    sesion.estado === 'autenticado' ? sesion.usuario.username : ''
 
   const consultaEmail = useUsuarioPorEmail(email)
   const consultaUsername = useUsuarioPorUsername(username)
-  const usuario =
-    consultaEmail.data ?? consultaUsername.data
+  const usuario = consultaEmail.data ?? consultaUsername.data
   const consultaPendiente =
     usuario === undefined &&
     (consultaEmail.isPending || consultaUsername.isPending)
   const consultaConError =
-    usuario === undefined &&
-    consultaEmail.isError &&
-    consultaUsername.isError
+    usuario === undefined && consultaEmail.isError && consultaUsername.isError
 
   if (sesion.estado !== 'autenticado') {
     return (
@@ -142,18 +130,14 @@ export default function Cuenta() {
 
         <dl className="flex gap-6 text-sm sm:text-right">
           <div>
-            <dt className="text-slate-500 dark:text-slate-400">
-              Rol
-            </dt>
+            <dt className="text-slate-500 dark:text-slate-400">Rol</dt>
             <dd className="mt-1 font-semibold text-indigo-700 dark:text-indigo-300">
               {sesion.usuario.roles.join(', ')}
             </dd>
           </div>
 
           <div>
-            <dt className="text-slate-500 dark:text-slate-400">
-              Estado
-            </dt>
+            <dt className="text-slate-500 dark:text-slate-400">Estado</dt>
             <dd className="mt-1 font-semibold text-emerald-700 dark:text-emerald-300">
               {usuario.active ? 'Activa' : 'Inactiva'}
             </dd>
@@ -173,11 +157,7 @@ export default function Cuenta() {
           <span />
         )}
 
-        <Boton
-          type="button"
-          variante="secundario"
-          onClick={cerrarSesion}
-        >
+        <Boton type="button" variante="secundario" onClick={cerrarSesion}>
           Cerrar sesión
         </Boton>
       </div>

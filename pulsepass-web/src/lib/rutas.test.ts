@@ -9,8 +9,6 @@ describe('rutas de PulsePass', () => {
   it('construye y codifica las rutas con parámetros', () => {
     expect(crearRuta.detalleEvento('EVT 001')).toBe('/eventos/EVT%20001')
     expect(crearRuta.detalleArtista(20)).toBe('/artistas/20')
-    expect(crearRuta.detalleTicket('TCK/001')).toBe(
-      '/mis-tickets/TCK%2F001',
-    )
+    expect(crearRuta.detalleTicket('TCK/001')).toBe('/mis-tickets/TCK%2F001')
   })
 })

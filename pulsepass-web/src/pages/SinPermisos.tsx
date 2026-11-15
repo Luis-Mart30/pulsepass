@@ -9,7 +9,7 @@ export default function SinPermisos() {
         aria-labelledby="titulo-sin-permisos"
       >
         <div>
-          <p className="text-sm font-bold uppercase tracking-[0.25em] text-violet-600 dark:text-violet-400">
+          <p className="text-sm font-bold tracking-[0.25em] text-violet-600 uppercase dark:text-violet-400">
             Error 403
           </p>
 
@@ -21,8 +21,8 @@ export default function SinPermisos() {
           </h1>
 
           <p className="mt-5 text-lg leading-8 text-slate-600 dark:text-slate-300">
-            Tu cuenta no cuenta con el rol necesario para acceder a
-            esta sección de PulsePass.
+            Tu cuenta no cuenta con el rol necesario para acceder a esta sección
+            de PulsePass.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">

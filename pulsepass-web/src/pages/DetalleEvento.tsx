@@ -1,20 +1,12 @@
 import { useState } from 'react'
-import {
-  Link,
-  useLocation,
-  useNavigate,
-  useParams,
-} from 'react-router'
+import { Link, useLocation, useNavigate, useParams } from 'react-router'
 import { Boton } from '../componentes/Boton'
 import { useAuth } from '../funcionalidades/auth/useAuth'
 import { useEventoPorCodigo } from '../funcionalidades/eventos/consultas'
 import { useComprarTicket } from '../funcionalidades/tickets/consultas'
 import type { TipoTicket } from '../funcionalidades/tickets/tipos'
 import { ApiError } from '../lib/http'
-import {
-  formatearFechaEvento,
-  obtenerEtiquetaCategoria,
-} from '../lib/formatos'
+import { formatearFechaEvento, obtenerEtiquetaCategoria } from '../lib/formatos'
 import { crearRuta, RUTAS } from '../lib/rutas'
 
 const opcionesTicket: Array<{
@@ -45,23 +37,18 @@ const opcionesTicket: Array<{
 ]
 
 export default function DetalleEvento() {
-  const { eventCode = '' } =
-    useParams<{ eventCode: string }>()
+  const { eventCode = '' } = useParams<{ eventCode: string }>()
   const navigate = useNavigate()
   const location = useLocation()
   const { sesion, tieneRol } = useAuth()
 
   const consulta = useEventoPorCodigo(eventCode)
-  const email =
-    sesion.estado === 'autenticado'
-      ? sesion.usuario.email
-      : ''
+  const email = sesion.estado === 'autenticado' ? sesion.usuario.email : ''
   const compra = useComprarTicket(email)
 
   const [tipoSeleccionado, setTipoSeleccionado] =
     useState<TipoTicket>('GENERAL')
-  const [errorCompra, setErrorCompra] =
-    useState<string | null>(null)
+  const [errorCompra, setErrorCompra] = useState<string | null>(null)
 
   const comprarEntrada = async () => {
     setErrorCompra(null)
@@ -87,10 +74,9 @@ export default function DetalleEvento() {
         type: tipoSeleccionado,
       })
 
-      navigate(
-        crearRuta.confirmacionCompra(ticket.ticketCode),
-        { replace: true },
-      )
+      navigate(crearRuta.confirmacionCompra(ticket.ticketCode), {
+        replace: true,
+      })
     } catch (error: unknown) {
       if (error instanceof ApiError && error.status === 409) {
         setErrorCompra(
@@ -120,8 +106,7 @@ export default function DetalleEvento() {
 
   if (consulta.isError) {
     const noEncontrado =
-      consulta.error instanceof ApiError &&
-      consulta.error.status === 404
+      consulta.error instanceof ApiError && consulta.error.status === 404
 
     return (
       <section className="mx-auto w-full max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
@@ -130,10 +115,7 @@ export default function DetalleEvento() {
             ? 'Evento no encontrado'
             : 'No pudimos cargar el evento'}
         </h1>
-        <p
-          role="alert"
-          className="mt-4 text-slate-600 dark:text-slate-300"
-        >
+        <p role="alert" className="mt-4 text-slate-600 dark:text-slate-300">
           {noEncontrado
             ? 'El evento solicitado no existe o no está disponible.'
             : 'Ocurrió un problema al consultar la información. Intenta nuevamente.'}
@@ -161,7 +143,7 @@ export default function DetalleEvento() {
       </Link>
 
       <article className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-10 dark:border-slate-700 dark:bg-slate-900">
-        <p className="text-sm font-semibold uppercase tracking-wider text-violet-600 dark:text-violet-400">
+        <p className="text-sm font-semibold tracking-wider text-violet-600 uppercase dark:text-violet-400">
           {obtenerEtiquetaCategoria(evento.category)}
         </p>
 
@@ -260,8 +242,8 @@ export default function DetalleEvento() {
         ) : (
           <>
             <p className="mt-2 text-slate-600 dark:text-slate-300">
-              Selecciona el tipo de entrada. El precio final será
-              calculado de forma segura por PulsePass.
+              Selecciona el tipo de entrada. El precio final será calculado de
+              forma segura por PulsePass.
             </p>
 
             <fieldset className="mt-6">
@@ -271,17 +253,12 @@ export default function DetalleEvento() {
 
               <div className="mt-3 grid gap-3 sm:grid-cols-2">
                 {opcionesTicket.map((opcion) => (
-                  <label
-                    key={opcion.tipo}
-                    className="relative cursor-pointer"
-                  >
+                  <label key={opcion.tipo} className="relative cursor-pointer">
                     <input
                       type="radio"
                       name="tipo-ticket"
                       value={opcion.tipo}
-                      checked={
-                        tipoSeleccionado === opcion.tipo
-                      }
+                      checked={tipoSeleccionado === opcion.tipo}
                       onChange={() => {
                         setTipoSeleccionado(opcion.tipo)
                         setErrorCompra(null)

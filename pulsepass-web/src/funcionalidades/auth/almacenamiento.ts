@@ -1,7 +1,4 @@
-import {
-  SesionGuardadaSchema,
-  type SesionGuardada,
-} from './tipos'
+import { SesionGuardadaSchema, type SesionGuardada } from './tipos'
 
 const CLAVE_SESION = 'pulsepass.sesion'
 
@@ -17,9 +14,7 @@ export function leerSesion(): SesionGuardada | null {
   }
 
   try {
-    const resultado = SesionGuardadaSchema.safeParse(
-      JSON.parse(valor),
-    )
+    const resultado = SesionGuardadaSchema.safeParse(JSON.parse(valor))
 
     if (!resultado.success || resultado.data.expiraEn <= Date.now()) {
       borrarSesion()

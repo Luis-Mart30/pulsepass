@@ -12,9 +12,7 @@ import {
   type UsuarioRegistrado,
 } from './tipos'
 
-export function iniciarSesionApi(
-  datos: LoginDatos,
-): Promise<AuthResponse> {
+export function iniciarSesionApi(datos: LoginDatos): Promise<AuthResponse> {
   const datosValidados = LoginSchema.parse(datos)
 
   return http(

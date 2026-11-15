@@ -1,21 +1,7 @@
-import {
-  MemoryRouter,
-  Route,
-  Routes,
-} from 'react-router'
-import {
-  render,
-  screen,
-  waitFor,
-} from '@testing-library/react'
+import { MemoryRouter, Route, Routes } from 'react-router'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import {
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useAuth } from '../funcionalidades/auth/useAuth'
 import {
   useCancelarTicket,
@@ -44,14 +30,9 @@ const mutateAsync = vi.fn()
 
 function renderizarDetalle() {
   return render(
-    <MemoryRouter
-      initialEntries={['/mis-tickets/TKT-PAID-001']}
-    >
+    <MemoryRouter initialEntries={['/mis-tickets/TKT-PAID-001']}>
       <Routes>
-        <Route
-          path="/mis-tickets/:ticketCode"
-          element={<DetalleTicket />}
-        />
+        <Route path="/mis-tickets/:ticketCode" element={<DetalleTicket />} />
       </Routes>
     </MemoryRouter>,
   )
@@ -100,9 +81,7 @@ describe('página Detalle del ticket', () => {
       }),
     ).toBeInTheDocument()
 
-    expect(
-      screen.getByText('TKT-PAID-001'),
-    ).toBeInTheDocument()
+    expect(screen.getByText('TKT-PAID-001')).toBeInTheDocument()
 
     expect(screen.getByText('VIP')).toBeInTheDocument()
     expect(screen.getByText('Pagado')).toBeInTheDocument()
@@ -137,9 +116,7 @@ describe('página Detalle del ticket', () => {
     ).toBeInTheDocument()
 
     expect(
-      screen.getByText(
-        /no pudimos encontrar este ticket o no tienes permiso/i,
-      ),
+      screen.getByText(/no pudimos encontrar este ticket o no tienes permiso/i),
     ).toBeInTheDocument()
   })
 
@@ -172,15 +149,11 @@ describe('página Detalle del ticket', () => {
     )
 
     await waitFor(() => {
-      expect(mutateAsync).toHaveBeenCalledWith(
-        'TKT-PAID-001',
-      )
+      expect(mutateAsync).toHaveBeenCalledWith('TKT-PAID-001')
     })
 
     await waitFor(() => {
-      expect(
-        screen.queryByRole('dialog'),
-      ).not.toBeInTheDocument()
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     })
   })
 })

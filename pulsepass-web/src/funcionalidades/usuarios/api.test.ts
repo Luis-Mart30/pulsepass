@@ -1,15 +1,5 @@
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
-import {
-  obtenerUsuarioPorEmailApi,
-  obtenerUsuarioPorUsernameApi,
-} from './api'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { obtenerUsuarioPorEmailApi, obtenerUsuarioPorUsernameApi } from './api'
 
 describe('API de usuarios', () => {
   const fetchMock = vi.fn<typeof fetch>()
@@ -82,9 +72,7 @@ describe('API de usuarios', () => {
       ),
     )
 
-    await obtenerUsuarioPorEmailApi(
-      'correo+prueba@pulsepass.test',
-    )
+    await obtenerUsuarioPorEmailApi('correo+prueba@pulsepass.test')
 
     expect(fetchMock).toHaveBeenCalledWith(
       '/api/users/by-email?email=correo%2Bprueba%40pulsepass.test',
@@ -93,9 +81,7 @@ describe('API de usuarios', () => {
   })
 
   it('rechaza un correo inválido antes de consultar', () => {
-    expect(() =>
-      obtenerUsuarioPorEmailApi('correo-invalido'),
-    ).toThrow()
+    expect(() => obtenerUsuarioPorEmailApi('correo-invalido')).toThrow()
 
     expect(fetchMock).not.toHaveBeenCalled()
   })

@@ -1,13 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router'
-import {
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import Inicio from './Inicio'
 
 const mocks = vi.hoisted(() => ({
@@ -85,12 +79,14 @@ describe('página de Inicio', () => {
   it('muestra las llamadas a la acción y limita los destacados', () => {
     renderizarInicio()
 
-    expect(
-      screen.getByRole('link', { name: 'Ver cartelera' }),
-    ).toHaveAttribute('href', '/eventos')
-    expect(
-      screen.getByRole('link', { name: 'Crear cuenta' }),
-    ).toHaveAttribute('href', '/registro')
+    expect(screen.getByRole('link', { name: 'Ver cartelera' })).toHaveAttribute(
+      'href',
+      '/eventos',
+    )
+    expect(screen.getByRole('link', { name: 'Crear cuenta' })).toHaveAttribute(
+      'href',
+      '/registro',
+    )
 
     expect(
       screen.getAllByRole('link', { name: /Ver evento Evento/ }),
@@ -208,8 +204,6 @@ describe('página de Inicio', () => {
     expect(
       screen.getByText('Aún no hay eventos publicados.'),
     ).toBeInTheDocument()
-    expect(
-      screen.getByText('Aún no hay artistas activos.'),
-    ).toBeInTheDocument()
+    expect(screen.getByText('Aún no hay artistas activos.')).toBeInTheDocument()
   })
 })

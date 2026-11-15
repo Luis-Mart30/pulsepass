@@ -18,22 +18,19 @@ export default function TicketsPagadosEvento() {
   const consulta = useTicketsPagados(eventCode)
   const uso = useMarcarTicketUsado(eventCode)
 
-  const [ticketsValidados, setTicketsValidados] =
-    useState<Set<string>>(() => new Set())
-  const [codigoProcesando, setCodigoProcesando] =
-    useState<string | null>(null)
-  const [mensajeExito, setMensajeExito] =
-    useState<string | null>(null)
-  const [mensajeError, setMensajeError] =
-    useState<string | null>(null)
+  const [ticketsValidados, setTicketsValidados] = useState<Set<string>>(
+    () => new Set(),
+  )
+  const [codigoProcesando, setCodigoProcesando] = useState<string | null>(null)
+  const [mensajeExito, setMensajeExito] = useState<string | null>(null)
+  const [mensajeError, setMensajeError] = useState<string | null>(null)
 
   const tickets = (consulta.data ?? []).filter(
     (ticket) => !ticketsValidados.has(ticket.ticketCode),
   )
 
   const nombreEvento =
-    consulta.data !== undefined &&
-    consulta.data.length > 0
+    consulta.data !== undefined && consulta.data.length > 0
       ? consulta.data[0]!.eventName
       : eventCode
 
@@ -51,9 +48,7 @@ export default function TicketsPagadosEvento() {
         return nuevos
       })
 
-      setMensajeExito(
-        `Ticket ${ticketCode} validado correctamente.`,
-      )
+      setMensajeExito(`Ticket ${ticketCode} validado correctamente.`)
     } catch (error: unknown) {
       if (error instanceof ApiError && error.status === 409) {
         setMensajeError(
@@ -73,7 +68,7 @@ export default function TicketsPagadosEvento() {
     <section className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
       <header className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+          <p className="text-sm font-semibold tracking-wider text-indigo-600 uppercase dark:text-indigo-400">
             Acceso STAFF
           </p>
           <h1 className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">
@@ -144,103 +139,94 @@ export default function TicketsPagadosEvento() {
         </div>
       )}
 
-      {!consulta.isPending &&
-        !consulta.isError &&
-        tickets.length === 0 && (
-          <div className="mt-8 rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center dark:border-slate-700 dark:bg-slate-900">
-            <h2 className="text-xl font-bold text-slate-950 dark:text-white">
-              No hay tickets pagados pendientes
-            </h2>
-            <p className="mt-2 text-slate-600 dark:text-slate-300">
-              No existen entradas pagadas por validar para este
-              evento.
+      {!consulta.isPending && !consulta.isError && tickets.length === 0 && (
+        <div className="mt-8 rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center dark:border-slate-700 dark:bg-slate-900">
+          <h2 className="text-xl font-bold text-slate-950 dark:text-white">
+            No hay tickets pagados pendientes
+          </h2>
+          <p className="mt-2 text-slate-600 dark:text-slate-300">
+            No existen entradas pagadas por validar para este evento.
+          </p>
+        </div>
+      )}
+
+      {!consulta.isPending && !consulta.isError && tickets.length > 0 && (
+        <>
+          <div className="mt-8 rounded-xl border border-indigo-200 bg-indigo-50 px-5 py-4 dark:border-indigo-900 dark:bg-indigo-950">
+            <p className="font-semibold text-indigo-800 dark:text-indigo-200">
+              Pendientes de validación: {tickets.length}
             </p>
           </div>
-        )}
 
-      {!consulta.isPending &&
-        !consulta.isError &&
-        tickets.length > 0 && (
-          <>
-            <div className="mt-8 rounded-xl border border-indigo-200 bg-indigo-50 px-5 py-4 dark:border-indigo-900 dark:bg-indigo-950">
-              <p className="font-semibold text-indigo-800 dark:text-indigo-200">
-                Pendientes de validación: {tickets.length}
-              </p>
-            </div>
+          <div className="mt-5 grid gap-5">
+            {tickets.map((ticket) => (
+              <article
+                key={ticket.ticketCode}
+                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 dark:border-slate-800 dark:bg-slate-900"
+              >
+                <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+                  <dl className="grid min-w-0 flex-1 gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <div>
+                      <dt className="text-sm text-slate-500 dark:text-slate-400">
+                        Código
+                      </dt>
+                      <dd className="mt-1 font-bold break-all text-slate-950 dark:text-white">
+                        {ticket.ticketCode}
+                      </dd>
+                    </div>
 
-            <div className="mt-5 grid gap-5">
-              {tickets.map((ticket) => (
-                <article
-                  key={ticket.ticketCode}
-                  className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-6"
-                >
-                  <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-                    <dl className="grid min-w-0 flex-1 gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-4">
-                      <div>
-                        <dt className="text-sm text-slate-500 dark:text-slate-400">
-                          Código
-                        </dt>
-                        <dd className="mt-1 break-all font-bold text-slate-950 dark:text-white">
-                          {ticket.ticketCode}
-                        </dd>
-                      </div>
+                    <div>
+                      <dt className="text-sm text-slate-500 dark:text-slate-400">
+                        Titular
+                      </dt>
+                      <dd className="mt-1 font-semibold break-all text-slate-950 dark:text-white">
+                        {ticket.userEmail}
+                      </dd>
+                    </div>
 
-                      <div>
-                        <dt className="text-sm text-slate-500 dark:text-slate-400">
-                          Titular
-                        </dt>
-                        <dd className="mt-1 break-all font-semibold text-slate-950 dark:text-white">
-                          {ticket.userEmail}
-                        </dd>
-                      </div>
+                    <div>
+                      <dt className="text-sm text-slate-500 dark:text-slate-400">
+                        Tipo y precio
+                      </dt>
+                      <dd className="mt-1 font-semibold text-slate-950 dark:text-white">
+                        {obtenerEtiquetaTipoTicket(ticket.type)}
+                        {' · '}
+                        {formatearPrecioCOP(ticket.price)}
+                      </dd>
+                    </div>
 
-                      <div>
-                        <dt className="text-sm text-slate-500 dark:text-slate-400">
-                          Tipo y precio
-                        </dt>
-                        <dd className="mt-1 font-semibold text-slate-950 dark:text-white">
-                          {obtenerEtiquetaTipoTicket(ticket.type)}
-                          {' · '}
-                          {formatearPrecioCOP(ticket.price)}
-                        </dd>
-                      </div>
+                    <div>
+                      <dt className="text-sm text-slate-500 dark:text-slate-400">
+                        Compra
+                      </dt>
+                      <dd className="mt-1 font-semibold text-slate-950 dark:text-white">
+                        {formatearFechaCompra(ticket.purchaseDate)}
+                      </dd>
+                    </div>
+                  </dl>
 
-                      <div>
-                        <dt className="text-sm text-slate-500 dark:text-slate-400">
-                          Compra
-                        </dt>
-                        <dd className="mt-1 font-semibold text-slate-950 dark:text-white">
-                          {formatearFechaCompra(
-                            ticket.purchaseDate,
-                          )}
-                        </dd>
-                      </div>
-                    </dl>
-
-                    <Boton
-                      type="button"
-                      className="w-full lg:w-auto lg:flex-shrink-0"
-                      cargando={
-                        codigoProcesando === ticket.ticketCode
-                      }
-                      textoCargando="Validando…"
-                      disabled={
-                        codigoProcesando !== null &&
-                        codigoProcesando !== ticket.ticketCode
-                      }
-                      aria-label={`Validar ingreso de ${ticket.ticketCode}`}
-                      onClick={() => {
-                        void validarTicket(ticket.ticketCode)
-                      }}
-                    >
-                      Validar ingreso
-                    </Boton>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </>
-        )}
+                  <Boton
+                    type="button"
+                    className="w-full lg:w-auto lg:flex-shrink-0"
+                    cargando={codigoProcesando === ticket.ticketCode}
+                    textoCargando="Validando…"
+                    disabled={
+                      codigoProcesando !== null &&
+                      codigoProcesando !== ticket.ticketCode
+                    }
+                    aria-label={`Validar ingreso de ${ticket.ticketCode}`}
+                    onClick={() => {
+                      void validarTicket(ticket.ticketCode)
+                    }}
+                  >
+                    Validar ingreso
+                  </Boton>
+                </div>
+              </article>
+            ))}
+          </div>
+        </>
+      )}
     </section>
   )
 }

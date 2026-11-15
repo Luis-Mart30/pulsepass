@@ -31,10 +31,7 @@ describe('política de reintentos de React Query', () => {
     'no reintenta respuestas HTTP %i',
     (estado) => {
       expect(
-        debeReintentarConsulta(
-          0,
-          new ApiError(estado, 'Error de cliente'),
-        ),
+        debeReintentarConsulta(0, new ApiError(estado, 'Error de cliente')),
       ).toBe(false)
     },
   )
@@ -42,10 +39,7 @@ describe('política de reintentos de React Query', () => {
   it.each([0, 500, 502, 503])(
     'reintenta una sola vez el estado %i',
     (estado) => {
-      const error = new ApiError(
-        estado,
-        'Error recuperable',
-      )
+      const error = new ApiError(estado, 'Error recuperable')
 
       expect(debeReintentarConsulta(0, error)).toBe(true)
       expect(debeReintentarConsulta(1, error)).toBe(false)
@@ -80,9 +74,7 @@ describe('política de reintentos de React Query', () => {
     const cliente = crearClienteDePrueba()
     const consulta = vi
       .fn()
-      .mockRejectedValue(
-        new ApiError(500, 'Error del servidor'),
-      )
+      .mockRejectedValue(new ApiError(500, 'Error del servidor'))
 
     await expect(
       cliente.fetchQuery({
@@ -96,9 +88,7 @@ describe('política de reintentos de React Query', () => {
   })
 
   it('mantiene desactivados los reintentos de mutaciones', () => {
-    expect(
-      queryClient.getDefaultOptions().mutations?.retry,
-    ).toBe(false)
+    expect(queryClient.getDefaultOptions().mutations?.retry).toBe(false)
   })
 })
 
@@ -116,47 +106,27 @@ describe('convenciones de caché del PRD', () => {
   })
 
   it('genera las claves de detalle y colecciones esperadas', () => {
-    expect(clavesEventos.publicados()).toEqual([
-      'eventos',
-      'publicados',
-    ])
-    expect(clavesEventos.detalle('EVT-01')).toEqual([
-      'evento',
-      'EVT-01',
-    ])
+    expect(clavesEventos.publicados()).toEqual(['eventos', 'publicados'])
+    expect(clavesEventos.detalle('EVT-01')).toEqual(['evento', 'EVT-01'])
     expect(clavesEventos.porArtista('Solar Beat')).toEqual([
       'eventos',
       'artista',
       'Solar Beat',
     ])
-    expect(clavesArtistas.activos()).toEqual([
-      'artistas',
-      'activos',
+    expect(clavesArtistas.activos()).toEqual(['artistas', 'activos'])
+    expect(clavesArtistas.detalle(20)).toEqual(['artista', 20])
+    expect(clavesSedes.activas()).toEqual(['sedes', 'activas'])
+    expect(clavesSedes.detalle('VEN-01')).toEqual(['sede', 'VEN-01'])
+    expect(clavesUsuarios.porEmail('user@pulsepass.test')).toEqual([
+      'usuario',
+      'user@pulsepass.test',
     ])
-    expect(clavesArtistas.detalle(20)).toEqual([
-      'artista',
-      20,
-    ])
-    expect(clavesSedes.activas()).toEqual([
-      'sedes',
-      'activas',
-    ])
-    expect(clavesSedes.detalle('VEN-01')).toEqual([
-      'sede',
-      'VEN-01',
-    ])
-    expect(
-      clavesUsuarios.porEmail('user@pulsepass.test'),
-    ).toEqual(['usuario', 'user@pulsepass.test'])
     expect(clavesTickets.porUsuario('user@pulsepass.test')).toEqual([
       'tickets',
       'usuario',
       'user@pulsepass.test',
     ])
-    expect(clavesTickets.detalle('TKT-01')).toEqual([
-      'ticket',
-      'TKT-01',
-    ])
+    expect(clavesTickets.detalle('TKT-01')).toEqual(['ticket', 'TKT-01'])
     expect(clavesTickets.pagadosEvento('EVT-01')).toEqual([
       'tickets',
       'pagados',

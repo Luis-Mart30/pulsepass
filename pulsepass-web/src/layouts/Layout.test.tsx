@@ -1,21 +1,7 @@
-import {
-  render,
-  screen,
-  within,
-} from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import {
-  MemoryRouter,
-  Route,
-  Routes,
-} from 'react-router'
-import {
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
+import { MemoryRouter, Route, Routes } from 'react-router'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Rol } from '../funcionalidades/auth/tipos'
 import Layout from './Layout'
 
@@ -70,18 +56,9 @@ function renderizarLayout(ruta = '/') {
           <Route path="login" element={<h1>Login</h1>} />
           <Route path="registro" element={<h1>Registro</h1>} />
           <Route path="cuenta" element={<h1>Cuenta</h1>} />
-          <Route
-            path="mis-tickets"
-            element={<h1>Mis tickets</h1>}
-          />
-          <Route
-            path="staff/validacion"
-            element={<h1>Validación</h1>}
-          />
-          <Route
-            path="admin/eventos"
-            element={<h1>Administración</h1>}
-          />
+          <Route path="mis-tickets" element={<h1>Mis tickets</h1>} />
+          <Route path="staff/validacion" element={<h1>Validación</h1>} />
+          <Route path="admin/eventos" element={<h1>Administración</h1>} />
         </Route>
       </Routes>
     </MemoryRouter>,
@@ -106,18 +83,18 @@ describe('Layout y navegación por rol', () => {
     expect(
       screen.queryByRole('link', { name: 'Mis tickets' }),
     ).not.toBeInTheDocument()
-    expect(
-      screen.getByRole('link', { name: 'Eventos' }),
-    ).toHaveClass('bg-violet-100')
+    expect(screen.getByRole('link', { name: 'Eventos' })).toHaveClass(
+      'bg-violet-100',
+    )
   })
 
   it('muestra las opciones correspondientes al rol USER', async () => {
     configurarSesion(['USER'])
     renderizarLayout()
 
-    await userEvent.setup().click(
-      screen.getByRole('button', { name: /andrea/i }),
-    )
+    await userEvent
+      .setup()
+      .click(screen.getByRole('button', { name: /andrea/i }))
 
     const menu = screen.getByRole('menu')
     expect(
@@ -153,9 +130,9 @@ describe('Layout y navegación por rol', () => {
       }),
     ).not.toBeInTheDocument()
 
-    await userEvent.setup().click(
-      screen.getByRole('button', { name: /andrea/i }),
-    )
+    await userEvent
+      .setup()
+      .click(screen.getByRole('button', { name: /andrea/i }))
     expect(
       within(screen.getByRole('menu')).queryByRole('menuitem', {
         name: 'Mis tickets',
@@ -189,16 +166,12 @@ describe('Layout y navegación por rol', () => {
     await usuario.keyboard('{Enter}')
 
     expect(boton).toHaveAttribute('aria-expanded', 'true')
-    expect(
-      document.getElementById('menu-movil'),
-    ).toBeInTheDocument()
+    expect(document.getElementById('menu-movil')).toBeInTheDocument()
 
     await usuario.keyboard('{Escape}')
 
     expect(boton).toHaveAttribute('aria-expanded', 'false')
-    expect(
-      document.getElementById('menu-movil'),
-    ).not.toBeInTheDocument()
+    expect(document.getElementById('menu-movil')).not.toBeInTheDocument()
     expect(boton).toHaveFocus()
   })
 
@@ -207,9 +180,7 @@ describe('Layout y navegación por rol', () => {
     renderizarLayout()
     const usuario = userEvent.setup()
 
-    await usuario.click(
-      screen.getByRole('button', { name: /andrea/i }),
-    )
+    await usuario.click(screen.getByRole('button', { name: /andrea/i }))
     await usuario.click(
       within(screen.getByRole('menu')).getByRole('menuitem', {
         name: 'Salir',

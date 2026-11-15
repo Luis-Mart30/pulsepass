@@ -1,11 +1,4 @@
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   obtenerArtistaPorIdApi,
   obtenerArtistaPorNombreApi,
@@ -40,9 +33,7 @@ describe('API pública de artistas', () => {
       }),
     )
 
-    await expect(
-      obtenerArtistasActivosApi(),
-    ).resolves.toEqual([artista])
+    await expect(obtenerArtistasActivosApi()).resolves.toEqual([artista])
 
     expect(fetchMock).toHaveBeenCalledWith(
       '/api/artists/active',
@@ -58,9 +49,7 @@ describe('API pública de artistas', () => {
       }),
     )
 
-    await expect(
-      obtenerArtistaPorIdApi(20),
-    ).resolves.toEqual(artista)
+    await expect(obtenerArtistaPorIdApi(20)).resolves.toEqual(artista)
 
     expect(fetchMock).toHaveBeenCalledWith(
       '/api/artists/20',
@@ -85,9 +74,7 @@ describe('API pública de artistas', () => {
   })
 
   it('rechaza identificadores inválidos antes de consultar', async () => {
-    await expect(
-      obtenerArtistaPorIdApi(0),
-    ).rejects.toBeDefined()
+    await expect(obtenerArtistaPorIdApi(0)).rejects.toBeDefined()
 
     expect(fetchMock).not.toHaveBeenCalled()
   })

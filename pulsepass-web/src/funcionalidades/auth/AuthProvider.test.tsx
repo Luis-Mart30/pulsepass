@@ -1,19 +1,10 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router'
-import {
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryClient } from '../../lib/query-client'
 import { borrarSesion } from './almacenamiento'
-import {
-  iniciarSesionApi,
-  obtenerUsuarioAutenticadoApi,
-} from './api'
+import { iniciarSesionApi, obtenerUsuarioAutenticadoApi } from './api'
 import { AuthProvider } from './AuthProvider'
 import { useAuth } from './useAuth'
 
@@ -23,17 +14,10 @@ vi.mock('./api', () => ({
 }))
 
 const iniciarSesionMock = vi.mocked(iniciarSesionApi)
-const obtenerUsuarioMock = vi.mocked(
-  obtenerUsuarioAutenticadoApi,
-)
+const obtenerUsuarioMock = vi.mocked(obtenerUsuarioAutenticadoApi)
 
 function ObservadorSesion() {
-  const {
-    sesion,
-    iniciarSesion,
-    cerrarSesion,
-    tieneRol,
-  } = useAuth()
+  const { sesion, iniciarSesion, cerrarSesion, tieneRol } = useAuth()
 
   return (
     <>
@@ -106,9 +90,7 @@ describe('AuthProvider', () => {
       }),
     )
 
-    expect(
-      await screen.findByText('autenticado'),
-    ).toBeInTheDocument()
+    expect(await screen.findByText('autenticado')).toBeInTheDocument()
     expect(screen.getByText('es-admin')).toBeInTheDocument()
     expect(sessionStorage.getItem('pulsepass.sesion')).not.toBeNull()
   })

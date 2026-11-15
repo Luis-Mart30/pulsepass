@@ -1,21 +1,7 @@
-import {
-  MemoryRouter,
-  Route,
-  Routes,
-} from 'react-router'
-import {
-  render,
-  screen,
-  waitFor,
-} from '@testing-library/react'
+import { MemoryRouter, Route, Routes } from 'react-router'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import {
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useAuth } from '../funcionalidades/auth/useAuth'
 import { useEventoPorCodigo } from '../funcionalidades/eventos/consultas'
 import type { Evento } from '../funcionalidades/eventos/tipos'
@@ -83,22 +69,13 @@ function renderizarDetalleEvento() {
   return render(
     <MemoryRouter initialEntries={['/eventos/EVT-001']}>
       <Routes>
-        <Route
-          path="/eventos/:eventCode"
-          element={<DetalleEvento />}
-        />
-        <Route
-          path="/login"
-          element={<p>Página de ingreso</p>}
-        />
+        <Route path="/eventos/:eventCode" element={<DetalleEvento />} />
+        <Route path="/login" element={<p>Página de ingreso</p>} />
         <Route
           path="/compra/confirmacion/:ticketCode"
           element={<p>Destino de confirmación</p>}
         />
-        <Route
-          path="/403"
-          element={<p>Sin permisos</p>}
-        />
+        <Route path="/403" element={<p>Sin permisos</p>} />
       </Routes>
     </MemoryRouter>,
   )
@@ -146,9 +123,7 @@ describe('flujo de compra de tickets', () => {
       }),
     )
 
-    expect(
-      screen.getByText('Página de ingreso'),
-    ).toBeInTheDocument()
+    expect(screen.getByText('Página de ingreso')).toBeInTheDocument()
     expect(mutateAsync).not.toHaveBeenCalled()
   })
 
@@ -158,9 +133,7 @@ describe('flujo de compra de tickets', () => {
 
     renderizarDetalleEvento()
 
-    await usuario.click(
-      screen.getByRole('radio', { name: /VIP/i }),
-    )
+    await usuario.click(screen.getByRole('radio', { name: /VIP/i }))
     await usuario.click(
       screen.getByRole('button', {
         name: 'Comprar entrada',
@@ -183,9 +156,7 @@ describe('flujo de compra de tickets', () => {
   it('muestra el conflicto de disponibilidad dentro de la página', async () => {
     const usuario = userEvent.setup()
 
-    mutateAsync.mockRejectedValue(
-      new ApiError(409, 'Sin disponibilidad'),
-    )
+    mutateAsync.mockRejectedValue(new ApiError(409, 'Sin disponibilidad'))
 
     renderizarDetalleEvento()
 
@@ -196,19 +167,13 @@ describe('flujo de compra de tickets', () => {
     )
 
     expect(
-      await screen.findByText(
-        /la disponibilidad del evento cambió/i,
-      ),
+      await screen.findByText(/la disponibilidad del evento cambió/i),
     ).toBeInTheDocument()
   })
 
   it('muestra el resumen de la compra confirmada', () => {
     render(
-      <MemoryRouter
-        initialEntries={[
-          '/compra/confirmacion/TKT-COMPRA-010',
-        ]}
-      >
+      <MemoryRouter initialEntries={['/compra/confirmacion/TKT-COMPRA-010']}>
         <Routes>
           <Route
             path="/compra/confirmacion/:ticketCode"
@@ -224,13 +189,9 @@ describe('flujo de compra de tickets', () => {
       }),
     ).toBeInTheDocument()
 
-    expect(
-      screen.getByText('TKT-COMPRA-010'),
-    ).toBeInTheDocument()
+    expect(screen.getByText('TKT-COMPRA-010')).toBeInTheDocument()
 
-    expect(
-      screen.getByRole('link', { name: 'Ver ticket' }),
-    ).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Ver ticket' })).toHaveAttribute(
       'href',
       '/mis-tickets/TKT-COMPRA-010',
     )

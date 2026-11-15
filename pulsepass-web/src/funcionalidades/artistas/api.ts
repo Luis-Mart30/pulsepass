@@ -10,9 +10,7 @@ export function obtenerArtistasActivosApi(): Promise<Artista[]> {
   return http('/artists/active', ListaArtistasSchema)
 }
 
-export async function obtenerArtistaPorIdApi(
-  id: number,
-): Promise<Artista> {
+export async function obtenerArtistaPorIdApi(id: number): Promise<Artista> {
   const idValidado = IdArtistaSchema.parse(id)
 
   return http(`/artists/${idValidado}`, ArtistaSchema)
@@ -25,8 +23,5 @@ export function obtenerArtistaPorNombreApi(
     stageName: nombreArtistico,
   })
 
-  return http(
-    `/artists/by-stage-name?${parametros.toString()}`,
-    ArtistaSchema,
-  )
+  return http(`/artists/by-stage-name?${parametros.toString()}`, ArtistaSchema)
 }

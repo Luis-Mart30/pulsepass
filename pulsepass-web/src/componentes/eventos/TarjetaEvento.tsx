@@ -10,9 +10,7 @@ interface TarjetaEventoProps {
   evento: ResumenEvento
 }
 
-export function TarjetaEvento({
-  evento,
-}: TarjetaEventoProps) {
+export function TarjetaEvento({ evento }: TarjetaEventoProps) {
   return (
     <article className="h-full">
       <Link

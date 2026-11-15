@@ -21,9 +21,7 @@ const CAMPOS_REGISTRO = new Set<keyof RegistroDatos>([
   'birthDate',
 ])
 
-function esCampoRegistro(
-  campo: string,
-): campo is keyof RegistroDatos {
+function esCampoRegistro(campo: string): campo is keyof RegistroDatos {
   return CAMPOS_REGISTRO.has(campo as keyof RegistroDatos)
 }
 
@@ -67,9 +65,7 @@ function calcularFortaleza(password: string): {
 export default function Registro() {
   const navigate = useNavigate()
   const [mostrarPassword, setMostrarPassword] = useState(false)
-  const [errorGeneral, setErrorGeneral] = useState<string | null>(
-    null,
-  )
+  const [errorGeneral, setErrorGeneral] = useState<string | null>(null)
 
   const {
     control,
@@ -95,9 +91,7 @@ export default function Registro() {
   })
   const fortaleza = calcularFortaleza(password)
 
-  const enviarRegistro = async (
-    datos: RegistroDatos,
-  ): Promise<void> => {
+  const enviarRegistro = async (datos: RegistroDatos): Promise<void> => {
     setErrorGeneral(null)
 
     try {
@@ -112,17 +106,15 @@ export default function Registro() {
         if (error.status === 400) {
           let detalleMapeado = false
 
-          Object.entries(error.details).forEach(
-            ([campo, mensaje]) => {
-              if (esCampoRegistro(campo)) {
-                setError(campo, {
-                  type: 'server',
-                  message: mensaje,
-                })
-                detalleMapeado = true
-              }
-            },
-          )
+          Object.entries(error.details).forEach(([campo, mensaje]) => {
+            if (esCampoRegistro(campo)) {
+              setError(campo, {
+                type: 'server',
+                message: mensaje,
+              })
+              detalleMapeado = true
+            }
+          })
 
           if (!detalleMapeado) {
             setErrorGeneral(
@@ -134,16 +126,12 @@ export default function Registro() {
         }
 
         if (error.status === 409) {
-          setErrorGeneral(
-            'El usuario o correo ya está registrado.',
-          )
+          setErrorGeneral('El usuario o correo ya está registrado.')
           return
         }
       }
 
-      setErrorGeneral(
-        'No fue posible crear la cuenta. Inténtalo nuevamente.',
-      )
+      setErrorGeneral('No fue posible crear la cuenta. Inténtalo nuevamente.')
     }
   }
 
@@ -251,7 +239,7 @@ export default function Registro() {
                     ? 'registro-password-error'
                     : 'registro-password-ayuda'
                 }
-                className="min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 pr-12 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+                className="min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 pr-12 text-slate-900 transition outline-none placeholder:text-slate-400 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
                 {...register('password')}
               />
 
@@ -259,13 +247,9 @@ export default function Registro() {
                 type="button"
                 className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-slate-500 hover:text-indigo-600"
                 aria-label={
-                  mostrarPassword
-                    ? 'Ocultar contraseña'
-                    : 'Mostrar contraseña'
+                  mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
                 }
-                onClick={() =>
-                  setMostrarPassword((actual) => !actual)
-                }
+                onClick={() => setMostrarPassword((actual) => !actual)}
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -298,10 +282,7 @@ export default function Registro() {
               </p>
             )}
 
-            <div
-              className="grid grid-cols-5 gap-1 pt-1"
-              aria-hidden="true"
-            >
+            <div className="grid grid-cols-5 gap-1 pt-1" aria-hidden="true">
               {[1, 2, 3, 4, 5].map((segmento) => (
                 <span
                   key={segmento}

@@ -29,24 +29,21 @@ export default function Inicio() {
   const { sesion } = useAuth()
   const consultaEventos = useEventosPublicados()
   const consultaArtistas = useArtistasActivos()
-  const eventosDestacados =
-    consultaEventos.data?.slice(0, 3) ?? []
-  const artistasDestacados =
-    consultaArtistas.data?.slice(0, 6) ?? []
+  const eventosDestacados = consultaEventos.data?.slice(0, 3) ?? []
+  const artistasDestacados = consultaArtistas.data?.slice(0, 6) ?? []
 
   return (
     <>
       <section className="bg-linear-to-r from-violet-700 to-fuchsia-600 px-4 py-20 text-white sm:px-6 lg:px-8">
         <div className="mx-auto w-full max-w-7xl">
-          <p className="text-sm font-semibold uppercase tracking-wider text-violet-100">
+          <p className="text-sm font-semibold tracking-wider text-violet-100 uppercase">
             Eventos y experiencias
           </p>
           <h1 className="mt-4 max-w-3xl text-4xl font-black sm:text-5xl lg:text-6xl">
             Descubre los mejores eventos
           </h1>
           <p className="mt-5 max-w-2xl text-lg text-violet-50">
-            Música, cultura, deporte y tecnología en un solo
-            lugar.
+            Música, cultura, deporte y tecnología en un solo lugar.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
@@ -70,7 +67,7 @@ export default function Inicio() {
       <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-wider text-violet-600">
+            <p className="text-sm font-semibold tracking-wider text-violet-600 uppercase">
               Próximamente
             </p>
             <h2 className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">
@@ -85,9 +82,7 @@ export default function Inicio() {
           </Link>
         </div>
 
-        {consultaEventos.isPending ? (
-          <Esqueletos cantidad={3} />
-        ) : null}
+        {consultaEventos.isPending ? <Esqueletos cantidad={3} /> : null}
 
         {consultaEventos.isError ? (
           <div
@@ -129,7 +124,7 @@ export default function Inicio() {
         <div className="mx-auto w-full max-w-7xl">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-wider text-violet-600">
+              <p className="text-sm font-semibold tracking-wider text-violet-600 uppercase">
                 Talento en escena
               </p>
               <h2 className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">
@@ -144,9 +139,7 @@ export default function Inicio() {
             </Link>
           </div>
 
-          {consultaArtistas.isPending ? (
-            <Esqueletos cantidad={3} />
-          ) : null}
+          {consultaArtistas.isPending ? <Esqueletos cantidad={3} /> : null}
 
           {consultaArtistas.isError ? (
             <div

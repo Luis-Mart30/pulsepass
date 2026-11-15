@@ -29,25 +29,17 @@ export default function CatalogoEventos() {
     artista: parametros.get('artista') ?? '',
   })
 
-  const consultaPublicados = useEventosPublicados(
-    filtros.artista.length === 0,
-  )
-  const consultaPorArtista = useEventosPorArtista(
-    filtros.artista,
-  )
+  const consultaPublicados = useEventosPublicados(filtros.artista.length === 0)
+  const consultaPorArtista = useEventosPorArtista(filtros.artista)
   const consultaArtistas = useArtistasActivos()
   const consultaEventos =
-    filtros.artista.length > 0
-      ? consultaPorArtista
-      : consultaPublicados
+    filtros.artista.length > 0 ? consultaPorArtista : consultaPublicados
 
   const textoNormalizado = filtros.q.toLocaleLowerCase('es-CO')
   const eventosFiltrados = (consultaEventos.data ?? []).filter(
     (evento) =>
       (textoNormalizado.length === 0 ||
-        evento.name
-          .toLocaleLowerCase('es-CO')
-          .includes(textoNormalizado)) &&
+        evento.name.toLocaleLowerCase('es-CO').includes(textoNormalizado)) &&
       (filtros.categoria === undefined ||
         evento.category === filtros.categoria),
   )
@@ -75,15 +67,15 @@ export default function CatalogoEventos() {
 
   return (
     <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      <p className="text-sm font-semibold uppercase tracking-wider text-violet-600">
+      <p className="text-sm font-semibold tracking-wider text-violet-600 uppercase">
         PulsePass
       </p>
       <h1 className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">
         Catálogo de eventos
       </h1>
       <p className="mt-3 max-w-2xl text-slate-600 dark:text-slate-300">
-        Encuentra experiencias disponibles y consulta toda la
-        información antes de obtener tu entrada.
+        Encuentra experiencias disponibles y consulta toda la información antes
+        de obtener tu entrada.
       </p>
 
       <div
@@ -101,11 +93,9 @@ export default function CatalogoEventos() {
             id="buscar-evento"
             type="search"
             value={filtros.q}
-            onChange={(evento) =>
-              actualizarParametro('q', evento.target.value)
-            }
+            onChange={(evento) => actualizarParametro('q', evento.target.value)}
             placeholder="Nombre del evento"
-            className="min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none transition focus:border-violet-600 focus:ring-2 focus:ring-violet-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+            className="min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 transition outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
           />
         </div>
 
@@ -120,12 +110,9 @@ export default function CatalogoEventos() {
             id="categoria-evento"
             value={filtros.categoria ?? ''}
             onChange={(evento) =>
-              actualizarParametro(
-                'categoria',
-                evento.target.value,
-              )
+              actualizarParametro('categoria', evento.target.value)
             }
-            className="min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none transition focus:border-violet-600 focus:ring-2 focus:ring-violet-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+            className="min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 transition outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
           >
             <option value="">Todas las categorías</option>
             {CATEGORIAS.map((categoria: CategoriaEvento) => (
@@ -150,7 +137,7 @@ export default function CatalogoEventos() {
             onChange={(evento) =>
               actualizarParametro('artista', evento.target.value)
             }
-            className="min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none transition focus:border-violet-600 focus:ring-2 focus:ring-violet-100 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+            className="min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 transition outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-100 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
           >
             <option value="">Todos los artistas</option>
             {(consultaArtistas.data ?? []).map((artista) => (

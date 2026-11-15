@@ -1,9 +1,4 @@
-import {
-  useEffect,
-  useId,
-  useRef,
-  type ReactNode,
-} from 'react'
+import { useEffect, useId, useRef, type ReactNode } from 'react'
 import clsx from 'clsx'
 
 const SELECTOR_ENFOCABLE = [
@@ -52,21 +47,14 @@ export function Modal({
     const obtenerEnfocables = (): HTMLElement[] =>
       dialogo === null
         ? []
-        : Array.from(
-            dialogo.querySelectorAll<HTMLElement>(
-              SELECTOR_ENFOCABLE,
-            ),
-          )
+        : Array.from(dialogo.querySelectorAll<HTMLElement>(SELECTOR_ENFOCABLE))
 
     const enfocables = obtenerEnfocables()
     const objetivoInicial = enfocables[0] ?? dialogo
     objetivoInicial?.focus()
 
     const manejarTeclado = (evento: KeyboardEvent): void => {
-      if (
-        evento.key === 'Escape' &&
-        !bloquearCierreRef.current
-      ) {
+      if (evento.key === 'Escape' && !bloquearCierreRef.current) {
         evento.preventDefault()
         onCerrarRef.current()
         return
@@ -91,10 +79,7 @@ export function Modal({
       ) {
         evento.preventDefault()
         ultimo?.focus()
-      } else if (
-        !evento.shiftKey &&
-        document.activeElement === ultimo
-      ) {
+      } else if (!evento.shiftKey && document.activeElement === ultimo) {
         evento.preventDefault()
         primero?.focus()
       }
@@ -120,10 +105,7 @@ export function Modal({
       className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4"
       role="presentation"
       onMouseDown={(evento) => {
-        if (
-          evento.target === evento.currentTarget &&
-          !bloquearCierre
-        ) {
+        if (evento.target === evento.currentTarget && !bloquearCierre) {
           onCerrar()
         }
       }}

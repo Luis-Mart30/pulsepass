@@ -28,8 +28,7 @@ export const RegistroSchema = z.object({
     .string()
     .min(12, 'La contraseña debe tener al menos 12 caracteres')
     .refine(
-      (password) =>
-        new TextEncoder().encode(password).length <= 72,
+      (password) => new TextEncoder().encode(password).length <= 72,
       'La contraseña no puede superar 72 bytes',
     ),
   firstName: z.string().trim().min(1, 'Ingresa tu nombre'),
@@ -79,12 +78,8 @@ export type LoginDatos = z.infer<typeof LoginSchema>
 export type RegistroDatos = z.infer<typeof RegistroSchema>
 export type Rol = z.infer<typeof RolSchema>
 export type AuthResponse = z.infer<typeof AuthResponseSchema>
-export type UsuarioAutenticado = z.infer<
-  typeof UsuarioAutenticadoSchema
->
-export type UsuarioRegistrado = z.infer<
-  typeof UsuarioRegistradoSchema
->
+export type UsuarioAutenticado = z.infer<typeof UsuarioAutenticadoSchema>
+export type UsuarioRegistrado = z.infer<typeof UsuarioRegistradoSchema>
 export type SesionGuardada = z.infer<typeof SesionGuardadaSchema>
 
 export type Sesion =

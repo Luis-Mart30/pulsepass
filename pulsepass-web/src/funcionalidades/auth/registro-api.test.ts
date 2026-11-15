@@ -1,11 +1,4 @@
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { registrarUsuarioApi } from './api'
 
 describe('API de registro de usuarios', () => {
@@ -50,9 +43,7 @@ describe('API de registro de usuarios', () => {
       ),
     )
 
-    await expect(
-      registrarUsuarioApi(datosRegistro),
-    ).resolves.toMatchObject({
+    await expect(registrarUsuarioApi(datosRegistro)).resolves.toMatchObject({
       id: 10,
       username: 'nuevo_usuario',
       email: 'nuevo@pulsepass.test',
@@ -68,9 +59,7 @@ describe('API de registro de usuarios', () => {
       method: 'POST',
     })
 
-    expect(JSON.parse(String(opciones?.body))).toEqual(
-      datosRegistro,
-    )
+    expect(JSON.parse(String(opciones?.body))).toEqual(datosRegistro)
   })
 
   it('rechaza una contraseña corta antes de consultar la API', () => {

@@ -1,15 +1,6 @@
-import {
-  render,
-  screen,
-} from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import {
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   useMarcarTicketUsado,
   useTicket,
@@ -36,12 +27,15 @@ const mutateAsync = vi.fn()
 const reset = vi.fn()
 
 function configurarTicket(ticket: Ticket) {
-  vi.mocked(useTicket).mockImplementation((codigo) => ({
-    data: codigo.length > 0 ? ticket : undefined,
-    isPending: false,
-    isError: false,
-    error: null,
-  }) as unknown as ReturnType<typeof useTicket>)
+  vi.mocked(useTicket).mockImplementation(
+    (codigo) =>
+      ({
+        data: codigo.length > 0 ? ticket : undefined,
+        isPending: false,
+        isError: false,
+        error: null,
+      }) as unknown as ReturnType<typeof useTicket>,
+  )
 }
 
 async function buscarCodigo() {
@@ -69,17 +63,13 @@ describe('página de validación de ingreso', () => {
       mutateAsync,
       isPending: false,
       reset,
-    } as unknown as ReturnType<
-      typeof useMarcarTicketUsado
-    >)
+    } as unknown as ReturnType<typeof useMarcarTicketUsado>)
   })
 
   it('muestra un ticket pagado como entrada válida', async () => {
     render(<ValidacionIngreso />)
 
-    expect(
-      screen.getByLabelText('Código del ticket'),
-    ).toHaveFocus()
+    expect(screen.getByLabelText('Código del ticket')).toHaveFocus()
 
     await buscarCodigo()
 
@@ -114,10 +104,9 @@ describe('página de validación de ingreso', () => {
   it('permite buscar el ticket con la tecla Enter', async () => {
     render(<ValidacionIngreso />)
 
-    await userEvent.setup().type(
-      screen.getByLabelText('Código del ticket'),
-      'TKT-STAFF-001{Enter}',
-    )
+    await userEvent
+      .setup()
+      .type(screen.getByLabelText('Código del ticket'), 'TKT-STAFF-001{Enter}')
 
     expect(
       screen.getByRole('heading', {
@@ -143,9 +132,7 @@ describe('página de validación de ingreso', () => {
     ).toBeInTheDocument()
 
     expect(
-      screen.getByText(
-        'Este ticket ya fue utilizado anteriormente.',
-      ),
+      screen.getByText('Este ticket ya fue utilizado anteriormente.'),
     ).toBeInTheDocument()
 
     expect(
@@ -171,21 +158,19 @@ describe('página de validación de ingreso', () => {
       }),
     ).toBeInTheDocument()
 
-    expect(
-      screen.getByText(/no permitas el ingreso/i),
-    ).toBeInTheDocument()
+    expect(screen.getByText(/no permitas el ingreso/i)).toBeInTheDocument()
   })
 
   it('muestra ticket no encontrado para una respuesta 404', async () => {
-    vi.mocked(useTicket).mockImplementation((codigo) => ({
-      data: undefined,
-      isPending: false,
-      isError: codigo.length > 0,
-      error:
-        codigo.length > 0
-          ? new ApiError(404, 'No encontrado')
-          : null,
-    }) as unknown as ReturnType<typeof useTicket>)
+    vi.mocked(useTicket).mockImplementation(
+      (codigo) =>
+        ({
+          data: undefined,
+          isPending: false,
+          isError: codigo.length > 0,
+          error: codigo.length > 0 ? new ApiError(404, 'No encontrado') : null,
+        }) as unknown as ReturnType<typeof useTicket>,
+    )
 
     render(<ValidacionIngreso />)
 
@@ -216,22 +201,14 @@ describe('página de validación de ingreso', () => {
       }),
     )
 
-    expect(mutateAsync).toHaveBeenCalledWith(
-      'TKT-STAFF-001',
-    )
+    expect(mutateAsync).toHaveBeenCalledWith('TKT-STAFF-001')
 
     expect(
-      await screen.findByText(
-        'Ingreso validado correctamente.',
-      ),
+      await screen.findByText('Ingreso validado correctamente.'),
     ).toBeInTheDocument()
 
-    expect(
-      screen.getByLabelText('Código del ticket'),
-    ).toHaveValue('')
-    expect(
-      screen.getByLabelText('Código del ticket'),
-    ).toHaveFocus()
+    expect(screen.getByLabelText('Código del ticket')).toHaveValue('')
+    expect(screen.getByLabelText('Código del ticket')).toHaveFocus()
 
     expect(
       screen.getByRole('heading', {
@@ -241,9 +218,7 @@ describe('página de validación de ingreso', () => {
   })
 
   it('muestra el conflicto si el estado cambió al validar', async () => {
-    mutateAsync.mockRejectedValue(
-      new ApiError(409, 'El ticket ya fue usado'),
-    )
+    mutateAsync.mockRejectedValue(new ApiError(409, 'El ticket ya fue usado'))
 
     render(<ValidacionIngreso />)
 
@@ -267,15 +242,15 @@ describe('página de validación de ingreso', () => {
   })
 
   it('muestra sin permisos para una respuesta 403', async () => {
-    vi.mocked(useTicket).mockImplementation((codigo) => ({
-      data: undefined,
-      isPending: false,
-      isError: codigo.length > 0,
-      error:
-        codigo.length > 0
-          ? new ApiError(403, 'Prohibido')
-          : null,
-    }) as unknown as ReturnType<typeof useTicket>)
+    vi.mocked(useTicket).mockImplementation(
+      (codigo) =>
+        ({
+          data: undefined,
+          isPending: false,
+          isError: codigo.length > 0,
+          error: codigo.length > 0 ? new ApiError(403, 'Prohibido') : null,
+        }) as unknown as ReturnType<typeof useTicket>,
+    )
 
     render(<ValidacionIngreso />)
 
@@ -287,9 +262,7 @@ describe('página de validación de ingreso', () => {
       }),
     ).toBeInTheDocument()
     expect(
-      screen.getByText(
-        'No tienes permisos para consultar este ticket.',
-      ),
+      screen.getByText('No tienes permisos para consultar este ticket.'),
     ).toBeInTheDocument()
   })
 })

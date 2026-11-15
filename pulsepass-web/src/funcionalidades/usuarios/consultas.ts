@@ -1,15 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { TIEMPOS_CACHE } from '../../lib/query-client'
-import {
-  obtenerUsuarioPorEmailApi,
-  obtenerUsuarioPorUsernameApi,
-} from './api'
+import { obtenerUsuarioPorEmailApi, obtenerUsuarioPorUsernameApi } from './api'
 
 export const clavesUsuarios = {
-  porEmail: (email: string) =>
-    ['usuario', email] as const,
-  porUsername: (username: string) =>
-    ['usuario', 'username', username] as const,
+  porEmail: (email: string) => ['usuario', email] as const,
+  porUsername: (username: string) => ['usuario', 'username', username] as const,
 }
 
 export function useUsuarioPorUsername(username: string) {

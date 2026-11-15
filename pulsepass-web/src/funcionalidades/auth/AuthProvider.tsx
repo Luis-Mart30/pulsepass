@@ -6,21 +6,11 @@ import {
   type PropsWithChildren,
 } from 'react'
 import { useNavigate } from 'react-router'
-import {
-  establecerManejador401,
-  establecerTokenHttp,
-} from '../../lib/http'
+import { establecerManejador401, establecerTokenHttp } from '../../lib/http'
 import { queryClient } from '../../lib/query-client'
 import { RUTAS } from '../../lib/rutas'
-import {
-  borrarSesion,
-  guardarSesion,
-  leerSesion,
-} from './almacenamiento'
-import {
-  iniciarSesionApi,
-  obtenerUsuarioAutenticadoApi,
-} from './api'
+import { borrarSesion, guardarSesion, leerSesion } from './almacenamiento'
+import { iniciarSesionApi, obtenerUsuarioAutenticadoApi } from './api'
 import { AuthContext, type AuthContextValue } from './AuthContext'
 import type { LoginDatos, Rol, Sesion } from './tipos'
 
@@ -61,8 +51,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const iniciarSesion = useCallback(
     async (datos: LoginDatos): Promise<void> => {
       const autenticacion = await iniciarSesionApi(datos)
-      const expiraEn =
-        Date.now() + autenticacion.expiresIn * 1_000
+      const expiraEn = Date.now() + autenticacion.expiresIn * 1_000
 
       establecerTokenHttp(autenticacion.accessToken)
 
@@ -170,9 +159,5 @@ export function AuthProvider({ children }: PropsWithChildren) {
     [cerrarSesion, iniciarSesion, sesion, tieneRol],
   )
 
-  return (
-    <AuthContext.Provider value={valor}>
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={valor}>{children}</AuthContext.Provider>
 }

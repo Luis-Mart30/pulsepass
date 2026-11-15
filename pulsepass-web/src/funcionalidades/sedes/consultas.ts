@@ -1,15 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { TIEMPOS_CACHE } from '../../lib/query-client'
-import {
-  obtenerSedePorCodigoApi,
-  obtenerSedesActivasApi,
-} from './api'
+import { obtenerSedePorCodigoApi, obtenerSedesActivasApi } from './api'
 
 export const clavesSedes = {
   todas: ['sedes'] as const,
   activas: () => [...clavesSedes.todas, 'activas'] as const,
-  detalle: (codigo: string) =>
-    ['sede', codigo] as const,
+  detalle: (codigo: string) => ['sede', codigo] as const,
 }
 
 export function useSedesActivas() {

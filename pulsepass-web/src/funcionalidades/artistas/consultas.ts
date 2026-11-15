@@ -8,10 +8,8 @@ import {
 
 export const clavesArtistas = {
   todos: ['artistas'] as const,
-  activos: () =>
-    [...clavesArtistas.todos, 'activos'] as const,
-  detalle: (id: number) =>
-    ['artista', id] as const,
+  activos: () => [...clavesArtistas.todos, 'activos'] as const,
+  detalle: (id: number) => ['artista', id] as const,
   nombre: (nombreArtistico: string) =>
     ['artista', 'nombre', nombreArtistico] as const,
 }
@@ -33,13 +31,10 @@ export function useArtistaPorId(id: number | null) {
   })
 }
 
-export function useArtistaPorNombre(
-  nombreArtistico: string,
-) {
+export function useArtistaPorNombre(nombreArtistico: string) {
   return useQuery({
     queryKey: clavesArtistas.nombre(nombreArtistico),
-    queryFn: () =>
-      obtenerArtistaPorNombreApi(nombreArtistico),
+    queryFn: () => obtenerArtistaPorNombreApi(nombreArtistico),
     enabled: nombreArtistico.trim().length > 0,
     staleTime: TIEMPOS_CACHE.artistas,
   })

@@ -22,20 +22,14 @@ export default function DetalleSede() {
 
   if (consulta.isError) {
     const noEncontrada =
-      consulta.error instanceof ApiError &&
-      consulta.error.status === 404
+      consulta.error instanceof ApiError && consulta.error.status === 404
 
     return (
       <section className="mx-auto w-full max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-bold text-slate-950 dark:text-white">
-          {noEncontrada
-            ? 'Sede no encontrada'
-            : 'No pudimos cargar la sede'}
+          {noEncontrada ? 'Sede no encontrada' : 'No pudimos cargar la sede'}
         </h1>
-        <p
-          role="alert"
-          className="mt-4 text-slate-600 dark:text-slate-300"
-        >
+        <p role="alert" className="mt-4 text-slate-600 dark:text-slate-300">
           {noEncontrada
             ? 'La sede solicitada no existe o ya no está disponible.'
             : 'Ocurrió un problema al consultar la información. Intenta nuevamente.'}
@@ -64,7 +58,7 @@ export default function DetalleSede() {
       <article className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
         <div className="p-6 sm:p-10">
           <div className="flex flex-wrap items-center gap-3">
-            <p className="text-sm font-semibold uppercase tracking-wider text-violet-600">
+            <p className="text-sm font-semibold tracking-wider text-violet-600 uppercase">
               {sede.city}
             </p>
             <span

@@ -34,17 +34,14 @@ const CamposResumenEventoSchema = z.object({
   venueName: z.string().min(1),
 })
 
-export const ResumenEventoSchema =
-  CamposResumenEventoSchema
+export const ResumenEventoSchema = CamposResumenEventoSchema
 
 export const EventoSchema = CamposResumenEventoSchema.extend({
   description: z.string().max(1000).nullable(),
   artists: z.array(ArtistaSchema),
 })
 
-export const ListaResumenEventosSchema = z.array(
-  ResumenEventoSchema,
-)
+export const ListaResumenEventosSchema = z.array(ResumenEventoSchema)
 
 export const CrearEventoSchema = z.object({
   eventCode: z.string().trim().min(1),
@@ -56,16 +53,8 @@ export const CrearEventoSchema = z.object({
   venueCode: z.string().trim().min(1),
 })
 
-export type CategoriaEvento = z.infer<
-  typeof CategoriaEventoSchema
->
-export type EstadoEvento = z.infer<
-  typeof EstadoEventoSchema
->
-export type ResumenEvento = z.infer<
-  typeof ResumenEventoSchema
->
+export type CategoriaEvento = z.infer<typeof CategoriaEventoSchema>
+export type EstadoEvento = z.infer<typeof EstadoEventoSchema>
+export type ResumenEvento = z.infer<typeof ResumenEventoSchema>
 export type Evento = z.infer<typeof EventoSchema>
-export type CrearEventoDatos = z.infer<
-  typeof CrearEventoSchema
->
+export type CrearEventoDatos = z.infer<typeof CrearEventoSchema>

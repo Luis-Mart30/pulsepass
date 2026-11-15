@@ -1,20 +1,7 @@
-import {
-  MemoryRouter,
-  Route,
-  Routes,
-} from 'react-router'
-import {
-  render,
-  screen,
-} from '@testing-library/react'
+import { MemoryRouter, Route, Routes } from 'react-router'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import {
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   useMarcarTicketUsado,
   useTicketsPagados,
@@ -64,11 +51,7 @@ function configurarConsulta(datos: Ticket[]) {
 
 function renderizarPagina() {
   return render(
-    <MemoryRouter
-      initialEntries={[
-        '/staff/eventos/EVT-001/tickets',
-      ]}
-    >
+    <MemoryRouter initialEntries={['/staff/eventos/EVT-001/tickets']}>
       <Routes>
         <Route
           path="/staff/eventos/:eventCode/tickets"
@@ -87,28 +70,18 @@ describe('tickets pagados de un evento', () => {
     vi.mocked(useMarcarTicketUsado).mockReturnValue({
       mutateAsync,
       isPending: false,
-    } as unknown as ReturnType<
-      typeof useMarcarTicketUsado
-    >)
+    } as unknown as ReturnType<typeof useMarcarTicketUsado>)
   })
 
   it('muestra los tickets pagados pendientes', () => {
     renderizarPagina()
 
-    expect(
-      screen.getByText('Festival del Caribe'),
-    ).toBeInTheDocument()
+    expect(screen.getByText('Festival del Caribe')).toBeInTheDocument()
 
-    expect(
-      screen.getByText('TKT-PAID-001'),
-    ).toBeInTheDocument()
-    expect(
-      screen.getByText('TKT-PAID-002'),
-    ).toBeInTheDocument()
+    expect(screen.getByText('TKT-PAID-001')).toBeInTheDocument()
+    expect(screen.getByText('TKT-PAID-002')).toBeInTheDocument()
 
-    expect(
-      screen.getByText('Pendientes de validación: 2'),
-    ).toBeInTheDocument()
+    expect(screen.getByText('Pendientes de validación: 2')).toBeInTheDocument()
   })
 
   it('muestra el estado vacío', () => {
@@ -160,31 +133,21 @@ describe('tickets pagados de un evento', () => {
       }),
     )
 
-    expect(mutateAsync).toHaveBeenCalledWith(
-      'TKT-PAID-001',
-    )
+    expect(mutateAsync).toHaveBeenCalledWith('TKT-PAID-001')
 
     expect(
-      await screen.findByText(
-        'Ticket TKT-PAID-001 validado correctamente.',
-      ),
+      await screen.findByText('Ticket TKT-PAID-001 validado correctamente.'),
     ).toBeInTheDocument()
 
-    expect(
-      screen.queryByText('TKT-PAID-001'),
-    ).not.toBeInTheDocument()
+    expect(screen.queryByText('TKT-PAID-001')).not.toBeInTheDocument()
 
-    expect(
-      screen.getByText('Pendientes de validación: 1'),
-    ).toBeInTheDocument()
+    expect(screen.getByText('Pendientes de validación: 1')).toBeInTheDocument()
   })
 
   it('conserva el ticket cuando la validación responde 409', async () => {
     const usuario = userEvent.setup()
 
-    mutateAsync.mockRejectedValue(
-      new ApiError(409, 'El estado cambió'),
-    )
+    mutateAsync.mockRejectedValue(new ApiError(409, 'El estado cambió'))
 
     renderizarPagina()
 
@@ -195,13 +158,9 @@ describe('tickets pagados de un evento', () => {
     )
 
     expect(
-      await screen.findByText(
-        /el ticket ya fue utilizado o su estado cambió/i,
-      ),
+      await screen.findByText(/el ticket ya fue utilizado o su estado cambió/i),
     ).toBeInTheDocument()
 
-    expect(
-      screen.getByText('TKT-PAID-001'),
-    ).toBeInTheDocument()
+    expect(screen.getByText('TKT-PAID-001')).toBeInTheDocument()
   })
 })

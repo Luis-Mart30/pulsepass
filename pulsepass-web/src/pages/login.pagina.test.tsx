@@ -1,17 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import {
-  MemoryRouter,
-  Route,
-  Routes,
-} from 'react-router'
-import {
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
+import { MemoryRouter, Route, Routes } from 'react-router'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   AuthContext,
   type AuthContextValue,
@@ -28,9 +18,7 @@ const contexto: AuthContextValue = {
   tieneRol: () => false,
 }
 
-function renderizarLogin(
-  estado?: Record<string, unknown>,
-) {
+function renderizarLogin(estado?: Record<string, unknown>) {
   return render(
     <AuthContext.Provider value={contexto}>
       <MemoryRouter
@@ -43,10 +31,7 @@ function renderizarLogin(
       >
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route
-            path="/destino"
-            element={<p>Página privada</p>}
-          />
+          <Route path="/destino" element={<p>Página privada</p>} />
           <Route path="/" element={<p>Inicio</p>} />
         </Routes>
       </MemoryRouter>
@@ -57,14 +42,8 @@ function renderizarLogin(
 async function completarLogin() {
   const usuario = userEvent.setup()
 
-  await usuario.type(
-    screen.getByLabelText('Usuario o correo'),
-    'andrea',
-  )
-  await usuario.type(
-    screen.getByLabelText('Contraseña'),
-    'Contraseña123',
-  )
+  await usuario.type(screen.getByLabelText('Usuario o correo'), 'andrea')
+  await usuario.type(screen.getByLabelText('Contraseña'), 'Contraseña123')
 
   return usuario
 }
@@ -79,9 +58,7 @@ describe('página de inicio de sesión', () => {
 
     renderizarLogin()
 
-    await usuario.click(
-      screen.getByRole('button', { name: 'Ingresar' }),
-    )
+    await usuario.click(screen.getByRole('button', { name: 'Ingresar' }))
 
     expect(
       await screen.findByText('Ingresa tu usuario o correo'),
@@ -95,13 +72,9 @@ describe('página de inicio de sesión', () => {
     renderizarLogin({ desde: '/destino' })
     const usuario = await completarLogin()
 
-    await usuario.click(
-      screen.getByRole('button', { name: 'Ingresar' }),
-    )
+    await usuario.click(screen.getByRole('button', { name: 'Ingresar' }))
 
-    expect(
-      await screen.findByText('Página privada'),
-    ).toBeInTheDocument()
+    expect(await screen.findByText('Página privada')).toBeInTheDocument()
 
     expect(iniciarSesion).toHaveBeenCalledWith({
       identifier: 'andrea',
@@ -110,16 +83,12 @@ describe('página de inicio de sesión', () => {
   })
 
   it('muestra un mensaje genérico para un error 401', async () => {
-    iniciarSesion.mockRejectedValue(
-      new ApiError(401, 'Usuario inexistente'),
-    )
+    iniciarSesion.mockRejectedValue(new ApiError(401, 'Usuario inexistente'))
 
     renderizarLogin()
     const usuario = await completarLogin()
 
-    await usuario.click(
-      screen.getByRole('button', { name: 'Ingresar' }),
-    )
+    await usuario.click(screen.getByRole('button', { name: 'Ingresar' }))
 
     expect(
       await screen.findByText('Credenciales inválidas.'),

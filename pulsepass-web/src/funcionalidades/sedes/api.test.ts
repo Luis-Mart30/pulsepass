@@ -1,16 +1,6 @@
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ApiError } from '../../lib/http'
-import {
-  obtenerSedePorCodigoApi,
-  obtenerSedesActivasApi,
-} from './api'
+import { obtenerSedePorCodigoApi, obtenerSedesActivasApi } from './api'
 
 describe('API pública de sedes', () => {
   const fetchMock = vi.fn<typeof fetch>()
@@ -80,9 +70,7 @@ describe('API pública de sedes', () => {
       ),
     )
 
-    await expect(
-      obtenerSedePorCodigoApi('VEN COSTA'),
-    ).resolves.toMatchObject({
+    await expect(obtenerSedePorCodigoApi('VEN COSTA')).resolves.toMatchObject({
       id: 2,
       code: 'VEN COSTA',
     })
@@ -108,9 +96,9 @@ describe('API pública de sedes', () => {
       ),
     )
 
-    await expect(
-      obtenerSedePorCodigoApi('VEN-001'),
-    ).rejects.toBeInstanceOf(ApiError)
+    await expect(obtenerSedePorCodigoApi('VEN-001')).rejects.toBeInstanceOf(
+      ApiError,
+    )
   })
 
   it('rechaza una capacidad negativa', async () => {
@@ -132,9 +120,7 @@ describe('API pública de sedes', () => {
       ),
     )
 
-    await expect(
-      obtenerSedePorCodigoApi('VEN-001'),
-    ).rejects.toMatchObject({
+    await expect(obtenerSedePorCodigoApi('VEN-001')).rejects.toMatchObject({
       status: 500,
     })
   })

@@ -11,9 +11,7 @@ import {
 const CodigoSchema = z.string().trim().min(1)
 const EmailSchema = z.email()
 
-export function comprarTicketApi(
-  datos: CompraTicketDatos,
-): Promise<Ticket> {
+export function comprarTicketApi(datos: CompraTicketDatos): Promise<Ticket> {
   const datosValidados = CompraTicketSchema.parse(datos)
 
   return http('/tickets', TicketSchema, {
@@ -22,20 +20,13 @@ export function comprarTicketApi(
   })
 }
 
-export function obtenerTicketPorCodigoApi(
-  ticketCode: string,
-): Promise<Ticket> {
+export function obtenerTicketPorCodigoApi(ticketCode: string): Promise<Ticket> {
   const codigo = CodigoSchema.parse(ticketCode)
 
-  return http(
-    `/tickets/${encodeURIComponent(codigo)}`,
-    TicketSchema,
-  )
+  return http(`/tickets/${encodeURIComponent(codigo)}`, TicketSchema)
 }
 
-export function obtenerTicketsPorUsuarioApi(
-  email: string,
-): Promise<Ticket[]> {
+export function obtenerTicketsPorUsuarioApi(email: string): Promise<Ticket[]> {
   const emailValidado = EmailSchema.parse(email)
 
   return http(
@@ -55,26 +46,18 @@ export function obtenerTicketsPagadosPorEventoApi(
   )
 }
 
-export function cancelarTicketApi(
-  ticketCode: string,
-): Promise<Ticket> {
+export function cancelarTicketApi(ticketCode: string): Promise<Ticket> {
   const codigo = CodigoSchema.parse(ticketCode)
 
-  return http(
-    `/tickets/${encodeURIComponent(codigo)}/cancel`,
-    TicketSchema,
-    { method: 'PATCH' },
-  )
+  return http(`/tickets/${encodeURIComponent(codigo)}/cancel`, TicketSchema, {
+    method: 'PATCH',
+  })
 }
 
-export function marcarTicketUsadoApi(
-  ticketCode: string,
-): Promise<Ticket> {
+export function marcarTicketUsadoApi(ticketCode: string): Promise<Ticket> {
   const codigo = CodigoSchema.parse(ticketCode)
 
-  return http(
-    `/tickets/${encodeURIComponent(codigo)}/use`,
-    TicketSchema,
-    { method: 'PATCH' },
-  )
+  return http(`/tickets/${encodeURIComponent(codigo)}/use`, TicketSchema, {
+    method: 'PATCH',
+  })
 }

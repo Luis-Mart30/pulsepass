@@ -1,8 +1,9 @@
 import { z, type ZodType } from 'zod'
 
-const API_BASE_URL = (
-  import.meta.env.VITE_API_BASE_URL ?? '/api'
-).replace(/\/$/, '')
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? '/api').replace(
+  /\/$/,
+  '',
+)
 
 export const ErrorResponseSchema = z.object({
   timestamp: z.string(),
@@ -37,15 +38,11 @@ export function establecerTokenHttp(token: string | null): void {
   tokenActual = token
 }
 
-export function establecerManejador401(
-  manejador: () => void,
-): void {
+export function establecerManejador401(manejador: () => void): void {
   manejarNoAutorizado = manejador
 }
 
-async function crearApiError(
-  respuesta: Response,
-): Promise<ApiError> {
+async function crearApiError(respuesta: Response): Promise<ApiError> {
   try {
     const cuerpo: unknown = await respuesta.json()
     const resultado = ErrorResponseSchema.safeParse(cuerpo)
@@ -77,10 +74,7 @@ export async function http<T>(
 
   headers.set('Accept', 'application/json')
 
-  if (
-    opciones.body !== undefined &&
-    !(opciones.body instanceof FormData)
-  ) {
+  if (opciones.body !== undefined && !(opciones.body instanceof FormData)) {
     headers.set('Content-Type', 'application/json')
   }
 
@@ -95,10 +89,7 @@ export async function http<T>(
     })
 
     if (!respuesta.ok) {
-      if (
-        respuesta.status === 401 &&
-        configuracion.manejar401 !== false
-      ) {
+      if (respuesta.status === 401 && configuracion.manejar401 !== false) {
         manejarNoAutorizado()
       }
 
@@ -106,9 +97,7 @@ export async function http<T>(
     }
 
     const cuerpo: unknown =
-      respuesta.status === 204
-        ? undefined
-        : await respuesta.json()
+      respuesta.status === 204 ? undefined : await respuesta.json()
 
     const resultado = esquema.safeParse(cuerpo)
 
@@ -125,9 +114,6 @@ export async function http<T>(
       throw error
     }
 
-    throw new ApiError(
-      0,
-      'No se pudo contactar el servidor.',
-    )
+    throw new ApiError(0, 'No se pudo contactar el servidor.')
   }
 }

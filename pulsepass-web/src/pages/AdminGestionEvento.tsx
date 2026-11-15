@@ -1,9 +1,5 @@
 import { useMemo, useState } from 'react'
-import {
-  Link,
-  useLocation,
-  useParams,
-} from 'react-router'
+import { Link, useLocation, useParams } from 'react-router'
 import { Boton } from '../componentes/Boton'
 import { Modal } from '../componentes/Modal'
 import { useArtistasActivos } from '../funcionalidades/artistas/consultas'
@@ -13,10 +9,7 @@ import {
   usePublicarEvento,
 } from '../funcionalidades/eventos/consultas'
 import type { EstadoEvento } from '../funcionalidades/eventos/tipos'
-import {
-  formatearFechaEvento,
-  obtenerEtiquetaCategoria,
-} from '../lib/formatos'
+import { formatearFechaEvento, obtenerEtiquetaCategoria } from '../lib/formatos'
 import { ApiError } from '../lib/http'
 import { RUTAS } from '../lib/rutas'
 
@@ -41,25 +34,20 @@ export default function AdminGestionEvento() {
   const publicar = usePublicarEvento()
 
   const [artistaId, setArtistaId] = useState('')
-  const [confirmarPublicacion, setConfirmarPublicacion] =
-    useState(false)
+  const [confirmarPublicacion, setConfirmarPublicacion] = useState(false)
   const [mensaje, setMensaje] = useState<string | null>(
     (location.state as EstadoNavegacion | null)?.creado === true
       ? 'El evento fue creado como borrador.'
       : null,
   )
-  const [errorAccion, setErrorAccion] = useState<string | null>(
-    null,
-  )
+  const [errorAccion, setErrorAccion] = useState<string | null>(null)
 
   const artistasDisponibles = useMemo(() => {
     const asociados = new Set(
       evento.data?.artists.map((artista) => artista.id) ?? [],
     )
 
-    return (artistas.data ?? []).filter(
-      (artista) => !asociados.has(artista.id),
-    )
+    return (artistas.data ?? []).filter((artista) => !asociados.has(artista.id))
   }, [artistas.data, evento.data?.artists])
 
   const asociarArtista = async (): Promise<void> => {
@@ -88,9 +76,7 @@ export default function AdminGestionEvento() {
         return
       }
 
-      setErrorAccion(
-        'No fue posible asociar el artista. Inténtalo nuevamente.',
-      )
+      setErrorAccion('No fue posible asociar el artista. Inténtalo nuevamente.')
     }
   }
 
@@ -110,9 +96,7 @@ export default function AdminGestionEvento() {
         return
       }
 
-      setErrorAccion(
-        'No fue posible publicar el evento. Inténtalo nuevamente.',
-      )
+      setErrorAccion('No fue posible publicar el evento. Inténtalo nuevamente.')
     }
   }
 
@@ -157,7 +141,7 @@ export default function AdminGestionEvento() {
           >
             ← Volver a eventos
           </Link>
-          <p className="mt-6 font-semibold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400">
+          <p className="mt-6 font-semibold tracking-[0.2em] text-indigo-600 uppercase dark:text-indigo-400">
             Gestión administrativa
           </p>
           <h1 className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">
@@ -204,17 +188,13 @@ export default function AdminGestionEvento() {
           </p>
         </div>
         <div>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Fecha
-          </p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Fecha</p>
           <p className="mt-1 font-semibold text-slate-950 dark:text-white">
             {formatearFechaEvento(datos.eventDate)}
           </p>
         </div>
         <div>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Sede
-          </p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Sede</p>
           <p className="mt-1 font-semibold text-slate-950 dark:text-white">
             {datos.venueName}
           </p>
@@ -290,10 +270,7 @@ export default function AdminGestionEvento() {
                   : 'Selecciona un artista'}
               </option>
               {artistasDisponibles.map((artista) => (
-                <option
-                  key={artista.id}
-                  value={String(artista.id)}
-                >
+                <option key={artista.id} value={String(artista.id)}>
                   {artista.stageName}
                 </option>
               ))}
@@ -304,8 +281,7 @@ export default function AdminGestionEvento() {
               cargando={agregarArtista.isPending}
               textoCargando="Asociando..."
               disabled={
-                artistaId.length === 0 ||
-                artistasDisponibles.length === 0
+                artistaId.length === 0 || artistasDisponibles.length === 0
               }
               onClick={() => void asociarArtista()}
               className="w-full"
@@ -320,8 +296,7 @@ export default function AdminGestionEvento() {
             Publicación
           </h2>
           <p className="mt-3 text-slate-600 dark:text-slate-300">
-            Al publicar, el evento quedará visible en el catálogo
-            público.
+            Al publicar, el evento quedará visible en el catálogo público.
           </p>
 
           {!puedePublicar ? (
@@ -349,8 +324,7 @@ export default function AdminGestionEvento() {
           bloquearCierre={publicar.isPending}
         >
           <p className="mt-3 text-slate-600 dark:text-slate-300">
-            El evento aparecerá inmediatamente en el catálogo
-            público.
+            El evento aparecerá inmediatamente en el catálogo público.
           </p>
 
           <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">

@@ -1,14 +1,6 @@
 import clsx from 'clsx'
-import {
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
-import {
-  NavLink,
-  Outlet,
-  type NavLinkRenderProps,
-} from 'react-router'
+import { useEffect, useRef, useState } from 'react'
+import { NavLink, Outlet, type NavLinkRenderProps } from 'react-router'
 import { useAuth } from '../funcionalidades/auth/useAuth'
 import { RUTAS } from '../lib/rutas'
 
@@ -33,10 +25,8 @@ export default function Layout() {
   const { sesion, cerrarSesion, tieneRol } = useAuth()
   const botonMenuMovilRef = useRef<HTMLButtonElement>(null)
   const botonUsuarioRef = useRef<HTMLButtonElement>(null)
-  const [menuMovilAbierto, setMenuMovilAbierto] =
-    useState(false)
-  const [menuUsuarioAbierto, setMenuUsuarioAbierto] =
-    useState(false)
+  const [menuMovilAbierto, setMenuMovilAbierto] = useState(false)
+  const [menuUsuarioAbierto, setMenuUsuarioAbierto] = useState(false)
 
   const autenticado = sesion.estado === 'autenticado'
   const username = autenticado ? sesion.usuario.username : ''
@@ -82,11 +72,7 @@ export default function Layout() {
 
   const enlacesPublicos = (
     <>
-      <NavLink
-        to={RUTAS.EVENTOS}
-        className={claseEnlace}
-        onClick={cerrarMenus}
-      >
+      <NavLink to={RUTAS.EVENTOS} className={claseEnlace} onClick={cerrarMenus}>
         Eventos
       </NavLink>
       <NavLink
@@ -96,11 +82,7 @@ export default function Layout() {
       >
         Artistas
       </NavLink>
-      <NavLink
-        to={RUTAS.SEDES}
-        className={claseEnlace}
-        onClick={cerrarMenus}
-      >
+      <NavLink to={RUTAS.SEDES} className={claseEnlace} onClick={cerrarMenus}>
         Sedes
       </NavLink>
     </>
@@ -163,14 +145,10 @@ export default function Layout() {
                 ? 'Cerrar menú principal'
                 : 'Abrir menú principal'
             }
-            onClick={() =>
-              setMenuMovilAbierto((abierto) => !abierto)
-            }
+            onClick={() => setMenuMovilAbierto((abierto) => !abierto)}
             className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-slate-300 text-xl text-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 md:hidden dark:border-slate-700 dark:text-slate-200"
           >
-            <span aria-hidden="true">
-              {menuMovilAbierto ? '×' : '☰'}
-            </span>
+            <span aria-hidden="true">{menuMovilAbierto ? '×' : '☰'}</span>
           </button>
 
           <div className="hidden items-center gap-1 md:flex">
@@ -202,11 +180,7 @@ export default function Layout() {
                   aria-expanded={menuUsuarioAbierto}
                   aria-haspopup="menu"
                   aria-controls="menu-usuario"
-                  onClick={() =>
-                    setMenuUsuarioAbierto(
-                      (abierto) => !abierto,
-                    )
-                  }
+                  onClick={() => setMenuUsuarioAbierto((abierto) => !abierto)}
                   className="flex min-h-11 items-center gap-2 rounded-lg px-2 text-sm font-semibold text-slate-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 dark:text-slate-100"
                 >
                   <span

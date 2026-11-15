@@ -11,9 +11,7 @@ export default function ListaSedes() {
         className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8"
         aria-live="polite"
       >
-        <p className="text-slate-600 dark:text-slate-300">
-          Cargando sedes…
-        </p>
+        <p className="text-slate-600 dark:text-slate-300">Cargando sedes…</p>
       </section>
     )
   }
@@ -36,7 +34,7 @@ export default function ListaSedes() {
 
   return (
     <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      <p className="text-sm font-semibold uppercase tracking-wider text-violet-600">
+      <p className="text-sm font-semibold tracking-wider text-violet-600 uppercase">
         PulsePass
       </p>
       <h1 className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">
@@ -70,8 +68,7 @@ export default function ListaSedes() {
                   {sede.address}
                 </p>
                 <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-                  Capacidad:{' '}
-                  {sede.capacity.toLocaleString('es-CO')} personas
+                  Capacidad: {sede.capacity.toLocaleString('es-CO')} personas
                 </p>
 
                 <Link

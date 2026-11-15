@@ -1,11 +1,4 @@
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   cancelarTicketApi,
   comprarTicketApi,
@@ -27,10 +20,7 @@ const ticketRespuesta = {
   eventName: 'Caribbean Music Fest 2026',
 }
 
-function respuestaJson(
-  cuerpo: unknown,
-  status = 200,
-): Response {
+function respuestaJson(cuerpo: unknown, status = 200): Response {
   return new Response(JSON.stringify(cuerpo), {
     status,
     headers: { 'Content-Type': 'application/json' },
@@ -50,9 +40,7 @@ describe('API de tickets', () => {
   })
 
   it('compra un ticket', async () => {
-    fetchMock.mockResolvedValue(
-      respuestaJson(ticketRespuesta, 201),
-    )
+    fetchMock.mockResolvedValue(respuestaJson(ticketRespuesta, 201))
 
     await expect(
       comprarTicketApi({
@@ -90,13 +78,9 @@ describe('API de tickets', () => {
   })
 
   it('obtiene los tickets del usuario', async () => {
-    fetchMock.mockResolvedValue(
-      respuestaJson([ticketRespuesta]),
-    )
+    fetchMock.mockResolvedValue(respuestaJson([ticketRespuesta]))
 
-    await obtenerTicketsPorUsuarioApi(
-      'andrea@pulsepass.test',
-    )
+    await obtenerTicketsPorUsuarioApi('andrea@pulsepass.test')
 
     expect(fetchMock).toHaveBeenCalledWith(
       '/api/tickets/by-user?email=andrea%40pulsepass.test',
@@ -105,9 +89,7 @@ describe('API de tickets', () => {
   })
 
   it('obtiene los tickets pagados del evento', async () => {
-    fetchMock.mockResolvedValue(
-      respuestaJson([ticketRespuesta]),
-    )
+    fetchMock.mockResolvedValue(respuestaJson([ticketRespuesta]))
 
     await obtenerTicketsPagadosPorEventoApi('CMF-2026')
 

@@ -8,6 +8,4 @@ export interface AuthContextValue {
   tieneRol: (...roles: Rol[]) => boolean
 }
 
-export const AuthContext = createContext<AuthContextValue | null>(
-  null,
-)
+export const AuthContext = createContext<AuthContextValue | null>(null)

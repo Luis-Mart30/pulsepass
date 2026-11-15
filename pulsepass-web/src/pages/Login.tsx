@@ -1,18 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import {
-  Link,
-  useLocation,
-  useNavigate,
-} from 'react-router'
+import { Link, useLocation, useNavigate } from 'react-router'
 import { Boton } from '../componentes/Boton'
 import { Campo } from '../componentes/Campo'
 import { useAuth } from '../funcionalidades/auth/useAuth'
-import {
-  LoginSchema,
-  type LoginDatos,
-} from '../funcionalidades/auth/tipos'
+import { LoginSchema, type LoginDatos } from '../funcionalidades/auth/tipos'
 import { ApiError } from '../lib/http'
 import { RUTAS } from '../lib/rutas'
 
@@ -35,10 +28,7 @@ function obtenerDestino(estado: EstadoLogin | null): string {
     return desde
   }
 
-  if (
-    typeof desde === 'object' &&
-    typeof desde.pathname === 'string'
-  ) {
+  if (typeof desde === 'object' && typeof desde.pathname === 'string') {
     return `${desde.pathname}${desde.search ?? ''}${desde.hash ?? ''}`
   }
 
@@ -50,9 +40,7 @@ export default function Login() {
   const location = useLocation()
   const { iniciarSesion } = useAuth()
   const [mostrarPassword, setMostrarPassword] = useState(false)
-  const [errorGeneral, setErrorGeneral] = useState<string | null>(
-    null,
-  )
+  const [errorGeneral, setErrorGeneral] = useState<string | null>(null)
 
   const estado = location.state as EstadoLogin | null
 
@@ -69,9 +57,7 @@ export default function Login() {
     },
   })
 
-  const enviarLogin = async (
-    datos: LoginDatos,
-  ): Promise<void> => {
+  const enviarLogin = async (datos: LoginDatos): Promise<void> => {
     setErrorGeneral(null)
 
     try {
@@ -105,18 +91,13 @@ export default function Login() {
             })
           }
 
-          if (
-            identifierError !== undefined ||
-            passwordError !== undefined
-          ) {
+          if (identifierError !== undefined || passwordError !== undefined) {
             return
           }
         }
       }
 
-      setErrorGeneral(
-        'No fue posible iniciar sesión. Inténtalo más tarde.',
-      )
+      setErrorGeneral('No fue posible iniciar sesión. Inténtalo más tarde.')
     }
   }
 
@@ -217,7 +198,7 @@ export default function Login() {
                     ? 'login-password-error'
                     : undefined
                 }
-                className="min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 pr-12 text-slate-900 outline-none transition focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+                className="min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 pr-12 text-slate-900 transition outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
                 {...register('password')}
               />
 
@@ -225,13 +206,9 @@ export default function Login() {
                 type="button"
                 className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-slate-500 hover:text-indigo-600"
                 aria-label={
-                  mostrarPassword
-                    ? 'Ocultar contraseña'
-                    : 'Mostrar contraseña'
+                  mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
                 }
-                onClick={() =>
-                  setMostrarPassword((actual) => !actual)
-                }
+                onClick={() => setMostrarPassword((actual) => !actual)}
               >
                 <svg
                   viewBox="0 0 24 24"

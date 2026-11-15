@@ -1,25 +1,18 @@
 import type { ComponentPropsWithoutRef } from 'react'
 import clsx from 'clsx'
 
-type VarianteBoton =
-  | 'primario'
-  | 'secundario'
-  | 'peligro'
-  | 'fantasma'
+type VarianteBoton = 'primario' | 'secundario' | 'peligro' | 'fantasma'
 
 const CLASES_VARIANTE: Record<VarianteBoton, string> = {
-  primario:
-    'bg-indigo-600 text-white hover:bg-indigo-700',
+  primario: 'bg-indigo-600 text-white hover:bg-indigo-700',
   secundario:
     'border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800',
-  peligro:
-    'bg-red-600 text-white hover:bg-red-700',
+  peligro: 'bg-red-600 text-white hover:bg-red-700',
   fantasma:
     'bg-transparent text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800',
 }
 
-interface BotonProps
-  extends ComponentPropsWithoutRef<'button'> {
+interface BotonProps extends ComponentPropsWithoutRef<'button'> {
   cargando?: boolean
   textoCargando?: string
   variante?: VarianteBoton

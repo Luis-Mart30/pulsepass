@@ -8,10 +8,7 @@ import {
   useCancelarTicket,
   useTicket,
 } from '../funcionalidades/tickets/consultas'
-import type {
-  EstadoTicket,
-  Ticket,
-} from '../funcionalidades/tickets/tipos'
+import type { EstadoTicket, Ticket } from '../funcionalidades/tickets/tipos'
 import { ApiError } from '../lib/http'
 import {
   formatearFechaCompra,
@@ -22,14 +19,10 @@ import {
 import { crearRuta, RUTAS } from '../lib/rutas'
 
 const clasesEstado: Record<EstadoTicket, string> = {
-  RESERVED:
-    'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-200',
-  PAID:
-    'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200',
-  CANCELLED:
-    'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-200',
-  USED:
-    'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200',
+  RESERVED: 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-200',
+  PAID: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200',
+  CANCELLED: 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-200',
+  USED: 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200',
 }
 
 interface ModalCancelacionProps {
@@ -105,18 +98,16 @@ export default function DetalleTicket() {
   const { ticketCode = '' } = useParams()
   const { sesion } = useAuth()
 
-  const email =
-    sesion.estado === 'autenticado'
-      ? sesion.usuario.email
-      : ''
+  const email = sesion.estado === 'autenticado' ? sesion.usuario.email : ''
 
   const consulta = useTicket(ticketCode)
   const cancelacion = useCancelarTicket(email)
 
   const [copiado, setCopiado] = useState(false)
   const [modalAbierto, setModalAbierto] = useState(false)
-  const [mensajeCancelacion, setMensajeCancelacion] =
-    useState<string | null>(null)
+  const [mensajeCancelacion, setMensajeCancelacion] = useState<string | null>(
+    null,
+  )
 
   const copiarCodigo = async () => {
     if (consulta.data === undefined) {
@@ -124,9 +115,7 @@ export default function DetalleTicket() {
     }
 
     try {
-      await window.navigator.clipboard.writeText(
-        consulta.data.ticketCode,
-      )
+      await window.navigator.clipboard.writeText(consulta.data.ticketCode)
       setCopiado(true)
       window.setTimeout(() => setCopiado(false), 2_000)
     } catch {
@@ -154,9 +143,7 @@ export default function DetalleTicket() {
     setMensajeCancelacion(null)
 
     try {
-      await cancelacion.mutateAsync(
-        consulta.data.ticketCode,
-      )
+      await cancelacion.mutateAsync(consulta.data.ticketCode)
       setModalAbierto(false)
     } catch (error: unknown) {
       if (error instanceof ApiError && error.status === 409) {
@@ -197,8 +184,8 @@ export default function DetalleTicket() {
           </h1>
 
           <p className="mt-3 text-slate-600 dark:text-slate-300">
-            No pudimos encontrar este ticket o no tienes permiso
-            para consultarlo.
+            No pudimos encontrar este ticket o no tienes permiso para
+            consultarlo.
           </p>
 
           <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
@@ -237,12 +224,10 @@ export default function DetalleTicket() {
         <header className="bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 p-6 text-white sm:p-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-wider text-indigo-100">
+              <p className="text-sm font-semibold tracking-wider text-indigo-100 uppercase">
                 Entrada PulsePass
               </p>
-              <h1 className="mt-2 text-3xl font-bold">
-                {ticket.eventName}
-              </h1>
+              <h1 className="mt-2 text-3xl font-bold">{ticket.eventName}</h1>
             </div>
 
             <span
@@ -269,7 +254,7 @@ export default function DetalleTicket() {
             </h2>
 
             <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <strong className="break-all text-xl text-slate-950 dark:text-white">
+              <strong className="text-xl break-all text-slate-950 dark:text-white">
                 {ticket.ticketCode}
               </strong>
 
@@ -315,7 +300,7 @@ export default function DetalleTicket() {
               <dt className="text-sm text-slate-500 dark:text-slate-400">
                 Correo del titular
               </dt>
-              <dd className="mt-1 break-all text-lg font-semibold text-slate-950 dark:text-white">
+              <dd className="mt-1 text-lg font-semibold break-all text-slate-950 dark:text-white">
                 {ticket.userEmail}
               </dd>
             </div>
@@ -336,8 +321,7 @@ export default function DetalleTicket() {
                 Cancelación
               </h2>
               <p className="mt-2 text-sm text-red-700 dark:text-red-300">
-                Puedes cancelar este ticket mientras conserve el
-                estado pagado.
+                Puedes cancelar este ticket mientras conserve el estado pagado.
               </p>
               <Boton
                 type="button"

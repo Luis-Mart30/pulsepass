@@ -1,13 +1,7 @@
 import type { CategoriaEvento } from '../funcionalidades/eventos/tipos'
-import type {
-  EstadoTicket,
-  TipoTicket,
-} from '../funcionalidades/tickets/tipos'
+import type { EstadoTicket, TipoTicket } from '../funcionalidades/tickets/tipos'
 
-const etiquetasCategoria: Record<
-  CategoriaEvento,
-  string
-> = {
+const etiquetasCategoria: Record<CategoriaEvento, string> = {
   MUSIC: 'Música',
   SPORTS: 'Deportes',
   TECHNOLOGY: 'Tecnología',
@@ -30,36 +24,26 @@ const etiquetasEstadoTicket: Record<EstadoTicket, string> = {
   USED: 'Usado',
 }
 
-export function obtenerEtiquetaCategoria(
-  categoria: CategoriaEvento,
-): string {
+export function obtenerEtiquetaCategoria(categoria: CategoriaEvento): string {
   return etiquetasCategoria[categoria]
 }
 
-export function formatearFechaEvento(
-  fecha: string,
-): string {
+export function formatearFechaEvento(fecha: string): string {
   return new Intl.DateTimeFormat('es-CO', {
     dateStyle: 'long',
     timeStyle: 'short',
   }).format(new Date(fecha))
 }
 
-export function obtenerEtiquetaTipoTicket(
-  tipo: TipoTicket,
-): string {
+export function obtenerEtiquetaTipoTicket(tipo: TipoTicket): string {
   return etiquetasTipoTicket[tipo]
 }
 
-export function obtenerEtiquetaEstadoTicket(
-  estado: EstadoTicket,
-): string {
+export function obtenerEtiquetaEstadoTicket(estado: EstadoTicket): string {
   return etiquetasEstadoTicket[estado]
 }
 
-export function formatearPrecioCOP(
-  precio: number,
-): string {
+export function formatearPrecioCOP(precio: number): string {
   return new Intl.NumberFormat('es-CO', {
     style: 'currency',
     currency: 'COP',
@@ -67,9 +51,7 @@ export function formatearPrecioCOP(
   }).format(precio)
 }
 
-export function formatearFechaCompra(
-  fecha: string,
-): string {
+export function formatearFechaCompra(fecha: string): string {
   return new Intl.DateTimeFormat('es-CO', {
     dateStyle: 'medium',
     timeStyle: 'short',

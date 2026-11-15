@@ -1,18 +1,12 @@
 import { render, screen } from '@testing-library/react'
-import {
-  createMemoryRouter,
-  type RouteObject,
-} from 'react-router'
+import { createMemoryRouter, type RouteObject } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
 import { describe, expect, it } from 'vitest'
 import {
   AuthContext,
   type AuthContextValue,
 } from '../../funcionalidades/auth/AuthContext'
-import type {
-  Rol,
-  Sesion,
-} from '../../funcionalidades/auth/tipos'
+import type { Rol, Sesion } from '../../funcionalidades/auth/tipos'
 import RutaPorRol from './RutaPorRol'
 import RutaProtegida from './RutaProtegida'
 import SoloAnonimo from './SoloAnonimo'

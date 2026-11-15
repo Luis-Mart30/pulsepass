@@ -7,9 +7,7 @@ interface RutaPorRolProps {
   roles: Rol[]
 }
 
-export default function RutaPorRol({
-  roles,
-}: RutaPorRolProps) {
+export default function RutaPorRol({ roles }: RutaPorRolProps) {
   const { sesion, tieneRol } = useAuth()
   const location = useLocation()
 

@@ -8,10 +8,7 @@ import {
   useCancelarTicket,
   useMisTickets,
 } from '../funcionalidades/tickets/consultas'
-import type {
-  EstadoTicket,
-  Ticket,
-} from '../funcionalidades/tickets/tipos'
+import type { EstadoTicket, Ticket } from '../funcionalidades/tickets/tipos'
 import { ApiError } from '../lib/http'
 import {
   formatearFechaCompra,
@@ -21,11 +18,7 @@ import {
 } from '../lib/formatos'
 import { crearRuta, RUTAS } from '../lib/rutas'
 
-type FiltroTicket =
-  | 'TODOS'
-  | 'PAID'
-  | 'USED'
-  | 'CANCELLED'
+type FiltroTicket = 'TODOS' | 'PAID' | 'USED' | 'CANCELLED'
 
 const filtros: Array<{
   valor: FiltroTicket
@@ -38,14 +31,10 @@ const filtros: Array<{
 ]
 
 const clasesEstado: Record<EstadoTicket, string> = {
-  RESERVED:
-    'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-200',
-  PAID:
-    'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200',
-  CANCELLED:
-    'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-200',
-  USED:
-    'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200',
+  RESERVED: 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-200',
+  PAID: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200',
+  CANCELLED: 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-200',
+  USED: 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200',
 }
 
 interface ModalCancelacionProps {
@@ -119,20 +108,18 @@ function ModalCancelacion({
 
 export default function MisTickets() {
   const { sesion } = useAuth()
-  const email =
-    sesion.estado === 'autenticado'
-      ? sesion.usuario.email
-      : ''
+  const email = sesion.estado === 'autenticado' ? sesion.usuario.email : ''
 
   const consulta = useMisTickets(email)
   const cancelacion = useCancelarTicket(email)
 
-  const [filtro, setFiltro] =
-    useState<FiltroTicket>('TODOS')
-  const [ticketSeleccionado, setTicketSeleccionado] =
-    useState<Ticket | null>(null)
-  const [mensajeCancelacion, setMensajeCancelacion] =
-    useState<string | null>(null)
+  const [filtro, setFiltro] = useState<FiltroTicket>('TODOS')
+  const [ticketSeleccionado, setTicketSeleccionado] = useState<Ticket | null>(
+    null,
+  )
+  const [mensajeCancelacion, setMensajeCancelacion] = useState<string | null>(
+    null,
+  )
 
   const tickets = consulta.data ?? []
   const ticketsFiltrados =
@@ -160,9 +147,7 @@ export default function MisTickets() {
     setMensajeCancelacion(null)
 
     try {
-      await cancelacion.mutateAsync(
-        ticketSeleccionado.ticketCode,
-      )
+      await cancelacion.mutateAsync(ticketSeleccionado.ticketCode)
       setTicketSeleccionado(null)
     } catch (error: unknown) {
       if (error instanceof ApiError && error.status === 409) {
@@ -181,7 +166,7 @@ export default function MisTickets() {
   return (
     <section className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
       <header>
-        <p className="text-sm font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+        <p className="text-sm font-semibold tracking-wider text-indigo-600 uppercase dark:text-indigo-400">
           PulsePass
         </p>
         <h1 className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">
@@ -192,10 +177,7 @@ export default function MisTickets() {
         </p>
       </header>
 
-      <div
-        className="mt-8 flex flex-wrap gap-2"
-        aria-label="Filtrar tickets"
-      >
+      <div className="mt-8 flex flex-wrap gap-2" aria-label="Filtrar tickets">
         {filtros.map((opcion) => (
           <button
             key={opcion.valor}
@@ -246,24 +228,22 @@ export default function MisTickets() {
         </div>
       )}
 
-      {!consulta.isPending &&
-        !consulta.isError &&
-        tickets.length === 0 && (
-          <div className="mt-8 rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center dark:border-slate-700 dark:bg-slate-900">
-            <h2 className="text-xl font-bold text-slate-950 dark:text-white">
-              Aún no tienes tickets
-            </h2>
-            <p className="mt-2 text-slate-600 dark:text-slate-300">
-              Explora la cartelera y encuentra tu próximo evento.
-            </p>
-            <Link
-              to={RUTAS.EVENTOS}
-              className="mt-5 inline-flex min-h-11 items-center rounded-lg bg-indigo-600 px-5 py-2.5 font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Ver eventos
-            </Link>
-          </div>
-        )}
+      {!consulta.isPending && !consulta.isError && tickets.length === 0 && (
+        <div className="mt-8 rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center dark:border-slate-700 dark:bg-slate-900">
+          <h2 className="text-xl font-bold text-slate-950 dark:text-white">
+            Aún no tienes tickets
+          </h2>
+          <p className="mt-2 text-slate-600 dark:text-slate-300">
+            Explora la cartelera y encuentra tu próximo evento.
+          </p>
+          <Link
+            to={RUTAS.EVENTOS}
+            className="mt-5 inline-flex min-h-11 items-center rounded-lg bg-indigo-600 px-5 py-2.5 font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          >
+            Ver eventos
+          </Link>
+        </div>
+      )}
 
       {!consulta.isPending &&
         !consulta.isError &&
@@ -281,7 +261,7 @@ export default function MisTickets() {
             {ticketsFiltrados.map((ticket) => (
               <article
                 key={ticket.ticketCode}
-                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-6"
+                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 dark:border-slate-800 dark:bg-slate-900"
               >
                 <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
                   <div className="min-w-0">
@@ -295,9 +275,7 @@ export default function MisTickets() {
                           clasesEstado[ticket.status],
                         )}
                       >
-                        {obtenerEtiquetaEstadoTicket(
-                          ticket.status,
-                        )}
+                        {obtenerEtiquetaEstadoTicket(ticket.status)}
                       </span>
                     </div>
 
@@ -331,9 +309,7 @@ export default function MisTickets() {
                           Compra
                         </dt>
                         <dd className="mt-1 font-semibold text-slate-900 dark:text-white">
-                          {formatearFechaCompra(
-                            ticket.purchaseDate,
-                          )}
+                          {formatearFechaCompra(ticket.purchaseDate)}
                         </dd>
                       </div>
                     </dl>
@@ -341,9 +317,7 @@ export default function MisTickets() {
 
                   <div className="flex flex-col gap-3 sm:flex-row lg:flex-shrink-0">
                     <Link
-                      to={crearRuta.detalleTicket(
-                        ticket.ticketCode,
-                      )}
+                      to={crearRuta.detalleTicket(ticket.ticketCode)}
                       className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-5 py-2.5 font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
                     >
                       Ver detalle
@@ -353,9 +327,7 @@ export default function MisTickets() {
                       <Boton
                         type="button"
                         variante="peligro"
-                        onClick={() =>
-                          abrirCancelacion(ticket)
-                        }
+                        onClick={() => abrirCancelacion(ticket)}
                       >
                         Cancelar
                       </Boton>

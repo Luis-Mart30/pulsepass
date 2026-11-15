@@ -1,18 +1,7 @@
 import { MemoryRouter } from 'react-router'
-import {
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import {
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   useCancelarTicket,
   useMisTickets,
@@ -115,29 +104,15 @@ describe('página Mis tickets', () => {
 
     renderizarPagina()
 
-    expect(
-      screen.getByText('Festival del Caribe'),
-    ).toBeInTheDocument()
-    expect(
-      screen.getByText('Concierto del Mar'),
-    ).toBeInTheDocument()
-    expect(
-      screen.getByText('Encuentro Tecnológico'),
-    ).toBeInTheDocument()
+    expect(screen.getByText('Festival del Caribe')).toBeInTheDocument()
+    expect(screen.getByText('Concierto del Mar')).toBeInTheDocument()
+    expect(screen.getByText('Encuentro Tecnológico')).toBeInTheDocument()
 
-    await usuario.click(
-      screen.getByRole('button', { name: 'Usados' }),
-    )
+    await usuario.click(screen.getByRole('button', { name: 'Usados' }))
 
-    expect(
-      screen.getByText('Concierto del Mar'),
-    ).toBeInTheDocument()
-    expect(
-      screen.queryByText('Festival del Caribe'),
-    ).not.toBeInTheDocument()
-    expect(
-      screen.queryByText('Encuentro Tecnológico'),
-    ).not.toBeInTheDocument()
+    expect(screen.getByText('Concierto del Mar')).toBeInTheDocument()
+    expect(screen.queryByText('Festival del Caribe')).not.toBeInTheDocument()
+    expect(screen.queryByText('Encuentro Tecnológico')).not.toBeInTheDocument()
   })
 
   it('muestra el estado vacío con acceso al catálogo', () => {
@@ -145,12 +120,11 @@ describe('página Mis tickets', () => {
 
     renderizarPagina()
 
-    expect(
-      screen.getByText('Aún no tienes tickets'),
-    ).toBeInTheDocument()
-    expect(
-      screen.getByRole('link', { name: 'Ver eventos' }),
-    ).toHaveAttribute('href', '/eventos')
+    expect(screen.getByText('Aún no tienes tickets')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Ver eventos' })).toHaveAttribute(
+      'href',
+      '/eventos',
+    )
   })
 
   it('confirma la cancelación de un ticket pagado', async () => {
@@ -162,9 +136,7 @@ describe('página Mis tickets', () => {
 
     renderizarPagina()
 
-    await usuario.click(
-      screen.getByRole('button', { name: 'Cancelar' }),
-    )
+    await usuario.click(screen.getByRole('button', { name: 'Cancelar' }))
 
     expect(
       screen.getByRole('dialog', {
@@ -179,31 +151,22 @@ describe('página Mis tickets', () => {
     )
 
     await waitFor(() => {
-      expect(mutateAsync).toHaveBeenCalledWith(
-        'TKT-PAID-001',
-      )
+      expect(mutateAsync).toHaveBeenCalledWith('TKT-PAID-001')
     })
 
     await waitFor(() => {
-      expect(
-        screen.queryByRole('dialog'),
-      ).not.toBeInTheDocument()
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     })
   })
 
   it('mantiene el modal abierto cuando la API responde 409', async () => {
     mutateAsync.mockRejectedValue(
-      new ApiError(
-        409,
-        'El ticket no puede cancelarse',
-      ),
+      new ApiError(409, 'El ticket no puede cancelarse'),
     )
 
     renderizarPagina()
 
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Cancelar' }),
-    )
+    fireEvent.click(screen.getByRole('button', { name: 'Cancelar' }))
     fireEvent.click(
       screen.getByRole('button', {
         name: 'Confirmar cancelación',
@@ -211,9 +174,7 @@ describe('página Mis tickets', () => {
     )
 
     expect(
-      await screen.findByText(
-        /este ticket ya no puede cancelarse/i,
-      ),
+      await screen.findByText(/este ticket ya no puede cancelarse/i),
     ).toBeInTheDocument()
 
     expect(

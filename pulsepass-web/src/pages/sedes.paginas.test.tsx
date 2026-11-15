@@ -1,16 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import {
-  MemoryRouter,
-  Route,
-  Routes,
-} from 'react-router'
-import {
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
+import { MemoryRouter, Route, Routes } from 'react-router'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { ApiError } from '../lib/http'
 import {
@@ -53,10 +43,7 @@ function renderizarDetalle() {
     <QueryClientProvider client={crearQueryClient()}>
       <MemoryRouter initialEntries={['/sedes/VEN-001']}>
         <Routes>
-          <Route
-            path="/sedes/:code"
-            element={<DetalleSede />}
-          />
+          <Route path="/sedes/:code" element={<DetalleSede />} />
         </Routes>
       </MemoryRouter>
     </QueryClientProvider>,
@@ -93,9 +80,10 @@ describe('páginas públicas de sedes', () => {
       }),
     ).toBeInTheDocument()
 
-    expect(
-      screen.getByRole('link', { name: 'Ver sede' }),
-    ).toHaveAttribute('href', '/sedes/VEN-001')
+    expect(screen.getByRole('link', { name: 'Ver sede' })).toHaveAttribute(
+      'href',
+      '/sedes/VEN-001',
+    )
 
     expect(
       screen.getByText('15.000 personas', { exact: false }),
@@ -112,9 +100,7 @@ describe('páginas públicas de sedes', () => {
     renderizarLista()
 
     expect(
-      screen.getByText(
-        'No hay sedes activas disponibles en este momento.',
-      ),
+      screen.getByText('No hay sedes activas disponibles en este momento.'),
     ).toBeInTheDocument()
   })
 
@@ -125,9 +111,7 @@ describe('páginas públicas de sedes', () => {
 
     renderizarLista()
 
-    expect(
-      screen.getByText('Cargando sedes…'),
-    ).toBeInTheDocument()
+    expect(screen.getByText('Cargando sedes…')).toBeInTheDocument()
   })
 
   it('muestra el detalle de una sede por código', () => {
@@ -147,9 +131,7 @@ describe('páginas públicas de sedes', () => {
 
     renderizarDetalle()
 
-    expect(useSedePorCodigoMock).toHaveBeenCalledWith(
-      'VEN-001',
-    )
+    expect(useSedePorCodigoMock).toHaveBeenCalledWith('VEN-001')
 
     expect(
       screen.getByRole('heading', {

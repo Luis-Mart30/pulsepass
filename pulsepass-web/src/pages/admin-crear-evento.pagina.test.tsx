@@ -1,16 +1,8 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import {
-  fireEvent,
-  render,
-  screen,
-} from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { HttpResponse, http } from 'msw'
-import {
-  MemoryRouter,
-  Route,
-  Routes,
-} from 'react-router'
+import { MemoryRouter, Route, Routes } from 'react-router'
 import { describe, expect, it, vi } from 'vitest'
 import { server } from '../test/server'
 import AdminCrearEvento from './AdminCrearEvento'
@@ -37,10 +29,7 @@ function renderizarPagina() {
     <MemoryRouter initialEntries={['/admin/eventos/nuevo']}>
       <QueryClientProvider client={queryClient}>
         <Routes>
-          <Route
-            path="/admin/eventos/nuevo"
-            element={<AdminCrearEvento />}
-          />
+          <Route path="/admin/eventos/nuevo" element={<AdminCrearEvento />} />
           <Route
             path="/admin/eventos/:eventCode"
             element={<p>Gestión del evento creado</p>}
@@ -59,10 +48,7 @@ async function completarFormulario() {
     name: 'Arena Central — Santa Marta',
   })
 
-  await usuario.type(
-    screen.getByLabelText('Código del evento'),
-    'FEST-2027',
-  )
+  await usuario.type(screen.getByLabelText('Código del evento'), 'FEST-2027')
   await usuario.type(
     screen.getByLabelText('Nombre del evento'),
     'Festival del Caribe',
@@ -71,19 +57,13 @@ async function completarFormulario() {
     screen.getByLabelText('Descripción'),
     'Un gran festival musical.',
   )
-  await usuario.selectOptions(
-    screen.getByLabelText('Categoría'),
-    'MUSIC',
-  )
+  await usuario.selectOptions(screen.getByLabelText('Categoría'), 'MUSIC')
   fireEvent.change(screen.getByLabelText('Fecha y hora'), {
     target: { value: '2027-02-20T19:00:00' },
   })
   await usuario.clear(screen.getByLabelText('Edad mínima'))
   await usuario.type(screen.getByLabelText('Edad mínima'), '18')
-  await usuario.selectOptions(
-    screen.getByLabelText('Sede'),
-    'VEN-01',
-  )
+  await usuario.selectOptions(screen.getByLabelText('Sede'), 'VEN-01')
 
   return usuario
 }
@@ -93,9 +73,7 @@ describe('página Crear evento', () => {
     const crear = vi.fn()
 
     server.use(
-      http.get('/api/venues/active', () =>
-        HttpResponse.json([sede]),
-      ),
+      http.get('/api/venues/active', () => HttpResponse.json([sede])),
       http.post('/api/events', async ({ request }) => {
         crear(await request.json())
         return HttpResponse.json({}, { status: 500 })
@@ -117,21 +95,14 @@ describe('página Crear evento', () => {
     )
 
     expect(crear).not.toHaveBeenCalled()
-    expect(
-      await screen.findAllByRole('alert'),
-    ).not.toHaveLength(0)
+    expect(await screen.findAllByRole('alert')).not.toHaveLength(0)
   })
 
   it('crea el borrador y navega a su gestión', async () => {
     server.use(
-      http.get('/api/venues/active', () =>
-        HttpResponse.json([sede]),
-      ),
+      http.get('/api/venues/active', () => HttpResponse.json([sede])),
       http.post('/api/events', async ({ request }) => {
-        const datos = (await request.json()) as Record<
-          string,
-          unknown
-        >
+        const datos = (await request.json()) as Record<string, unknown>
 
         return HttpResponse.json(
           {
@@ -162,9 +133,7 @@ describe('página Crear evento', () => {
 
   it('muestra un mensaje cuando el código está duplicado', async () => {
     server.use(
-      http.get('/api/venues/active', () =>
-        HttpResponse.json([sede]),
-      ),
+      http.get('/api/venues/active', () => HttpResponse.json([sede])),
       http.post('/api/events', () =>
         HttpResponse.json(
           {
@@ -186,9 +155,7 @@ describe('página Crear evento', () => {
     )
 
     expect(
-      await screen.findByText(
-        'Ya existe un evento registrado con ese código.',
-      ),
+      await screen.findByText('Ya existe un evento registrado con ese código.'),
     ).toBeInTheDocument()
   })
 })

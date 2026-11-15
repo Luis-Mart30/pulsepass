@@ -1,12 +1,5 @@
 import { z } from 'zod'
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   ApiError,
   establecerManejador401,
@@ -36,9 +29,7 @@ describe('cliente HTTP', () => {
     fetchMock.mockImplementation(async (_entrada, opciones) => {
       const headers = new Headers(opciones?.headers)
 
-      expect(headers.get('Authorization')).toBe(
-        'Bearer token-seguro',
-      )
+      expect(headers.get('Authorization')).toBe('Bearer token-seguro')
 
       return new Response(JSON.stringify({ ok: true }), {
         status: 200,
@@ -48,9 +39,9 @@ describe('cliente HTTP', () => {
 
     establecerTokenHttp('token-seguro')
 
-    await expect(
-      http('/prueba', RespuestaPruebaSchema),
-    ).resolves.toEqual({ ok: true })
+    await expect(http('/prueba', RespuestaPruebaSchema)).resolves.toEqual({
+      ok: true,
+    })
   })
 
   it('convierte el contrato de error en ApiError', async () => {
@@ -70,9 +61,7 @@ describe('cliente HTTP', () => {
       ),
     )
 
-    await expect(
-      http('/prueba', RespuestaPruebaSchema),
-    ).rejects.toMatchObject({
+    await expect(http('/prueba', RespuestaPruebaSchema)).rejects.toMatchObject({
       name: 'ApiError',
       status: 409,
       message: 'Operación no permitida',
@@ -115,12 +104,9 @@ describe('cliente HTTP', () => {
       }),
     )
 
-    await expect(
-      http('/prueba', RespuestaPruebaSchema),
-    ).rejects.toMatchObject({
+    await expect(http('/prueba', RespuestaPruebaSchema)).rejects.toMatchObject({
       status: 500,
-      message:
-        'La respuesta del servidor no tiene el formato esperado.',
+      message: 'La respuesta del servidor no tiene el formato esperado.',
     })
   })
 })

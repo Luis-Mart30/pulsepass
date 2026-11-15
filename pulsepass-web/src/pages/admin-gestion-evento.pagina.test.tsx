@@ -2,11 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { HttpResponse, http } from 'msw'
-import {
-  MemoryRouter,
-  Route,
-  Routes,
-} from 'react-router'
+import { MemoryRouter, Route, Routes } from 'react-router'
 import { describe, expect, it } from 'vitest'
 import { server } from '../test/server'
 import AdminGestionEvento from './AdminGestionEvento'
@@ -42,9 +38,7 @@ function renderizarPagina() {
   })
 
   return render(
-    <MemoryRouter
-      initialEntries={['/admin/eventos/FEST-2027']}
-    >
+    <MemoryRouter initialEntries={['/admin/eventos/FEST-2027']}>
       <QueryClientProvider client={queryClient}>
         <Routes>
           <Route
@@ -59,12 +53,8 @@ function renderizarPagina() {
 
 function configurarConsultas() {
   server.use(
-    http.get('/api/events/FEST-2027', () =>
-      HttpResponse.json(eventoBase),
-    ),
-    http.get('/api/artists/active', () =>
-      HttpResponse.json([artista]),
-    ),
+    http.get('/api/events/FEST-2027', () => HttpResponse.json(eventoBase)),
+    http.get('/api/artists/active', () => HttpResponse.json([artista])),
   )
 }
 
@@ -90,13 +80,11 @@ describe('página Gestionar evento', () => {
   it('asocia un artista y actualiza el evento', async () => {
     configurarConsultas()
     server.use(
-      http.post(
-        '/api/events/FEST-2027/artists/8',
-        () =>
-          HttpResponse.json({
-            ...eventoBase,
-            artists: [artista],
-          }),
+      http.post('/api/events/FEST-2027/artists/8', () =>
+        HttpResponse.json({
+          ...eventoBase,
+          artists: [artista],
+        }),
       ),
     )
 
@@ -106,10 +94,7 @@ describe('página Gestionar evento', () => {
     await screen.findByRole('option', {
       name: 'Solar Beat',
     })
-    await usuario.selectOptions(
-      screen.getByLabelText('Agregar artista'),
-      '8',
-    )
+    await usuario.selectOptions(screen.getByLabelText('Agregar artista'), '8')
     await usuario.click(
       screen.getByRole('button', {
         name: 'Asociar artista',
@@ -134,17 +119,14 @@ describe('página Gestionar evento', () => {
           status: publicado ? 'PUBLISHED' : 'DRAFT',
         }),
       ),
-      http.patch(
-        '/api/events/FEST-2027/publish',
-        () => {
-          publicado = true
+      http.patch('/api/events/FEST-2027/publish', () => {
+        publicado = true
 
-          return HttpResponse.json({
-            ...eventoBase,
-            status: 'PUBLISHED',
-          })
-        },
-      ),
+        return HttpResponse.json({
+          ...eventoBase,
+          status: 'PUBLISHED',
+        })
+      }),
     )
 
     const usuario = userEvent.setup()
@@ -172,9 +154,7 @@ describe('página Gestionar evento', () => {
     )
 
     expect(
-      await screen.findByText(
-        'Evento publicado correctamente.',
-      ),
+      await screen.findByText('Evento publicado correctamente.'),
     ).toBeInTheDocument()
     expect(
       screen.getByRole('button', {

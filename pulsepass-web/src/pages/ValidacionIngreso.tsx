@@ -19,14 +19,12 @@ import {
 } from '../lib/formatos'
 
 export default function ValidacionIngreso() {
-  const [codigoConsultado, setCodigoConsultado] =
-    useState('')
+  const [codigoConsultado, setCodigoConsultado] = useState('')
   const [errorValidacion, setErrorValidacion] = useState<{
     mensaje: string
     tipo: 'advertencia' | 'error'
   } | null>(null)
-  const [ticketValidado, setTicketValidado] =
-    useState<Ticket | null>(null)
+  const [ticketValidado, setTicketValidado] = useState<Ticket | null>(null)
 
   const {
     register,
@@ -41,9 +39,7 @@ export default function ValidacionIngreso() {
 
   const consulta = useTicket(codigoConsultado)
   const ticketActual = ticketValidado ?? consulta.data
-  const uso = useMarcarTicketUsado(
-    ticketActual?.eventCode ?? '',
-  )
+  const uso = useMarcarTicketUsado(ticketActual?.eventCode ?? '')
 
   const buscarTicket = (datos: ValidacionIngresoDatos) => {
     setErrorValidacion(null)
@@ -66,9 +62,7 @@ export default function ValidacionIngreso() {
     setErrorValidacion(null)
 
     try {
-      const actualizado = await uso.mutateAsync(
-        ticketActual.ticketCode,
-      )
+      const actualizado = await uso.mutateAsync(ticketActual.ticketCode)
       setTicketValidado(actualizado)
       setValue('ticketCode', '')
       setFocus('ticketCode')
@@ -96,23 +90,21 @@ export default function ValidacionIngreso() {
 
   const ticketPagado = ticketActual?.status === 'PAID'
   const ticketUsado = ticketActual?.status === 'USED'
-  const ticketCancelado =
-    ticketActual?.status === 'CANCELLED'
-  const ticketReservado =
-    ticketActual?.status === 'RESERVED'
+  const ticketCancelado = ticketActual?.status === 'CANCELLED'
+  const ticketReservado = ticketActual?.status === 'RESERVED'
 
   return (
     <section className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
       <header>
-        <p className="text-sm font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+        <p className="text-sm font-semibold tracking-wider text-indigo-600 uppercase dark:text-indigo-400">
           Acceso STAFF
         </p>
         <h1 className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">
           Validación de ingreso
         </h1>
         <p className="mt-3 max-w-2xl text-slate-600 dark:text-slate-300">
-          Ingresa el código de una entrada para comprobar su
-          estado antes de permitir el acceso.
+          Ingresa el código de una entrada para comprobar su estado antes de
+          permitir el acceso.
         </p>
       </header>
 
@@ -144,12 +136,10 @@ export default function ValidacionIngreso() {
             {...register('ticketCode', {
               onChange: () => setErrorValidacion(null),
             })}
-            className="min-h-11 flex-1 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-200 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:focus:border-indigo-400 dark:focus:ring-indigo-950"
+            className="min-h-11 flex-1 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-950 transition outline-none placeholder:text-slate-400 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-200 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:focus:border-indigo-400 dark:focus:ring-indigo-950"
           />
 
-          <Boton type="submit">
-            Buscar ticket
-          </Boton>
+          <Boton type="submit">Buscar ticket</Boton>
         </div>
 
         {errors.ticketCode?.message !== undefined ? (
@@ -178,22 +168,20 @@ export default function ValidacionIngreso() {
           className="mt-6 rounded-2xl border border-red-200 bg-red-50 p-6 dark:border-red-900 dark:bg-red-950"
         >
           <h2 className="text-xl font-bold text-red-800 dark:text-red-200">
-            {consulta.error instanceof ApiError &&
-            consulta.error.status === 404
+            {consulta.error instanceof ApiError && consulta.error.status === 404
               ? 'Ticket no encontrado'
               : consulta.error instanceof ApiError &&
                   consulta.error.status === 403
                 ? 'Sin permisos'
-              : 'No pudimos consultar el ticket'}
+                : 'No pudimos consultar el ticket'}
           </h2>
           <p className="mt-2 text-sm text-red-700 dark:text-red-300">
-            {consulta.error instanceof ApiError &&
-            consulta.error.status === 404
+            {consulta.error instanceof ApiError && consulta.error.status === 404
               ? 'Verifica el código e inténtalo nuevamente.'
               : consulta.error instanceof ApiError &&
                   consulta.error.status === 403
                 ? 'No tienes permisos para consultar este ticket.'
-              : 'Comprueba la conexión y vuelve a intentarlo.'}
+                : 'Comprueba la conexión y vuelve a intentarlo.'}
           </p>
         </div>
       )}
@@ -211,7 +199,7 @@ export default function ValidacionIngreso() {
                     : 'bg-red-600 p-6 text-white'
               }
             >
-              <p className="text-sm font-semibold uppercase tracking-wider opacity-90">
+              <p className="text-sm font-semibold tracking-wider uppercase opacity-90">
                 Resultado de validación
               </p>
               <h2 className="mt-2 text-2xl font-bold">
@@ -237,7 +225,7 @@ export default function ValidacionIngreso() {
                   <dt className="text-sm text-slate-500 dark:text-slate-400">
                     Código
                   </dt>
-                  <dd className="mt-1 break-all font-semibold text-slate-950 dark:text-white">
+                  <dd className="mt-1 font-semibold break-all text-slate-950 dark:text-white">
                     {ticketActual.ticketCode}
                   </dd>
                 </div>
@@ -246,7 +234,7 @@ export default function ValidacionIngreso() {
                   <dt className="text-sm text-slate-500 dark:text-slate-400">
                     Titular
                   </dt>
-                  <dd className="mt-1 break-all font-semibold text-slate-950 dark:text-white">
+                  <dd className="mt-1 font-semibold break-all text-slate-950 dark:text-white">
                     {ticketActual.userEmail}
                   </dd>
                 </div>
@@ -256,9 +244,7 @@ export default function ValidacionIngreso() {
                     Tipo
                   </dt>
                   <dd className="mt-1 font-semibold text-slate-950 dark:text-white">
-                    {obtenerEtiquetaTipoTicket(
-                      ticketActual.type,
-                    )}
+                    {obtenerEtiquetaTipoTicket(ticketActual.type)}
                   </dd>
                 </div>
 
@@ -276,9 +262,7 @@ export default function ValidacionIngreso() {
                     Estado
                   </dt>
                   <dd className="mt-1 font-semibold text-slate-950 dark:text-white">
-                    {obtenerEtiquetaEstadoTicket(
-                      ticketActual.status,
-                    )}
+                    {obtenerEtiquetaEstadoTicket(ticketActual.status)}
                   </dd>
                 </div>
               </dl>
@@ -318,8 +302,7 @@ export default function ValidacionIngreso() {
                   role="alert"
                   className="mt-6 rounded-xl border border-red-200 bg-red-50 p-5 font-semibold text-red-800 dark:border-red-900 dark:bg-red-950 dark:text-red-200"
                 >
-                  No permitas el ingreso: este ticket está
-                  cancelado.
+                  No permitas el ingreso: este ticket está cancelado.
                 </div>
               )}
 
@@ -328,8 +311,7 @@ export default function ValidacionIngreso() {
                   role="alert"
                   className="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-5 font-semibold text-amber-800 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200"
                 >
-                  No permitas el ingreso: este ticket todavía no
-                  está pagado.
+                  No permitas el ingreso: este ticket todavía no está pagado.
                 </div>
               )}
 

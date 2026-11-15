@@ -22,9 +22,9 @@ entradas, validar ingresos y administrar eventos según el rol de la sesión.
 
 La única variable del frontend es:
 
-| Variable | Descripción | Valor local |
-|---|---|---|
-| `VITE_API_BASE_URL` | Base de las solicitudes HTTP | `/api` |
+| Variable            | Descripción                  | Valor local |
+| ------------------- | ---------------------------- | ----------- |
+| `VITE_API_BASE_URL` | Base de las solicitudes HTTP | `/api`      |
 
 El archivo `.env.example` contiene el valor recomendado. Con `/api`, el
 servidor de desarrollo de Vite redirige las solicitudes al backend en el
@@ -59,24 +59,24 @@ $env:PULSEPASS_CORS_ALLOWED_ORIGINS = "http://localhost:5173"
 
 ## Comandos
 
-| Comando | Propósito |
-|---|---|
-| `npm.cmd run dev` | Servidor local con recarga automática |
-| `npm.cmd run build` | Comprobación TypeScript y build de producción |
-| `npm.cmd run preview` | Previsualización del build |
-| `npm.cmd test` | Suite completa de Vitest |
-| `npm.cmd run test:watch` | Pruebas en modo interactivo |
-| `npm.cmd run lint` | Análisis estático con ESLint |
-| `npm.cmd run format:check` | Verificación de formato con Prettier |
+| Comando                    | Propósito                                     |
+| -------------------------- | --------------------------------------------- |
+| `npm.cmd run dev`          | Servidor local con recarga automática         |
+| `npm.cmd run build`        | Comprobación TypeScript y build de producción |
+| `npm.cmd run preview`      | Previsualización del build                    |
+| `npm.cmd test`             | Suite completa de Vitest                      |
+| `npm.cmd run test:watch`   | Pruebas en modo interactivo                   |
+| `npm.cmd run lint`         | Análisis estático con ESLint                  |
+| `npm.cmd run format:check` | Verificación de formato con Prettier          |
 
 ## Roles de demostración
 
 La interfaz consume los roles entregados por `GET /api/auth/me`.
 
-| Rol | Capacidades principales |
-|---|---|
-| `USER` | Consultar su cuenta y sus tickets, comprar y cancelar entradas |
-| `STAFF` | Validar ingresos y consultar tickets pagados de un evento |
+| Rol     | Capacidades principales                                                                   |
+| ------- | ----------------------------------------------------------------------------------------- |
+| `USER`  | Consultar su cuenta y sus tickets, comprar y cancelar entradas                            |
+| `STAFF` | Validar ingresos y consultar tickets pagados de un evento                                 |
 | `ADMIN` | Buscar, crear, configurar y publicar eventos; también puede ejecutar operaciones de STAFF |
 
 Las credenciales no se almacenan en este repositorio. Las cuentas de
@@ -88,33 +88,33 @@ siempre corresponde a la API.
 
 ### Públicas y de autenticación
 
-| Ruta | Pantalla |
-|---|---|
-| `/` | Inicio |
-| `/eventos` | Catálogo de eventos |
+| Ruta                  | Pantalla                      |
+| --------------------- | ----------------------------- |
+| `/`                   | Inicio                        |
+| `/eventos`            | Catálogo de eventos           |
 | `/eventos/:eventCode` | Detalle y compra de un evento |
-| `/artistas` | Artistas activos |
-| `/artistas/:id` | Detalle de artista |
-| `/sedes` | Sedes activas |
-| `/sedes/:code` | Detalle de sede |
-| `/login` | Inicio de sesión |
-| `/registro` | Registro |
+| `/artistas`           | Artistas activos              |
+| `/artistas/:id`       | Detalle de artista            |
+| `/sedes`              | Sedes activas                 |
+| `/sedes/:code`        | Detalle de sede               |
+| `/login`              | Inicio de sesión              |
+| `/registro`           | Registro                      |
 
 ### Sesión autenticada
 
-| Ruta | Acceso |
-|---|---|
-| `/cuenta` | Cualquier sesión autenticada |
-| `/mis-tickets` | USER |
-| `/mis-tickets/:ticketCode` | USER |
-| `/compra/confirmacion/:ticketCode` | USER |
-| `/staff/validacion` | STAFF o ADMIN |
-| `/staff/eventos/:eventCode/tickets` | STAFF o ADMIN |
-| `/admin/eventos` | ADMIN |
-| `/admin/eventos/nuevo` | ADMIN |
-| `/admin/eventos/:eventCode` | ADMIN |
-| `/403` | Acceso sin permisos |
-| `*` | Página no encontrada |
+| Ruta                                | Acceso                       |
+| ----------------------------------- | ---------------------------- |
+| `/cuenta`                           | Cualquier sesión autenticada |
+| `/mis-tickets`                      | USER                         |
+| `/mis-tickets/:ticketCode`          | USER                         |
+| `/compra/confirmacion/:ticketCode`  | USER                         |
+| `/staff/validacion`                 | STAFF o ADMIN                |
+| `/staff/eventos/:eventCode/tickets` | STAFF o ADMIN                |
+| `/admin/eventos`                    | ADMIN                        |
+| `/admin/eventos/nuevo`              | ADMIN                        |
+| `/admin/eventos/:eventCode`         | ADMIN                        |
+| `/403`                              | Acceso sin permisos          |
+| `*`                                 | Página no encontrada         |
 
 Excepto Inicio y el Layout, las páginas se cargan de forma perezosa desde la
 configuración de `src/app/router.tsx`.

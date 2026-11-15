@@ -1,16 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import {
-  MemoryRouter,
-  useLocation,
-} from 'react-router'
-import {
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
+import { MemoryRouter, useLocation } from 'react-router'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useArtistasActivos } from '../funcionalidades/artistas/consultas'
 import {
   useEventosPorArtista,
@@ -27,15 +18,9 @@ vi.mock('../funcionalidades/eventos/consultas', () => ({
   useEventosPorArtista: vi.fn(),
 }))
 
-const useArtistasActivosMock = vi.mocked(
-  useArtistasActivos,
-)
-const useEventosPublicadosMock = vi.mocked(
-  useEventosPublicados,
-)
-const useEventosPorArtistaMock = vi.mocked(
-  useEventosPorArtista,
-)
+const useArtistasActivosMock = vi.mocked(useArtistasActivos)
+const useEventosPublicadosMock = vi.mocked(useEventosPublicados)
+const useEventosPorArtistaMock = vi.mocked(useEventosPorArtista)
 
 const eventos = [
   {
@@ -142,9 +127,7 @@ describe('página Catálogo de eventos', () => {
 
   it('restaura los filtros y actualiza texto y categoría en la URL', async () => {
     const usuario = userEvent.setup()
-    renderizarCatalogo(
-      '/eventos?q=caribbean&categoria=MUSIC',
-    )
+    renderizarCatalogo('/eventos?q=caribbean&categoria=MUSIC')
 
     expect(
       screen.getByRole('link', {
@@ -172,9 +155,7 @@ describe('página Catálogo de eventos', () => {
         name: 'Ver evento Tech Summit',
       }),
     ).toBeInTheDocument()
-    expect(screen.getByTestId('ubicacion')).toHaveTextContent(
-      'q=tech',
-    )
+    expect(screen.getByTestId('ubicacion')).toHaveTextContent('q=tech')
     expect(screen.getByTestId('ubicacion')).toHaveTextContent(
       'categoria=TECHNOLOGY',
     )
@@ -191,9 +172,7 @@ describe('página Catálogo de eventos', () => {
     renderizarCatalogo('/eventos?artista=Solar+Beat')
 
     expect(useEventosPublicadosMock).toHaveBeenCalledWith(false)
-    expect(useEventosPorArtistaMock).toHaveBeenCalledWith(
-      'Solar Beat',
-    )
+    expect(useEventosPorArtistaMock).toHaveBeenCalledWith('Solar Beat')
     expect(
       screen.getByRole('link', {
         name: 'Ver evento Caribbean Music Fest',
@@ -205,8 +184,6 @@ describe('página Catálogo de eventos', () => {
     renderizarCatalogo('/eventos?categoria=INVALIDA')
 
     expect(screen.getByText('2 eventos')).toBeInTheDocument()
-    expect(
-      screen.getByRole('combobox', { name: 'Categoría' }),
-    ).toHaveValue('')
+    expect(screen.getByRole('combobox', { name: 'Categoría' })).toHaveValue('')
   })
 })
