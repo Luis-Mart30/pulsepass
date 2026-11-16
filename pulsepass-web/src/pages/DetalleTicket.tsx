@@ -1,3 +1,4 @@
+import '../componentes/ExperienciaPulsePass.css'
 import { useState } from 'react'
 import { Link, useParams } from 'react-router'
 import clsx from 'clsx'
@@ -17,6 +18,8 @@ import {
   obtenerEtiquetaTipoTicket,
 } from '../lib/formatos'
 import { crearRuta, RUTAS } from '../lib/rutas'
+import './Entradas.css'
+import { IconoDato } from '../componentes/IconoDato'
 
 const clasesEstado: Record<EstadoTicket, string> = {
   RESERVED: 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-200',
@@ -218,14 +221,16 @@ export default function DetalleTicket() {
         ← Volver a mis tickets
       </Link>
 
-      <article className="mt-5 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-        <header className="bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 p-6 text-white sm:p-8">
+      <article className="tarjeta-operacion mt-5 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <header className="entrada-cabecera p-6 text-white sm:p-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="text-sm font-semibold tracking-wider text-indigo-100 uppercase">
                 Entrada PulsePass
               </p>
-              <h1 className="mt-2 text-3xl font-bold">{ticket.eventName}</h1>
+              <h1 className="titulo-pulsepass mt-2 text-3xl font-extrabold">
+                {ticket.eventName}
+              </h1>
             </div>
 
             <span
@@ -239,20 +244,21 @@ export default function DetalleTicket() {
           </div>
         </header>
 
-        <div className="p-6 sm:p-8">
+        <div className="entrada-talon p-6 sm:p-8">
           <section
             aria-labelledby="titulo-codigo-ticket"
-            className="rounded-xl border border-dashed border-indigo-300 bg-indigo-50 p-5 dark:border-indigo-800 dark:bg-indigo-950/50"
+            className="entrada-codigo rounded-2xl border p-4 sm:p-5"
           >
             <h2
               id="titulo-codigo-ticket"
               className="text-sm font-semibold text-slate-600 dark:text-slate-300"
             >
+              <IconoDato tipo="codigo" />
               Código del ticket
             </h2>
 
             <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <strong className="text-xl break-all text-slate-950 dark:text-white">
+              <strong className="font-mono text-xl break-all text-slate-950 dark:text-white">
                 {ticket.ticketCode}
               </strong>
 
@@ -264,11 +270,17 @@ export default function DetalleTicket() {
                 {copiado ? 'Código copiado' : 'Copiar código'}
               </Boton>
             </div>
+            {ticket.status === 'PAID' && (
+              <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">
+                Presenta este código al ingresar al evento.
+              </p>
+            )}
           </section>
 
-          <dl className="mt-8 grid gap-6 sm:grid-cols-2">
+          <dl className="entrada-datos mt-6 grid gap-3 sm:grid-cols-2">
             <div>
               <dt className="text-sm text-slate-500 dark:text-slate-400">
+                <IconoDato tipo="entrada" />
                 Tipo de entrada
               </dt>
               <dd className="mt-1 text-lg font-semibold text-slate-950 dark:text-white">
@@ -278,6 +290,7 @@ export default function DetalleTicket() {
 
             <div>
               <dt className="text-sm text-slate-500 dark:text-slate-400">
+                <IconoDato tipo="precio" />
                 Precio
               </dt>
               <dd className="mt-1 text-lg font-semibold text-slate-950 dark:text-white">
@@ -287,6 +300,7 @@ export default function DetalleTicket() {
 
             <div>
               <dt className="text-sm text-slate-500 dark:text-slate-400">
+                <IconoDato tipo="fecha" />
                 Fecha de compra
               </dt>
               <dd className="mt-1 text-lg font-semibold text-slate-950 dark:text-white">
@@ -296,6 +310,7 @@ export default function DetalleTicket() {
 
             <div>
               <dt className="text-sm text-slate-500 dark:text-slate-400">
+                <IconoDato tipo="edad" />
                 Correo del titular
               </dt>
               <dd className="mt-1 text-lg font-semibold break-all text-slate-950 dark:text-white">

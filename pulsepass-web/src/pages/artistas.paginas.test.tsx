@@ -47,7 +47,10 @@ function renderizarLista() {
   return render(
     <QueryClientProvider client={crearQueryClient()}>
       <MemoryRouter initialEntries={['/artistas']}>
-        <ListaArtistas />
+        <Routes>
+          <Route path="/artistas" element={<ListaArtistas />} />
+          <Route path="/artistas/:id" element={<DetalleArtista />} />
+        </Routes>
       </MemoryRouter>
     </QueryClientProvider>,
   )
@@ -75,7 +78,8 @@ describe('páginas públicas de artistas', () => {
     } as never)
   })
 
-  it('muestra los artistas activos y enlaza al detalle', () => {
+  it('abre el detalle al pulsar el nombre dentro de la tarjeta', async () => {
+    const usuario = userEvent.setup()
     useArtistasActivosMock.mockReturnValue({
       isPending: false,
       isError: false,
@@ -92,16 +96,18 @@ describe('páginas públicas de artistas', () => {
 
     renderizarLista()
 
+    const nombre = screen.getByRole('heading', { name: 'Mar Azul' })
+    const tarjeta = screen.getByRole('link', { name: 'Ver artista Mar Azul' })
+    expect(tarjeta).toHaveAttribute('href', '/artistas/20')
+    expect(tarjeta).toContainElement(nombre)
+    expect(tarjeta).toContainElement(screen.getByText('Colombia'))
+
+    await usuario.click(nombre)
+
+    expect(useArtistaPorIdMock).toHaveBeenCalledWith(20)
     expect(
-      screen.getByRole('heading', { name: 'Mar Azul' }),
+      screen.getByRole('heading', { name: 'Próximos eventos de Mar Azul' }),
     ).toBeInTheDocument()
-
-    expect(screen.getByRole('link', { name: 'Ver artista' })).toHaveAttribute(
-      'href',
-      '/artistas/20',
-    )
-
-    expect(screen.getByText('Colombia')).toBeInTheDocument()
   })
 
   it('informa cuando no existen artistas activos', () => {

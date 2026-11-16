@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { ApiError } from '../lib/http'
 import {
   useSedePorCodigo,
@@ -32,7 +33,10 @@ function renderizarLista() {
   return render(
     <QueryClientProvider client={crearQueryClient()}>
       <MemoryRouter initialEntries={['/sedes']}>
-        <ListaSedes />
+        <Routes>
+          <Route path="/sedes" element={<ListaSedes />} />
+          <Route path="/sedes/:code" element={<DetalleSede />} />
+        </Routes>
       </MemoryRouter>
     </QueryClientProvider>,
   )
@@ -55,39 +59,37 @@ describe('páginas públicas de sedes', () => {
     vi.clearAllMocks()
   })
 
-  it('muestra las sedes activas y enlaza al detalle', () => {
-    useSedesActivasMock.mockReturnValue({
-      isPending: false,
-      isError: false,
-      data: [
-        {
-          id: 1,
-          code: 'VEN-001',
-          name: 'Estadio PulsePass',
-          city: 'Santa Marta',
-          address: 'Carrera 1 # 10-20',
-          capacity: 15000,
-          active: true,
-        },
-      ],
-    } as never)
+  it('abre el detalle desde la tarjeta de sede con el teclado', async () => {
+    const usuario = userEvent.setup()
+    const sede = {
+      id: 1,
+      code: 'VEN-001',
+      name: 'Estadio PulsePass',
+      city: 'Santa Marta',
+      address: 'Carrera 1 # 10-20',
+      capacity: 15000,
+      active: true,
+    }
+    useSedesActivasMock.mockReturnValue({ data: [sede] } as never)
+    useSedePorCodigoMock.mockReturnValue({ data: sede } as never)
 
     renderizarLista()
 
-    expect(
-      screen.getByRole('heading', {
-        name: 'Estadio PulsePass',
-      }),
-    ).toBeInTheDocument()
-
-    expect(screen.getByRole('link', { name: 'Ver sede' })).toHaveAttribute(
-      'href',
-      '/sedes/VEN-001',
+    const tarjeta = screen.getByRole('link', {
+      name: 'Ver sede Estadio PulsePass',
+    })
+    expect(tarjeta).toHaveAttribute('href', '/sedes/VEN-001')
+    expect(tarjeta).toContainElement(
+      screen.getByRole('heading', { name: sede.name }),
     )
+    expect(tarjeta).toHaveTextContent('15.000 personas')
+    expect(tarjeta).toHaveTextContent('Activa')
 
-    expect(
-      screen.getByText('15.000 personas', { exact: false }),
-    ).toBeInTheDocument()
+    await usuario.tab()
+    expect(tarjeta).toHaveFocus()
+    await usuario.keyboard('{Enter}')
+
+    expect(useSedePorCodigoMock).toHaveBeenCalledWith('VEN-001')
   })
 
   it('informa cuando no existen sedes activas', () => {

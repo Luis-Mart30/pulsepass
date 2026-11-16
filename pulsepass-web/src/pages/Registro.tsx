@@ -4,6 +4,7 @@ import { useForm, useWatch } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router'
 import { Boton } from '../componentes/Boton'
 import { Campo } from '../componentes/Campo'
+import { IlustracionSeccion } from '../componentes/IlustracionSeccion'
 import { registrarUsuarioApi } from '../funcionalidades/auth/api'
 import {
   RegistroSchema,
@@ -11,6 +12,8 @@ import {
 } from '../funcionalidades/auth/tipos'
 import { ApiError } from '../lib/http'
 import { RUTAS } from '../lib/rutas'
+import './Acceso.css'
+import { IconoNota } from '../componentes/IconoNota'
 
 const CAMPOS_REGISTRO = new Set<keyof RegistroDatos>([
   'username',
@@ -136,27 +139,18 @@ export default function Registro() {
   }
 
   return (
-    <section className="mx-auto flex w-full max-w-6xl justify-center px-4 py-10 sm:px-6">
-      <div className="w-full max-w-xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 dark:border-slate-800 dark:bg-slate-900">
-        <div className="mb-7 text-center">
+    <section className="acceso-pagina acceso-registro relative mx-auto flex w-full max-w-6xl justify-center px-4 py-8 sm:px-6 sm:py-12">
+      <IlustracionSeccion tipo="acceso" />
+      <div className="acceso-tarjeta w-full min-w-0 rounded-3xl border border-violet-200 bg-white p-5 sm:p-8 dark:border-slate-700 dark:bg-slate-900">
+        <div className="acceso-cabecera mb-6 text-center">
           <div
-            className="mx-auto mb-4 flex size-12 items-center justify-center rounded-xl bg-indigo-600 text-white"
+            className="marca-pulsepass-icono mx-auto mb-4 grid size-12 place-items-center rounded-2xl bg-violet-700 text-white shadow-sm"
             aria-hidden="true"
           >
-            <svg
-              viewBox="0 0 24 24"
-              className="size-6"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M9 18V5l10-2v13" />
-              <circle cx="6" cy="18" r="3" />
-              <circle cx="16" cy="16" r="3" />
-            </svg>
+            <IconoNota />
           </div>
 
-          <h1 className="text-2xl font-bold text-slate-950 dark:text-white">
+          <h1 className="font-titulo text-2xl font-extrabold tracking-tight text-[#241044] sm:text-3xl dark:text-white">
             Crea tu cuenta
           </h1>
         </div>
@@ -171,7 +165,7 @@ export default function Registro() {
         ) : null}
 
         <form
-          className="space-y-5"
+          className="space-y-4 sm:space-y-5"
           noValidate
           onSubmit={handleSubmit(enviarRegistro)}
         >
@@ -245,7 +239,7 @@ export default function Registro() {
 
               <button
                 type="button"
-                className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-slate-500 hover:text-indigo-600"
+                className="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-lg text-violet-700 hover:bg-violet-50 focus-visible:outline-2 focus-visible:outline-violet-600 dark:text-violet-200 dark:hover:bg-slate-800"
                 aria-label={
                   mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
                 }
@@ -288,7 +282,7 @@ export default function Registro() {
                   key={segmento}
                   className={
                     segmento <= fortaleza.nivel
-                      ? 'h-1 rounded-full bg-indigo-600'
+                      ? 'h-1 rounded-full bg-violet-700 dark:bg-violet-400'
                       : 'h-1 rounded-full bg-slate-200 dark:bg-slate-700'
                   }
                 />
@@ -304,7 +298,7 @@ export default function Registro() {
             type="submit"
             cargando={isSubmitting}
             textoCargando="Creando cuenta…"
-            className="w-full"
+            className="w-full rounded-full! bg-violet-700! hover:bg-violet-800!"
           >
             Crear cuenta
           </Boton>
@@ -313,7 +307,7 @@ export default function Registro() {
         <p className="mt-6 text-center text-sm text-slate-600 dark:text-slate-400">
           ¿Ya tienes cuenta?{' '}
           <Link
-            className="font-semibold text-indigo-600 hover:text-indigo-700"
+            className="font-semibold text-violet-700 underline-offset-4 hover:underline dark:text-violet-300"
             to={RUTAS.LOGIN}
           >
             Inicia sesión

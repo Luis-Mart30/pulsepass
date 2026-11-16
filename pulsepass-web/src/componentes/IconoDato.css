@@ -1,0 +1,13 @@
+.icono-dato {
+  display: inline-block;
+  flex: none;
+  margin-inline-end: 0.35rem;
+  vertical-align: -0.2em;
+  color: var(--color-violet-700);
+}
+
+@media (prefers-color-scheme: dark) {
+  .icono-dato {
+    color: var(--color-violet-300);
+  }
+}

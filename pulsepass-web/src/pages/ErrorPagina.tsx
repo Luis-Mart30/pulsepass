@@ -11,11 +11,14 @@ export default function ErrorPagina() {
 
   return (
     <main className="grid min-h-screen place-items-center bg-slate-50 px-4 dark:bg-slate-950">
-      <section className="max-w-lg text-center" aria-labelledby="titulo-error">
+      <section
+        className="aviso-pulsepass w-full max-w-lg rounded-3xl border border-violet-200 bg-white p-6 text-center shadow-sm sm:p-9 dark:border-slate-700 dark:bg-slate-900"
+        aria-labelledby="titulo-error"
+      >
         <p className="font-semibold text-violet-600">PulsePass</p>
         <h1
           id="titulo-error"
-          className="mt-2 text-3xl font-bold text-slate-950 dark:text-white"
+          className="font-titulo mt-2 text-3xl font-extrabold tracking-tight text-slate-950 dark:text-white"
         >
           No pudimos cargar esta página
         </h1>

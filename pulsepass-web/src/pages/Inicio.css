@@ -1,0 +1,219 @@
+.inicio-portada {
+  --inicio-borde: #e0c9f7;
+  --inicio-sombra: #542b9114;
+  --inicio-lienzo: #fff;
+  --inicio-color-lateral: #f3eaff;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-areas: 'boletos audifonos' 'contenido contenido';
+  align-items: center;
+  gap: 0.45rem;
+  padding: clamp(0.9rem, 3vw, 2rem);
+  border: 1px solid var(--inicio-borde);
+  box-shadow: 0 0.85rem 2.6rem var(--inicio-sombra);
+  border-radius: clamp(1.25rem, 3vw, 2.5rem);
+  background: linear-gradient(
+    110deg,
+    var(--inicio-color-lateral),
+    var(--inicio-lienzo) 34% 66%,
+    var(--inicio-color-lateral)
+  );
+}
+
+.inicio-contenido {
+  grid-area: contenido;
+  padding-block-end: 0.4rem;
+}
+
+.inicio-titulo {
+  font-size: clamp(2.125rem, 3.7vw, 3.25rem);
+  line-height: 1.07;
+  font-weight: 800;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+
+.inicio-titulo-destacado {
+  position: relative;
+  display: inline-block;
+  color: #740bd5;
+}
+
+.inicio-titulo-destacado::after {
+  position: absolute;
+  inset: auto 3% -0.12em 10%;
+  height: 0.15em;
+  border-top: 0.065em solid #eab308;
+  border-radius: 50%;
+  content: '';
+  transform: rotate(1deg);
+}
+
+.inicio-ilustracion {
+  width: clamp(3.75rem, 19vw, 5.5rem);
+  margin-inline: auto;
+  aspect-ratio: 1;
+  background-image: url('../assets/ilustraciones-portada.webp');
+  background-repeat: no-repeat;
+  background-size: 200% 100%;
+  pointer-events: none;
+}
+
+.inicio-boletos {
+  --inicio-desplazamiento: -1rem;
+  --inicio-giro: -13deg;
+  grid-area: boletos;
+  justify-self: end;
+  margin-inline: 0 0.55rem;
+  background-position: left center;
+}
+
+.inicio-audifonos {
+  --inicio-desplazamiento: 1rem;
+  --inicio-giro: 13deg;
+  grid-area: audifonos;
+  justify-self: start;
+  margin-inline: 0.55rem 0;
+  background-position: right center;
+}
+
+@media (min-width: 40rem) {
+  .inicio-portada {
+    grid-template-columns: minmax(4.25rem, 1fr) minmax(0, 5.5fr) minmax(
+        4.25rem,
+        1fr
+      );
+    grid-template-areas: 'boletos contenido audifonos';
+    column-gap: clamp(0.5rem, 1.25vw, 1.25rem);
+    min-height: clamp(15rem, 24vw, 21.5rem);
+  }
+
+  .inicio-ilustracion {
+    width: 100%;
+    max-width: 12.5rem;
+    justify-self: center;
+    margin-inline: auto;
+  }
+
+  .inicio-contenido {
+    padding-block-end: 0;
+  }
+}
+
+@media (min-width: 80rem) {
+  .inicio-portada {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 4.5fr) minmax(0, 1fr);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .inicio-portada {
+    --inicio-borde: #493265;
+    --inicio-sombra: #01000d3d;
+    --inicio-lienzo: #111329;
+    --inicio-color-lateral: #241442;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .inicio-ilustracion {
+    animation: inicio-entrada-arte 760ms cubic-bezier(0.2, 0.75, 0.3, 1) both;
+  }
+
+  .inicio-audifonos {
+    animation-delay: 100ms;
+  }
+
+  .inicio-titulo-destacado::after {
+    transform-origin: left center;
+    animation: inicio-subrayado 500ms 110ms ease-out both;
+  }
+
+  @keyframes inicio-entrada-arte {
+    from {
+      opacity: 0.72;
+      transform: translate(var(--inicio-desplazamiento), 0.65rem)
+        rotate(var(--inicio-giro)) scale(0.86);
+    }
+
+    65% {
+      transform: translateY(-0.3rem) rotate(calc(var(--inicio-giro) * -0.22));
+    }
+
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes inicio-subrayado {
+    from {
+      transform: scaleX(0.12) rotate(1deg);
+    }
+    to {
+      transform: rotate(1deg);
+    }
+  }
+
+  @supports (animation-timeline: view()) {
+    .inicio-lista > li:not(:focus-within) {
+      animation: inicio-tarjeta-entrada linear both;
+      animation-timeline: view(block);
+      animation-range: entry 0% entry 75%;
+    }
+
+    @keyframes inicio-tarjeta-entrada {
+      from {
+        transform: translateY(0.65rem);
+      }
+      to {
+        transform: none;
+      }
+    }
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .inicio-accion {
+    transition:
+      transform 180ms ease,
+      background-color 180ms ease;
+  }
+
+  .inicio-accion:hover {
+    transform: translateY(-2px);
+  }
+
+  .inicio-accion-principal {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .inicio-accion-principal::after {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+      110deg,
+      transparent 30%,
+      #fff3,
+      transparent 70%
+    );
+    transform: translateX(-100%);
+    content: '';
+    pointer-events: none;
+  }
+
+  .inicio-accion-principal:hover::after {
+    animation: inicio-reflejo 500ms ease-out;
+  }
+
+  @keyframes inicio-reflejo {
+    to {
+      transform: translateX(100%);
+    }
+  }
+}

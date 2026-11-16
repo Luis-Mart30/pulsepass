@@ -1,3 +1,4 @@
+import { IlustracionSeccion } from '../componentes/IlustracionSeccion'
 import { useState } from 'react'
 import { Link } from 'react-router'
 import clsx from 'clsx'
@@ -17,6 +18,8 @@ import {
   obtenerEtiquetaTipoTicket,
 } from '../lib/formatos'
 import { crearRuta, RUTAS } from '../lib/rutas'
+import './Entradas.css'
+import { IconoDato } from '../componentes/IconoDato'
 
 type FiltroTicket = 'TODOS' | 'PAID' | 'USED' | 'CANCELLED'
 
@@ -163,19 +166,23 @@ export default function MisTickets() {
 
   return (
     <section className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-      <header>
-        <p className="text-sm font-semibold tracking-wider text-indigo-600 uppercase dark:text-indigo-400">
-          PulsePass
-        </p>
-        <h1 className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">
-          Mis tickets
-        </h1>
-        <p className="mt-3 max-w-2xl text-slate-600 dark:text-slate-300">
-          Consulta tus entradas y revisa el estado de cada compra.
-        </p>
+      <header className="portada-seccion portada-entradas">
+        <div>
+          <h1 className="titulo-pulsepass text-3xl font-extrabold text-slate-950 sm:text-4xl dark:text-white">
+            Mis tickets
+          </h1>
+          <p className="mt-3 max-w-2xl text-slate-600 dark:text-slate-300">
+            Consulta tus entradas y revisa el estado de cada compra.
+          </p>
+        </div>
+        <IlustracionSeccion tipo="entradas" />
       </header>
 
-      <div className="mt-8 flex flex-wrap gap-2" aria-label="Filtrar tickets">
+      <div
+        className="entrada-filtros mt-8 flex flex-wrap gap-2"
+        role="group"
+        aria-label="Filtrar tickets"
+      >
         {filtros.map((opcion) => (
           <button
             key={opcion.valor}
@@ -227,7 +234,10 @@ export default function MisTickets() {
       )}
 
       {!consulta.isPending && !consulta.isError && tickets.length === 0 && (
-        <div className="mt-8 rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center dark:border-slate-700 dark:bg-slate-900">
+        <div className="entrada-vacia mt-8 rounded-3xl border border-dashed border-violet-300 p-8 text-center dark:border-violet-800">
+          <div className="entrada-vacia-icono mx-auto mb-4" aria-hidden="true">
+            <IconoDato tipo="entrada" />
+          </div>
           <h2 className="text-xl font-bold text-slate-950 dark:text-white">
             Aún no tienes tickets
           </h2>
@@ -259,12 +269,15 @@ export default function MisTickets() {
             {ticketsFiltrados.map((ticket) => (
               <article
                 key={ticket.ticketCode}
-                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 dark:border-slate-800 dark:bg-slate-900"
+                className="entrada-fila rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900"
               >
-                <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+                <div className="entrada-fila-arte" aria-hidden="true">
+                  <IconoDato tipo="entrada" />
+                </div>
+                <div className="flex min-w-0 flex-col gap-5 p-5 sm:p-6 lg:flex-row lg:items-center lg:justify-between">
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-3">
-                      <h2 className="text-xl font-bold text-slate-950 dark:text-white">
+                      <h2 className="font-titulo text-xl font-extrabold break-words text-slate-950 dark:text-white">
                         {ticket.eventName}
                       </h2>
                       <span
@@ -280,14 +293,16 @@ export default function MisTickets() {
                     <dl className="mt-4 grid gap-x-8 gap-y-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
                       <div>
                         <dt className="text-slate-500 dark:text-slate-400">
+                          <IconoDato tipo="codigo" />
                           Código
                         </dt>
-                        <dd className="mt-1 font-semibold text-slate-900 dark:text-white">
+                        <dd className="mt-1 font-mono font-semibold break-all text-slate-900 dark:text-white">
                           {ticket.ticketCode}
                         </dd>
                       </div>
                       <div>
                         <dt className="text-slate-500 dark:text-slate-400">
+                          <IconoDato tipo="entrada" />
                           Tipo
                         </dt>
                         <dd className="mt-1 font-semibold text-slate-900 dark:text-white">
@@ -296,6 +311,7 @@ export default function MisTickets() {
                       </div>
                       <div>
                         <dt className="text-slate-500 dark:text-slate-400">
+                          <IconoDato tipo="precio" />
                           Precio
                         </dt>
                         <dd className="mt-1 font-semibold text-slate-900 dark:text-white">
@@ -304,6 +320,7 @@ export default function MisTickets() {
                       </div>
                       <div>
                         <dt className="text-slate-500 dark:text-slate-400">
+                          <IconoDato tipo="fecha" />
                           Compra
                         </dt>
                         <dd className="mt-1 font-semibold text-slate-900 dark:text-white">
@@ -313,7 +330,7 @@ export default function MisTickets() {
                     </dl>
                   </div>
 
-                  <div className="flex flex-col gap-3 sm:flex-row lg:flex-shrink-0">
+                  <div className="entrada-acciones flex flex-col gap-3 sm:flex-row lg:flex-shrink-0">
                     <Link
                       to={crearRuta.detalleTicket(ticket.ticketCode)}
                       className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-5 py-2.5 font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"

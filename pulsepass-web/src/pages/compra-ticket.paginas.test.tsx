@@ -291,6 +291,10 @@ describe('flujo de compra de tickets', () => {
 
     expect(screen.getByText('TKT-COMPRA-010')).toBeInTheDocument()
 
+    expect(
+      screen.getByRole('link', { name: 'Seguir explorando' }),
+    ).toHaveAttribute('href', '/eventos')
+
     expect(screen.getByRole('link', { name: 'Ver ticket' })).toHaveAttribute(
       'href',
       '/mis-tickets/TKT-COMPRA-010',

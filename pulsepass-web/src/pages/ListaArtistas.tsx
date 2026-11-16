@@ -1,6 +1,6 @@
-import { Link } from 'react-router'
+import { IlustracionSeccion } from '../componentes/IlustracionSeccion'
+import { AvatarArtista } from '../componentes/artistas/AvatarArtista'
 import { useArtistasActivos } from '../funcionalidades/artistas/consultas'
-import { crearRuta } from '../lib/rutas'
 
 export default function ListaArtistas() {
   const consulta = useArtistasActivos()
@@ -19,12 +19,12 @@ export default function ListaArtistas() {
   if (consulta.isError) {
     return (
       <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-slate-950 dark:text-white">
+        <h1 className="font-titulo text-3xl font-extrabold text-slate-950 dark:text-white">
           Artistas
         </h1>
         <div
           role="alert"
-          className="mt-6 rounded-xl border border-red-200 bg-red-50 p-4 text-red-800"
+          className="mt-6 rounded-xl border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-900 dark:bg-red-950 dark:text-red-200"
         >
           No fue posible cargar los artistas. Intenta nuevamente.
         </div>
@@ -34,47 +34,29 @@ export default function ListaArtistas() {
 
   return (
     <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      <p className="text-sm font-semibold tracking-wider text-violet-600 uppercase">
-        PulsePass
-      </p>
-      <h1 className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">
-        Artistas
-      </h1>
-      <p className="mt-3 max-w-2xl text-slate-600 dark:text-slate-300">
-        Descubre los artistas que forman parte de nuestros eventos.
-      </p>
+      <header className="portada-seccion portada-artistas">
+        <div>
+          <h1 className="font-titulo text-3xl font-extrabold tracking-tight text-[#241044] sm:text-4xl lg:text-5xl dark:text-slate-100">
+            Artistas
+          </h1>
+          <p className="mt-2 max-w-2xl text-slate-600 dark:text-slate-300">
+            Descubre los artistas que forman parte de nuestros eventos.
+          </p>
+        </div>
+        <IlustracionSeccion tipo="artistas" />
+      </header>
 
       {consulta.data.length === 0 ? (
-        <div className="mt-8 rounded-xl border border-slate-200 p-6 dark:border-slate-700">
+        <div className="mt-8 rounded-2xl border border-violet-200 bg-violet-50/60 p-6 dark:border-slate-700 dark:bg-slate-900">
           <p className="text-slate-600 dark:text-slate-300">
             No hay artistas activos disponibles en este momento.
           </p>
         </div>
       ) : (
-        <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {consulta.data.map((artista) => (
-            <li
-              key={artista.id}
-              className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md dark:border-slate-700 dark:bg-slate-900"
-            >
-              <div className="p-6">
-                <p className="text-sm font-semibold text-violet-600">
-                  {artista.genre}
-                </p>
-                <h2 className="mt-2 text-xl font-bold text-slate-950 dark:text-white">
-                  {artista.stageName}
-                </h2>
-                <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">
-                  {artista.country}
-                </p>
-
-                <Link
-                  to={crearRuta.detalleArtista(artista.id)}
-                  className="mt-6 inline-flex rounded-lg bg-violet-600 px-4 py-2 font-semibold text-white transition hover:bg-violet-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
-                >
-                  Ver artista
-                </Link>
-              </div>
+            <li key={artista.id} className="min-w-0">
+              <AvatarArtista artista={artista} variante="tarjeta" />
             </li>
           ))}
         </ul>

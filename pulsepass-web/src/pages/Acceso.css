@@ -1,0 +1,78 @@
+main:has(> .acceso-pagina) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+}
+
+.acceso-pagina {
+  --acceso-semi-ancho: 14rem;
+}
+
+.acceso-registro {
+  --acceso-semi-ancho: 18rem;
+}
+
+.acceso-pagina > .ilustracion-seccion {
+  display: none;
+}
+
+@media (min-width: 64rem) {
+  .acceso-pagina > .ilustracion-seccion {
+    position: absolute;
+    display: block;
+    top: 50%;
+    right: calc(50% + var(--acceso-semi-ancho) + clamp(1.75rem, 3vw, 3rem));
+    width: clamp(7rem, 13vw, 12rem);
+    translate: 0 -50%;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  main:has(> .acceso-pagina) {
+    background: linear-gradient(160deg, #f4edff, var(--color-slate-50) 58%);
+  }
+}
+
+.acceso-tarjeta {
+  max-width: calc(2 * var(--acceso-semi-ancho));
+  background: linear-gradient(160deg, #faf6ff, #fff 30%);
+  box-shadow: 0 1rem 3rem #3e1c661c;
+}
+
+.acceso-cabecera {
+  padding: 1.1rem 0.75rem 1.3rem;
+  border-radius: 1.15rem;
+  background: linear-gradient(120deg, #2e194f, #592f79);
+}
+
+.acceso-cabecera h1 {
+  color: white;
+}
+
+.acceso-cabecera .marca-pulsepass-icono {
+  background: #eed8ff;
+  color: #592988;
+}
+
+.acceso-tarjeta input:not([aria-invalid='true']):focus {
+  border-color: var(--color-violet-600);
+  outline: 2px solid var(--color-violet-400);
+  outline-offset: 1px;
+  box-shadow: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  main:has(> .acceso-pagina) {
+    background: linear-gradient(160deg, #1b1030, var(--color-slate-950) 60%);
+  }
+
+  .acceso-tarjeta {
+    background: linear-gradient(160deg, #25153d, var(--color-slate-900) 34%);
+    box-shadow: none;
+  }
+
+  .acceso-tarjeta input:not([aria-invalid='true']):focus {
+    border-color: var(--color-violet-300);
+    outline-color: var(--color-violet-400);
+  }
+}

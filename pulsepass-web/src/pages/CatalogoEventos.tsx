@@ -1,5 +1,6 @@
 import { Link, useSearchParams } from 'react-router'
 import { z } from 'zod'
+import arteCartelera from '../assets/pulsepass-cartelera-3d.webp'
 import { Boton } from '../componentes/Boton'
 import { TarjetaEvento } from '../componentes/eventos/TarjetaEvento'
 import {
@@ -16,6 +17,8 @@ import {
 } from '../funcionalidades/eventos/tipos'
 import { obtenerEtiquetaCategoria } from '../lib/formatos'
 import { crearRuta } from '../lib/rutas'
+import '../componentes/ExperienciaPulsePass.css'
+import './CatalogoEventos.css'
 
 const ParametrosCatalogoSchema = z.object({
   q: z.string().catch(''),
@@ -24,6 +27,21 @@ const ParametrosCatalogoSchema = z.object({
 })
 
 const CATEGORIAS = CategoriaEventoSchema.options
+
+const CLASE_FILTRO =
+  'min-w-0 rounded-xl border border-violet-200 bg-violet-50/60 p-3.5 focus-within:border-violet-500 dark:border-slate-700 dark:bg-slate-900 dark:focus-within:border-violet-400'
+
+const CLASE_ETIQUETA =
+  'mb-2 block text-sm font-semibold text-[#392451] dark:text-slate-100'
+
+const CLASE_CONTROL = [
+  'min-h-11 w-full min-w-0 rounded-xl border border-violet-200',
+  'bg-white px-3 py-2 text-slate-900 scheme-light',
+  'placeholder:text-slate-500 disabled:opacity-60',
+  'focus:border-violet-600 focus:outline-2 focus:outline-offset-2 focus:outline-violet-600',
+  'dark:border-slate-600 dark:bg-slate-950 dark:text-slate-100 dark:scheme-dark',
+  'dark:focus:border-violet-300 dark:focus:outline-violet-300',
+].join(' ')
 
 export default function CatalogoEventos() {
   const [parametros, setParametros] = useSearchParams()
@@ -73,44 +91,53 @@ export default function CatalogoEventos() {
   }
 
   return (
-    <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      <p className="text-sm font-semibold tracking-wider text-violet-600 uppercase">
-        PulsePass
-      </p>
-      <h1 className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">
-        Catálogo de eventos
-      </h1>
-      <p className="mt-3 max-w-2xl text-slate-600 dark:text-slate-300">
-        Encuentra experiencias disponibles y consulta toda la información antes
-        de obtener tu entrada.
-      </p>
+    <section className="mx-auto w-full max-w-7xl px-4 py-9 sm:px-6 sm:py-12 lg:px-8">
+      <header className="portada-seccion catalogo-portada">
+        <div className="min-w-0">
+          <h1 className="font-titulo text-3xl leading-tight font-extrabold tracking-tight text-[#241044] sm:text-4xl lg:text-5xl dark:text-slate-100">
+            Catálogo de{' '}
+            <span className="text-violet-700 dark:text-fuchsia-300">
+              eventos
+            </span>
+          </h1>
+          <p className="mt-2 max-w-2xl text-slate-600 dark:text-slate-300">
+            Encuentra experiencias disponibles y consulta toda la información
+            antes de obtener tu entrada.
+          </p>
+        </div>
+        <img
+          className="catalogo-arte movimiento-ilustracion"
+          src={arteCartelera}
+          alt=""
+          width={704}
+          height={704}
+        />
+      </header>
 
       <div
-        className="mt-8 grid gap-4 rounded-2xl border border-slate-200 bg-white p-5 md:grid-cols-3 dark:border-slate-800 dark:bg-slate-900"
+        className="catalogo-filtros grid gap-3 md:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)_minmax(0,1fr)]"
         aria-label="Filtros del catálogo"
       >
-        <div>
-          <label
-            htmlFor="buscar-evento"
-            className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-200"
-          >
+        <div className={CLASE_FILTRO}>
+          <label htmlFor="buscar-evento" className={CLASE_ETIQUETA}>
             Buscar por nombre
           </label>
-          <input
-            id="buscar-evento"
-            type="search"
-            value={filtros.q}
-            onChange={(evento) => actualizarParametro('q', evento.target.value)}
-            placeholder="Nombre del evento"
-            className="min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 transition outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
-          />
+          <div className="catalogo-busqueda">
+            <input
+              id="buscar-evento"
+              type="search"
+              value={filtros.q}
+              onChange={(evento) =>
+                actualizarParametro('q', evento.target.value)
+              }
+              placeholder="Nombre del evento"
+              className={CLASE_CONTROL}
+            />
+          </div>
         </div>
 
-        <div>
-          <label
-            htmlFor="categoria-evento"
-            className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-200"
-          >
+        <div className={CLASE_FILTRO}>
+          <label htmlFor="categoria-evento" className={CLASE_ETIQUETA}>
             Categoría
           </label>
           <select
@@ -119,7 +146,7 @@ export default function CatalogoEventos() {
             onChange={(evento) =>
               actualizarParametro('categoria', evento.target.value)
             }
-            className="min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 transition outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+            className={`selector-pulsepass ${CLASE_CONTROL}`}
           >
             <option value="">Todas las categorías</option>
             {CATEGORIAS.map((categoria: CategoriaEvento) => (
@@ -130,11 +157,8 @@ export default function CatalogoEventos() {
           </select>
         </div>
 
-        <div>
-          <label
-            htmlFor="artista-evento"
-            className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-200"
-          >
+        <div className={CLASE_FILTRO}>
+          <label htmlFor="artista-evento" className={CLASE_ETIQUETA}>
             Artista
           </label>
           <select
@@ -144,7 +168,7 @@ export default function CatalogoEventos() {
             onChange={(evento) =>
               actualizarParametro('artista', evento.target.value)
             }
-            className="min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 transition outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-100 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+            className={`selector-pulsepass ${CLASE_CONTROL}`}
           >
             <option value="">Todos los artistas</option>
             {(consultaArtistas.data ?? []).map((artista) => (
@@ -164,10 +188,11 @@ export default function CatalogoEventos() {
         </div>
 
         {hayFiltros ? (
-          <div className="md:col-span-3">
+          <div className="md:col-span-3 md:justify-self-end">
             <Boton
               type="button"
               variante="fantasma"
+              className="rounded-full border border-violet-200 bg-white px-4 text-violet-800 dark:border-slate-600 dark:bg-slate-950 dark:text-violet-200"
               onClick={() => setParametros({})}
             >
               Limpiar filtros
@@ -205,7 +230,7 @@ export default function CatalogoEventos() {
       {!consultaEventos.isPending && !consultaEventos.isError ? (
         <>
           <p
-            className="mt-8 text-sm font-medium text-slate-600 dark:text-slate-300"
+            className="catalogo-resultados mt-7 w-fit rounded-full px-3 py-1 text-sm font-semibold"
             aria-live="polite"
           >
             {eventosFiltrados.length}{' '}
@@ -213,7 +238,7 @@ export default function CatalogoEventos() {
           </p>
 
           {eventosFiltrados.length === 0 ? (
-            <div className="mt-4 rounded-xl border border-slate-200 p-6 dark:border-slate-700">
+            <div className="mt-4 rounded-2xl border border-violet-200 bg-violet-50/60 p-6 dark:border-slate-700 dark:bg-slate-900">
               <p className="text-slate-600 dark:text-slate-300">
                 {hayFiltros
                   ? 'Sin resultados para tu búsqueda.'
@@ -223,7 +248,7 @@ export default function CatalogoEventos() {
           ) : (
             <ul className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {eventosFiltrados.map((evento) => (
-                <li key={evento.id}>
+                <li key={evento.id} className="min-w-0">
                   <TarjetaEvento evento={evento} />
                 </li>
               ))}

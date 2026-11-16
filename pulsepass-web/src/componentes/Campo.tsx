@@ -7,11 +7,19 @@ interface CampoProps extends ComponentPropsWithoutRef<'input'> {
 }
 
 export const Campo = forwardRef<HTMLInputElement, CampoProps>(function Campo(
-  { etiqueta, error, id, className, ...propiedades },
+  {
+    etiqueta,
+    error,
+    id,
+    className,
+    'aria-describedby': descripcionId,
+    ...propiedades
+  },
   ref,
 ) {
   const errorId =
     error !== undefined && id !== undefined ? `${id}-error` : undefined
+  const descripcion = [descripcionId, errorId].filter(Boolean).join(' ')
 
   return (
     <div className="space-y-1.5">
@@ -26,7 +34,7 @@ export const Campo = forwardRef<HTMLInputElement, CampoProps>(function Campo(
         {...propiedades}
         ref={ref}
         id={id}
-        aria-describedby={errorId}
+        aria-describedby={descripcion || undefined}
         aria-invalid={error !== undefined}
         className={clsx(
           'min-h-11 w-full rounded-lg border bg-white px-3 py-2',
