@@ -1,10 +1,12 @@
+import '../componentes/ExperienciaPulsePass.css'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import { z } from 'zod'
 import { Boton } from '../componentes/Boton'
 import { Campo } from '../componentes/Campo'
+import { IconoDato } from '../componentes/IconoDato'
 import {
   useMarcarTicketUsado,
   useTicket,
@@ -20,7 +22,7 @@ import {
   obtenerEtiquetaEstadoTicket,
   obtenerEtiquetaTipoTicket,
 } from '../lib/formatos'
-import { crearRuta } from '../lib/rutas'
+import { crearRuta, SECCION_TICKETS_PAGADOS } from '../lib/rutas'
 
 const BusquedaEventoSchema = z.object({
   eventCode: z.string().trim().min(1, 'Ingresa el código del evento.'),
@@ -28,10 +30,19 @@ const BusquedaEventoSchema = z.object({
 
 export default function ValidacionIngreso() {
   const navigate = useNavigate()
+  const { hash } = useLocation()
+  const enTicketsPagados = hash === `#${SECCION_TICKETS_PAGADOS}`
   const busquedaEvento = useForm<z.infer<typeof BusquedaEventoSchema>>({
     resolver: zodResolver(BusquedaEventoSchema),
     defaultValues: { eventCode: '' },
   })
+  const { setFocus: enfocarEvento } = busquedaEvento
+
+  useEffect(() => {
+    if (enTicketsPagados) {
+      enfocarEvento('eventCode')
+    }
+  }, [enfocarEvento, enTicketsPagados])
 
   const [codigoConsultado, setCodigoConsultado] = useState('')
   const [errorValidacion, setErrorValidacion] = useState<{
@@ -108,12 +119,12 @@ export default function ValidacionIngreso() {
   const ticketReservado = ticketActual?.status === 'RESERVED'
 
   return (
-    <section className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
-      <header>
-        <p className="text-sm font-semibold tracking-wider text-indigo-600 uppercase dark:text-indigo-400">
+    <section className="panel-staff mx-auto w-full max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
+      <header className="encabezado-gestion encabezado-staff">
+        <p className="operacion-rol text-sm font-semibold tracking-wider text-indigo-600 uppercase dark:text-indigo-400">
           Acceso STAFF
         </p>
-        <h1 className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">
+        <h1 className="mt-2 text-3xl font-extrabold text-slate-950 sm:text-4xl dark:text-white">
           Validación de ingreso
         </h1>
         <p className="mt-3 max-w-2xl text-slate-600 dark:text-slate-300">
@@ -124,13 +135,14 @@ export default function ValidacionIngreso() {
 
       <form
         onSubmit={handleSubmit(buscarTicket)}
-        className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900"
+        className="panel-operativo tarjeta-operacion mt-8 rounded-2xl border border-teal-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900"
         noValidate
       >
         <label
           htmlFor="codigo-ticket"
-          className="block text-sm font-semibold text-slate-700 dark:text-slate-200"
+          className="panel-titulo block text-base font-semibold text-slate-800 dark:text-slate-200"
         >
+          <IconoDato tipo="entrada" />
           Código del ticket
         </label>
 
@@ -140,7 +152,7 @@ export default function ValidacionIngreso() {
             type="text"
             placeholder="Ejemplo: TKT-ABC-123"
             autoComplete="off"
-            autoFocus
+            autoFocus={!enTicketsPagados}
             aria-invalid={errors.ticketCode !== undefined}
             aria-describedby={
               errors.ticketCode === undefined
@@ -150,10 +162,12 @@ export default function ValidacionIngreso() {
             {...register('ticketCode', {
               onChange: () => setErrorValidacion(null),
             })}
-            className="min-h-11 flex-1 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-950 transition outline-none placeholder:text-slate-400 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-200 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:focus:border-indigo-400 dark:focus:ring-indigo-950"
+            className="min-h-11 min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-4 py-2.5 font-mono text-slate-950 transition outline-none placeholder:text-slate-500 focus:border-teal-700 focus:ring-2 focus:ring-teal-200 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:focus:border-teal-400 dark:focus:ring-teal-950"
           />
 
-          <Boton type="submit">Buscar ticket</Boton>
+          <Boton type="submit" className="panel-accion-staff">
+            Buscar ticket
+          </Boton>
         </div>
 
         {errors.ticketCode?.message !== undefined ? (
@@ -168,8 +182,9 @@ export default function ValidacionIngreso() {
       </form>
 
       <form
+        id={SECCION_TICKETS_PAGADOS}
         aria-label="Tickets pagados por evento"
-        className="mt-5 flex flex-col items-start gap-3 rounded-2xl border border-slate-200 bg-white p-6 sm:flex-row dark:border-slate-800 dark:bg-slate-900"
+        className="panel-operativo panel-busqueda-evento mt-5 flex scroll-mt-28 flex-col gap-3 rounded-2xl border border-teal-200 bg-white p-6 sm:flex-row sm:items-start dark:border-slate-800 dark:bg-slate-900"
         onSubmit={busquedaEvento.handleSubmit(({ eventCode }) =>
           navigate(crearRuta.ticketsPagadosEvento(eventCode)),
         )}
@@ -178,9 +193,11 @@ export default function ValidacionIngreso() {
         <div className="w-full min-w-0 flex-1">
           <Campo
             id="codigo-evento-pagados"
+            autoFocus={enTicketsPagados}
             etiqueta="Código del evento"
             placeholder="Ejemplo: EVT-001"
             autoComplete="off"
+            className="font-mono"
             error={busquedaEvento.formState.errors.eventCode?.message}
             {...busquedaEvento.register('eventCode')}
           />
@@ -230,7 +247,7 @@ export default function ValidacionIngreso() {
             <header
               className={
                 ticketPagado
-                  ? 'bg-emerald-600 p-6 text-white'
+                  ? 'bg-gradient-to-br from-teal-900 to-emerald-700 p-6 text-white'
                   : ticketUsado
                     ? 'bg-slate-600 p-6 text-white'
                     : 'bg-red-600 p-6 text-white'
@@ -248,7 +265,7 @@ export default function ValidacionIngreso() {
             </header>
 
             <div className="p-6">
-              <dl className="grid gap-5 sm:grid-cols-2">
+              <dl className="panel-ficha grid gap-3 sm:grid-cols-2">
                 <div>
                   <dt className="text-sm text-slate-500 dark:text-slate-400">
                     Evento

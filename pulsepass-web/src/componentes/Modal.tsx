@@ -118,13 +118,13 @@ export function Modal({
         aria-describedby={descripcionId}
         tabIndex={-1}
         className={clsx(
-          'w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl outline-none dark:border-slate-700 dark:bg-slate-900',
+          'max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto rounded-3xl border border-t-4 border-violet-200 border-t-violet-600 bg-white p-6 shadow-2xl outline-none dark:border-slate-700 dark:border-t-violet-400 dark:bg-slate-900',
           className,
         )}
       >
         <h2
           id={tituloId}
-          className="text-xl font-bold text-slate-950 dark:text-white"
+          className="font-titulo text-xl font-extrabold text-slate-950 dark:text-white"
         >
           {titulo}
         </h2>

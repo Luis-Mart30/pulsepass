@@ -1,0 +1,85 @@
+.panel-categoria-evento {
+  --panel-fondo: #37206d;
+  --panel-acento: #6442bf;
+  --panel-luz: #dbc7ff;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--panel-fondo), var(--panel-acento));
+  color: var(--panel-luz);
+}
+
+.panel-categoria-evento[data-categoria='TECHNOLOGY'] {
+  --panel-fondo: #113153;
+  --panel-acento: #146790;
+  --panel-luz: #c7efff;
+}
+
+.panel-categoria-evento[data-categoria='SPORTS'] {
+  --panel-fondo: #0b3935;
+  --panel-acento: #14705e;
+  --panel-luz: #bcffe5;
+}
+
+.panel-categoria-evento[data-categoria='CULTURE'] {
+  --panel-fondo: #52204b;
+  --panel-acento: #9c3c71;
+  --panel-luz: #ffe0ef;
+}
+
+.panel-categoria-evento[data-categoria='EDUCATION'] {
+  --panel-fondo: #492c22;
+  --panel-acento: #885420;
+  --panel-luz: #ffebba;
+}
+
+.panel-categoria-evento[data-categoria='ENTERTAINMENT'] {
+  --panel-fondo: #332069;
+  --panel-acento: #8b2d9b;
+  --panel-luz: #f7d7ff;
+}
+
+.panel-categoria-evento::before,
+.panel-categoria-evento::after {
+  position: absolute;
+  z-index: -1;
+  width: 64%;
+  aspect-ratio: 1;
+  border-radius: 29%;
+  background: color-mix(in srgb, var(--panel-luz) 15%, transparent);
+  content: '';
+  transform: rotate(-28deg);
+  pointer-events: none;
+}
+
+.panel-categoria-evento::before {
+  inset: -55% -14% auto auto;
+}
+
+.panel-categoria-evento::after {
+  inset: auto auto -59% -14%;
+}
+
+.panel-categoria-evento > svg {
+  box-sizing: content-box;
+  width: clamp(1.45rem, 3vw, 2.55rem);
+  height: auto;
+  padding: clamp(0.32rem, 1.5vw, 0.85rem);
+  border-radius: 28%;
+  background: color-mix(in srgb, var(--panel-fondo) 88%, transparent);
+  box-shadow:
+    0 6px 14px #130a263b,
+    inset 0 0 0 1px #fff3;
+}
+
+.panel-categoria-evento.evento-portada-categoria > svg {
+  width: clamp(2.1rem, 4vw, 3.5rem);
+  padding: clamp(0.7rem, 1.5vw, 1.25rem);
+}
+
+@media (prefers-contrast: more) {
+  .panel-categoria-evento > svg {
+    box-shadow: none;
+    outline: 1px solid currentColor;
+  }
+}

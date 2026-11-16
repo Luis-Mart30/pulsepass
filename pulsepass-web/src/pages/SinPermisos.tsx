@@ -5,7 +5,7 @@ export default function SinPermisos() {
   return (
     <div className="mx-auto grid w-full max-w-6xl flex-1 place-items-center px-4 py-16 sm:px-6">
       <section
-        className="grid w-full max-w-4xl items-center gap-10 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm md:grid-cols-2 md:p-12 dark:border-slate-800 dark:bg-slate-900"
+        className="aviso-pulsepass grid w-full max-w-4xl items-center gap-6 rounded-3xl border border-violet-200 bg-white p-8 shadow-sm sm:gap-10 md:grid-cols-2 md:p-12 dark:border-slate-800 dark:bg-slate-900"
         aria-labelledby="titulo-sin-permisos"
       >
         <div>
@@ -15,7 +15,7 @@ export default function SinPermisos() {
 
           <h1
             id="titulo-sin-permisos"
-            className="mt-3 text-4xl font-bold text-slate-950 dark:text-white"
+            className="font-titulo mt-3 text-3xl font-extrabold tracking-tight text-slate-950 sm:text-4xl dark:text-white"
           >
             No tienes permisos
           </h1>
@@ -43,7 +43,7 @@ export default function SinPermisos() {
         </div>
 
         <div
-          className="mx-auto flex size-56 items-center justify-center rounded-full bg-violet-50 text-violet-600 dark:bg-violet-950 dark:text-violet-300"
+          className="aviso-pulsepass-icono order-first mx-auto flex items-center justify-center rounded-[30%] md:order-none"
           aria-hidden="true"
         >
           <svg

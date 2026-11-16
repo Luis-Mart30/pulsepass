@@ -1,3 +1,5 @@
+export const SECCION_TICKETS_PAGADOS = 'tickets-pagados'
+
 export const RUTAS = {
   INICIO: '/',
   EVENTOS: '/eventos',

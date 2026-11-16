@@ -6,6 +6,7 @@ import { useArtistasActivos } from '../funcionalidades/artistas/consultas'
 import { useAuth } from '../funcionalidades/auth/useAuth'
 import { useEventosPublicados } from '../funcionalidades/eventos/consultas'
 import { RUTAS } from '../lib/rutas'
+import './Inicio.css'
 
 function Esqueletos({ cantidad }: { cantidad: number }) {
   return (
@@ -17,7 +18,7 @@ function Esqueletos({ cantidad }: { cantidad: number }) {
       {Array.from({ length: cantidad }, (_, indice) => (
         <div
           key={indice}
-          className="h-52 animate-pulse rounded-2xl bg-slate-200 dark:bg-slate-800"
+          className="h-52 rounded-2xl bg-violet-100 motion-safe:animate-pulse dark:bg-slate-800"
           aria-hidden="true"
         />
       ))}
@@ -34,49 +35,66 @@ export default function Inicio() {
 
   return (
     <>
-      <section className="bg-linear-to-r from-violet-700 to-fuchsia-600 px-4 py-20 text-white sm:px-6 lg:px-8">
-        <div className="mx-auto w-full max-w-7xl">
-          <p className="text-sm font-semibold tracking-wider text-violet-100 uppercase">
-            Eventos y experiencias
-          </p>
-          <h1 className="mt-4 max-w-3xl text-4xl font-black sm:text-5xl lg:text-6xl">
-            Descubre los mejores eventos
-          </h1>
-          <p className="mt-5 max-w-2xl text-lg text-violet-50">
-            Música, cultura, deporte y tecnología en un solo lugar.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              to={RUTAS.EVENTOS}
-              className="inline-flex min-h-11 items-center rounded-lg bg-white px-5 py-3 font-semibold text-violet-800 transition hover:bg-violet-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+      <section
+        aria-labelledby="inicio-titulo"
+        className="px-4 py-9 sm:px-6 sm:py-10 lg:px-8 lg:py-11"
+      >
+        <div className="inicio-portada mx-auto w-full max-w-7xl">
+          <div
+            aria-hidden="true"
+            className="inicio-ilustracion inicio-boletos"
+          />
+
+          <div className="inicio-contenido min-w-0 text-center">
+            <h1
+              id="inicio-titulo"
+              className="inicio-titulo text-[#241044] dark:text-slate-100"
             >
-              Ver cartelera
-            </Link>
-            {sesion.estado === 'anonimo' ? (
+              Descubre los mejores{' '}
+              <span className="inicio-titulo-destacado">eventos</span>
+            </h1>
+            <p className="mx-auto mt-3 max-w-2xl text-base text-[#51415f] sm:text-lg dark:text-slate-400">
+              Música, cultura, deporte y tecnología en un solo lugar.
+            </p>
+            <div className="mt-5 flex flex-wrap justify-center gap-3 sm:mt-6">
               <Link
-                to={RUTAS.REGISTRO}
-                className="inline-flex min-h-11 items-center rounded-lg border border-white/70 px-5 py-3 font-semibold text-white transition hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                to={RUTAS.EVENTOS}
+                className="inicio-accion inicio-accion-principal inline-flex min-h-11 items-center justify-center gap-3 rounded-full bg-violet-700 px-7 py-2.5 font-bold text-white transition-colors hover:bg-violet-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-violet-700"
               >
-                Crear cuenta
+                Ver cartelera
               </Link>
-            ) : null}
+              {sesion.estado === 'anonimo' ? (
+                <Link
+                  to={RUTAS.REGISTRO}
+                  className="inicio-accion inline-flex min-h-11 items-center justify-center rounded-full border-2 border-[#241044] px-7 py-2.5 font-bold text-[#241044] transition-colors hover:bg-violet-100 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-violet-700 dark:border-slate-500 dark:text-slate-100 dark:hover:bg-slate-800 dark:focus-visible:outline-violet-300"
+                >
+                  Crear cuenta
+                </Link>
+              ) : null}
+            </div>
           </div>
+
+          <div
+            aria-hidden="true"
+            className="inicio-ilustracion inicio-audifonos"
+          />
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <section
+        aria-labelledby="inicio-eventos"
+        className="mx-auto w-full max-w-7xl px-4 pt-3 pb-10 sm:px-6 lg:px-8"
+      >
         <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="text-sm font-semibold tracking-wider text-violet-600 uppercase">
-              Próximamente
-            </p>
-            <h2 className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">
-              Próximos eventos
-            </h2>
-          </div>
+          <h2
+            id="inicio-eventos"
+            className="rounded-sm border-l-4 border-violet-700 pl-3 text-2xl font-extrabold tracking-tight text-[#241044] sm:text-3xl dark:border-violet-400 dark:text-slate-100"
+          >
+            Próximos eventos
+          </h2>
           <Link
             to={RUTAS.EVENTOS}
-            className="font-semibold text-violet-600 hover:text-violet-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
+            className="font-semibold text-violet-600 hover:text-violet-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 dark:text-violet-300 dark:hover:text-violet-200 dark:focus-visible:outline-violet-300"
           >
             Ver todos →
           </Link>
@@ -104,15 +122,15 @@ export default function Inicio() {
         {!consultaEventos.isPending &&
         !consultaEventos.isError &&
         eventosDestacados.length === 0 ? (
-          <p className="mt-8 text-slate-600 dark:text-slate-300">
+          <p className="mt-8 text-[#51415f] dark:text-slate-400">
             Aún no hay eventos publicados.
           </p>
         ) : null}
 
         {eventosDestacados.length > 0 ? (
-          <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="inicio-lista mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {eventosDestacados.map((evento) => (
-              <li key={evento.id}>
+              <li key={evento.id} className="min-w-0">
                 <TarjetaEvento evento={evento} />
               </li>
             ))}
@@ -120,20 +138,21 @@ export default function Inicio() {
         ) : null}
       </section>
 
-      <section className="border-t border-slate-200 bg-slate-50 px-4 py-12 sm:px-6 lg:px-8 dark:border-slate-800 dark:bg-slate-950">
+      <section
+        aria-labelledby="inicio-artistas"
+        className="border-t border-violet-100 px-4 py-10 sm:px-6 lg:px-8 dark:border-slate-800"
+      >
         <div className="mx-auto w-full max-w-7xl">
           <div className="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <p className="text-sm font-semibold tracking-wider text-violet-600 uppercase">
-                Talento en escena
-              </p>
-              <h2 className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">
-                Artistas destacados
-              </h2>
-            </div>
+            <h2
+              id="inicio-artistas"
+              className="rounded-sm border-l-4 border-violet-700 pl-3 text-2xl font-extrabold tracking-tight text-[#241044] sm:text-3xl dark:border-violet-400 dark:text-slate-100"
+            >
+              Artistas destacados
+            </h2>
             <Link
               to={RUTAS.ARTISTAS}
-              className="font-semibold text-violet-600 hover:text-violet-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
+              className="font-semibold text-violet-600 hover:text-violet-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 dark:text-violet-300 dark:hover:text-violet-200 dark:focus-visible:outline-violet-300"
             >
               Ver todos →
             </Link>
@@ -161,13 +180,13 @@ export default function Inicio() {
           {!consultaArtistas.isPending &&
           !consultaArtistas.isError &&
           artistasDestacados.length === 0 ? (
-            <p className="mt-8 text-slate-600 dark:text-slate-300">
+            <p className="mt-8 text-[#51415f] dark:text-slate-400">
               Aún no hay artistas activos.
             </p>
           ) : null}
 
           {artistasDestacados.length > 0 ? (
-            <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className="inicio-lista mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {artistasDestacados.map((artista) => (
                 <li key={artista.id}>
                   <AvatarArtista artista={artista} />

@@ -1,6 +1,8 @@
+import '../componentes/ExperienciaPulsePass.css'
 import { useMemo, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router'
 import { Boton } from '../componentes/Boton'
+import { IconoDato } from '../componentes/IconoDato'
 import { Modal } from '../componentes/Modal'
 import { useArtistasActivos } from '../funcionalidades/artistas/consultas'
 import {
@@ -128,19 +130,19 @@ export default function AdminGestionEvento() {
   const puedePublicar = datos.status === 'DRAFT'
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
-      <header className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-        <div>
+    <div className="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6">
+      <header className="encabezado-gestion flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0 flex-1">
           <Link
             to={RUTAS.ADMIN_EVENTOS}
             className="font-semibold text-indigo-600 hover:underline dark:text-indigo-400"
           >
             ← Volver a eventos
           </Link>
-          <p className="mt-6 font-semibold tracking-[0.2em] text-indigo-600 uppercase dark:text-indigo-400">
+          <p className="operacion-rol mt-6 font-semibold tracking-[0.2em] text-indigo-600 uppercase dark:text-indigo-400">
             Gestión administrativa
           </p>
-          <h1 className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">
+          <h1 className="mt-2 text-3xl font-extrabold text-slate-950 sm:text-4xl dark:text-white">
             {datos.name}
           </h1>
           <p className="mt-2 text-slate-600 dark:text-slate-300">
@@ -148,14 +150,15 @@ export default function AdminGestionEvento() {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex shrink-0 flex-wrap items-center gap-2 sm:flex-col sm:items-end">
           <span className="w-fit rounded-full bg-indigo-100 px-4 py-2 font-semibold text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300">
             {ETIQUETAS_ESTADO[datos.status]}
           </span>
           <Link
             to={crearRuta.ticketsPagadosEvento(datos.eventCode)}
-            className="inline-flex min-h-11 items-center rounded-lg px-3 font-semibold text-indigo-700 underline focus-visible:outline-2 dark:text-indigo-300"
+            className="panel-enlace inline-flex min-h-11 items-center gap-1 rounded-xl px-3 text-sm font-semibold focus-visible:outline-2"
           >
+            <IconoDato tipo="entrada" />
             Ver tickets pagados
           </Link>
         </div>
@@ -181,50 +184,53 @@ export default function AdminGestionEvento() {
 
       <section
         aria-label="Información del evento"
-        className="mt-8 grid gap-5 rounded-2xl border border-slate-200 bg-white p-6 sm:grid-cols-2 lg:grid-cols-4 dark:border-slate-800 dark:bg-slate-900"
+        className="panel-operativo tarjeta-operacion mt-8 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 dark:border-slate-800 dark:bg-slate-900"
       >
-        <div>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Categoría
-          </p>
-          <p className="mt-1 font-semibold text-slate-950 dark:text-white">
-            {obtenerEtiquetaCategoria(datos.category)}
-          </p>
-        </div>
-        <div>
-          <p className="text-sm text-slate-500 dark:text-slate-400">Fecha</p>
-          <p className="mt-1 font-semibold text-slate-950 dark:text-white">
-            {formatearFechaEvento(datos.eventDate)}
-          </p>
-        </div>
-        <div>
-          <p className="text-sm text-slate-500 dark:text-slate-400">Sede</p>
-          <p className="mt-1 font-semibold text-slate-950 dark:text-white">
-            {datos.venueName}
-          </p>
-        </div>
-        <div>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Edad mínima
-          </p>
-          <p className="mt-1 font-semibold text-slate-950 dark:text-white">
-            {datos.minimumAge} años
-          </p>
-        </div>
-
-        <div className="sm:col-span-2 lg:col-span-4">
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Descripción
-          </p>
-          <p className="mt-1 whitespace-pre-wrap text-slate-800 dark:text-slate-200">
-            {datos.description ?? 'Sin descripción.'}
-          </p>
-        </div>
+        <dl className="panel-ficha grid gap-3 sm:grid-cols-2">
+          <div>
+            <dt>
+              <IconoDato tipo="fecha" /> Fecha
+            </dt>
+            <dd>
+              <time dateTime={datos.eventDate}>
+                {formatearFechaEvento(datos.eventDate).replace(
+                  /([ap]\.)\s+(m\.)$/,
+                  '$1\u00a0$2',
+                )}
+              </time>
+            </dd>
+          </div>
+          <div>
+            <dt>
+              <IconoDato tipo="lugar" /> Sede
+            </dt>
+            <dd>{datos.venueName}</dd>
+          </div>
+          <div>
+            <dt>
+              <IconoDato tipo="precio" /> Categoría
+            </dt>
+            <dd>{obtenerEtiquetaCategoria(datos.category)}</dd>
+          </div>
+          <div>
+            <dt>
+              <IconoDato tipo="edad" /> Edad mínima
+            </dt>
+            <dd>{datos.minimumAge} años</dd>
+          </div>
+          <div className="sm:col-span-2">
+            <dt>Descripción</dt>
+            <dd className="whitespace-pre-wrap">
+              {datos.description ?? 'Sin descripción.'}
+            </dd>
+          </div>
+        </dl>
       </section>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
-          <h2 className="text-xl font-bold text-slate-950 dark:text-white">
+        <section className="panel-operativo rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
+          <h2 className="panel-titulo text-xl font-bold text-slate-950 dark:text-white">
+            <IconoDato tipo="edad" />
             Artistas del evento
           </h2>
 
@@ -237,7 +243,7 @@ export default function AdminGestionEvento() {
               {datos.artists.map((artista) => (
                 <li
                   key={artista.id}
-                  className="rounded-lg border border-slate-200 p-4 dark:border-slate-700"
+                  className="panel-superficie rounded-xl border p-4"
                 >
                   <p className="font-semibold text-slate-950 dark:text-white">
                     {artista.stageName}
@@ -266,7 +272,7 @@ export default function AdminGestionEvento() {
                 artistas.isError ||
                 artistasDisponibles.length === 0
               }
-              className="min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+              className="selector-pulsepass min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
             >
               <option value="">
                 {artistas.isPending
@@ -295,8 +301,9 @@ export default function AdminGestionEvento() {
           </div>
         </section>
 
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
-          <h2 className="text-xl font-bold text-slate-950 dark:text-white">
+        <section className="panel-operativo rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
+          <h2 className="panel-titulo text-xl font-bold text-slate-950 dark:text-white">
+            <IconoDato tipo="entrada" />
             Publicación
           </h2>
           <p className="mt-3 text-slate-600 dark:text-slate-300">

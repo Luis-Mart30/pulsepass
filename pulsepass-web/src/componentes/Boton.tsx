@@ -4,7 +4,7 @@ import clsx from 'clsx'
 type VarianteBoton = 'primario' | 'secundario' | 'peligro' | 'fantasma'
 
 const CLASES_VARIANTE: Record<VarianteBoton, string> = {
-  primario: 'bg-indigo-600 text-white hover:bg-indigo-700',
+  primario: 'bg-violet-700 text-white hover:bg-violet-800',
   secundario:
     'border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800',
   peligro: 'bg-red-600 text-white hover:bg-red-700',
@@ -33,10 +33,10 @@ export function Boton({
       disabled={disabled === true || cargando}
       aria-busy={cargando}
       className={clsx(
-        'min-h-11 rounded-lg px-5 py-2.5',
-        'font-semibold transition',
+        'min-h-11 rounded-xl px-5 py-2.5',
+        'font-semibold transition-colors',
         'focus-visible:outline-2 focus-visible:outline-offset-2',
-        'focus-visible:outline-indigo-600',
+        'focus-visible:outline-violet-700 dark:focus-visible:outline-violet-300',
         'disabled:cursor-not-allowed disabled:opacity-60',
         CLASES_VARIANTE[variante],
         className,

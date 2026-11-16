@@ -60,9 +60,9 @@ function ResultadoEvento() {
   return <h1>Tickets pagados de {eventCode}</h1>
 }
 
-function renderizarPagina() {
+function renderizarPagina(ruta = '/staff/validacion') {
   return render(
-    <MemoryRouter initialEntries={['/staff/validacion']}>
+    <MemoryRouter initialEntries={[ruta]}>
       <Routes>
         <Route path="/staff/validacion" element={<ValidacionIngreso />} />
         <Route
@@ -84,6 +84,12 @@ describe('página de validación de ingreso', () => {
       isPending: false,
       reset,
     } as unknown as ReturnType<typeof useMarcarTicketUsado>)
+  })
+
+  it('enfoca el código del evento al entrar desde Tickets pagados', () => {
+    renderizarPagina('/staff/validacion#tickets-pagados')
+
+    expect(screen.getByLabelText('Código del evento')).toHaveFocus()
   })
 
   it('valida el código del evento y permite abrir sus tickets pagados', async () => {

@@ -1,28 +1,53 @@
 import clsx from 'clsx'
 import { useEffect, useRef, useState } from 'react'
-import { NavLink, Outlet, type NavLinkRenderProps } from 'react-router'
+import {
+  Link,
+  NavLink,
+  Outlet,
+  useMatch,
+  type NavLinkRenderProps,
+} from 'react-router'
 import { useAuth } from '../funcionalidades/auth/useAuth'
-import { RUTAS } from '../lib/rutas'
+import { RUTAS, SECCION_TICKETS_PAGADOS } from '../lib/rutas'
+import { IconoNota } from '../componentes/IconoNota'
+import { AvatarCuenta, MenuCuenta } from './MenuCuenta'
 
-const CLASE_ENLACE_BASE =
-  'rounded-md px-3 py-2 text-sm font-medium transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600'
+const CLASE_FOCO_ENLACE =
+  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 dark:focus-visible:outline-violet-300'
+
+const CLASE_ENLACE_BASE = clsx(
+  'rounded-full px-3 py-2 text-sm font-semibold transition-colors',
+  CLASE_FOCO_ENLACE,
+)
+
+const CLASE_ACCION_ENCABEZADO = clsx(
+  'inline-flex min-h-11 items-center justify-center rounded-full px-4 text-sm font-semibold transition-colors',
+  CLASE_FOCO_ENLACE,
+)
+
+const CLASE_ENLACE_INACTIVO =
+  'text-[#241044] hover:bg-violet-100 hover:text-violet-800 dark:text-slate-100 dark:hover:bg-slate-800 dark:hover:text-violet-200'
 
 function claseEnlace({ isActive }: NavLinkRenderProps) {
   return clsx(
     CLASE_ENLACE_BASE,
     isActive
       ? 'bg-violet-100 text-violet-800 dark:bg-violet-950 dark:text-violet-200'
-      : 'text-slate-700 hover:bg-violet-50 hover:text-violet-700 dark:text-slate-200 dark:hover:bg-slate-800',
+      : CLASE_ENLACE_INACTIVO,
   )
 }
 
-const claseBoton = clsx(
-  CLASE_ENLACE_BASE,
-  'text-slate-700 hover:bg-violet-50 hover:text-violet-700 dark:text-slate-200 dark:hover:bg-slate-800',
-)
-
 export default function Layout() {
   const { sesion, cerrarSesion, tieneRol } = useAuth()
+  const enInicio = Boolean(useMatch({ path: RUTAS.INICIO, end: true }))
+  const claseLogin = clsx(
+    CLASE_ACCION_ENCABEZADO,
+    'border border-[#241044] text-[#241044] hover:bg-violet-100 aria-[current=page]:bg-violet-100 dark:border-slate-500 dark:text-slate-100 dark:hover:bg-slate-800 dark:aria-[current=page]:bg-slate-800',
+  )
+  const claseRegistro = clsx(
+    CLASE_ACCION_ENCABEZADO,
+    'bg-violet-700 text-white hover:bg-violet-800 aria-[current=page]:ring-2 aria-[current=page]:ring-violet-400',
+  )
   const botonMenuMovilRef = useRef<HTMLButtonElement>(null)
   const botonUsuarioRef = useRef<HTMLButtonElement>(null)
   const [menuMovilAbierto, setMenuMovilAbierto] = useState(false)
@@ -30,7 +55,6 @@ export default function Layout() {
 
   const autenticado = sesion.estado === 'autenticado'
   const username = autenticado ? sesion.usuario.username : ''
-  const inicial = username.charAt(0).toUpperCase()
 
   useEffect(() => {
     if (!menuMovilAbierto && !menuUsuarioAbierto) {
@@ -91,13 +115,22 @@ export default function Layout() {
   const enlacesRol = autenticado ? (
     <>
       {tieneRol('STAFF', 'ADMIN') ? (
-        <NavLink
-          to={RUTAS.STAFF_VALIDACION}
-          className={claseEnlace}
-          onClick={cerrarMenus}
-        >
-          Validar ingreso
-        </NavLink>
+        <>
+          <NavLink
+            to={RUTAS.STAFF_VALIDACION}
+            className={claseEnlace}
+            onClick={cerrarMenus}
+          >
+            Validar ingreso
+          </NavLink>
+          <Link
+            to={`${RUTAS.STAFF_VALIDACION}#${SECCION_TICKETS_PAGADOS}`}
+            className={clsx(CLASE_ENLACE_BASE, CLASE_ENLACE_INACTIVO)}
+            onClick={cerrarMenus}
+          >
+            Tickets pagados
+          </Link>
+        </>
       ) : null}
 
       {tieneRol('ADMIN') ? (
@@ -113,7 +146,14 @@ export default function Layout() {
   ) : null
 
   return (
-    <div className="flex min-h-screen flex-col bg-white text-slate-950 max-sm:has-[[data-barra-compra-movil]]:pb-[calc(5rem+env(safe-area-inset-bottom))] dark:bg-slate-950 dark:text-white">
+    <div
+      className={clsx(
+        'flex min-h-screen flex-col max-md:has-[[data-barra-compra-movil]]:pb-[calc(5rem+env(safe-area-inset-bottom))]',
+        enInicio
+          ? 'inicio-tipografia bg-slate-50 text-[#241044] dark:bg-slate-950 dark:text-slate-100'
+          : 'bg-white text-slate-950 dark:bg-slate-950 dark:text-white',
+      )}
+    >
       <a
         href="#contenido"
         className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-white focus:p-3 focus:text-slate-950"
@@ -121,18 +161,29 @@ export default function Layout() {
         Saltar al contenido
       </a>
 
-      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950">
+      <header className="sticky top-0 z-40 shrink-0 border-b border-violet-100 bg-white dark:border-slate-800 dark:bg-slate-950">
         <nav
           aria-label="Principal"
-          className="mx-auto flex max-w-7xl flex-wrap items-center px-4 py-3 sm:px-6 lg:px-8"
+          className="relative mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6 lg:px-8"
         >
           <NavLink
             to={RUTAS.INICIO}
             end
             onClick={cerrarMenus}
-            className="mr-auto text-xl font-black text-violet-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-violet-600"
+            className="mr-auto inline-flex shrink-0 items-center gap-2.5 text-[#241044] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-violet-600 dark:text-slate-100 dark:focus-visible:outline-violet-300"
           >
-            ♪ PulsePass
+            <span
+              aria-hidden="true"
+              className="marca-pulsepass-icono grid size-10 place-items-center rounded-xl bg-violet-700 text-2xl text-white lg:size-11"
+            >
+              <IconoNota className="size-5 lg:size-6" />
+            </span>
+            <span className="marca-pulsepass-texto">
+              Pulse
+              <span className="marca-pulsepass-acento text-violet-700 dark:text-violet-300">
+                Pass
+              </span>
+            </span>
           </NavLink>
 
           <button
@@ -146,12 +197,32 @@ export default function Layout() {
                 : 'Abrir menú principal'
             }
             onClick={() => setMenuMovilAbierto((abierto) => !abierto)}
-            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-slate-300 text-xl text-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 md:hidden dark:border-slate-700 dark:text-slate-200"
+            className={clsx(
+              CLASE_FOCO_ENLACE,
+              'inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-violet-200 text-xl text-[#241044] md:hidden dark:border-slate-700 dark:text-slate-100',
+            )}
           >
-            <span aria-hidden="true">{menuMovilAbierto ? '×' : '☰'}</span>
+            <svg
+              aria-hidden="true"
+              focusable="false"
+              viewBox="0 0 24 24"
+              className="size-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
+              <path
+                d={
+                  menuMovilAbierto
+                    ? 'm6 6 12 12M18 6 6 18'
+                    : 'M4 6h16M4 12h16M4 18h16'
+                }
+              />
+            </svg>
           </button>
 
-          <div className="hidden items-center gap-1 md:flex">
+          <div className="hidden min-w-0 flex-wrap items-center justify-end gap-1.5 md:flex lg:gap-x-2">
             {enlacesPublicos}
             {enlacesRol}
 
@@ -159,14 +230,14 @@ export default function Layout() {
               <>
                 <NavLink
                   to={RUTAS.LOGIN}
-                  className={claseEnlace}
+                  className={claseLogin}
                   onClick={cerrarMenus}
                 >
                   Iniciar sesión
                 </NavLink>
                 <NavLink
                   to={RUTAS.REGISTRO}
-                  className={claseEnlace}
+                  className={claseRegistro}
                   onClick={cerrarMenus}
                 >
                   Registrarse
@@ -181,51 +252,35 @@ export default function Layout() {
                   aria-haspopup="menu"
                   aria-controls="menu-usuario"
                   onClick={() => setMenuUsuarioAbierto((abierto) => !abierto)}
-                  className="flex min-h-11 items-center gap-2 rounded-lg px-2 text-sm font-semibold text-slate-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 dark:text-slate-100"
+                  className="cuenta-disparador"
                 >
-                  <span
-                    className="flex size-8 items-center justify-center rounded-full bg-violet-700 font-bold text-white"
+                  <AvatarCuenta username={username} />
+                  <span className="max-w-36 truncate">{username}</span>
+                  <svg
+                    className="cuenta-indicador"
                     aria-hidden="true"
+                    viewBox="0 0 16 16"
+                    width="15"
+                    height="15"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    focusable="false"
                   >
-                    {inicial}
-                  </span>
-                  <span>{username}</span>
-                  <span aria-hidden="true">▾</span>
+                    <path d="m4 6 4 4 4-4" />
+                  </svg>
                 </button>
 
                 {menuUsuarioAbierto ? (
-                  <div
-                    id="menu-usuario"
-                    role="menu"
-                    className="absolute right-0 mt-2 grid min-w-48 gap-1 rounded-xl border border-slate-200 bg-white p-2 shadow-lg dark:border-slate-700 dark:bg-slate-900"
-                  >
-                    <NavLink
-                      to={RUTAS.CUENTA}
-                      role="menuitem"
-                      className={claseEnlace}
-                      onClick={cerrarMenus}
-                    >
-                      Mi cuenta
-                    </NavLink>
-                    {tieneRol('USER') ? (
-                      <NavLink
-                        to={RUTAS.MIS_TICKETS}
-                        role="menuitem"
-                        className={claseEnlace}
-                        onClick={cerrarMenus}
-                      >
-                        Mis tickets
-                      </NavLink>
-                    ) : null}
-                    <button
-                      type="button"
-                      role="menuitem"
-                      onClick={salir}
-                      className={clsx(claseBoton, 'text-left')}
-                    >
-                      Salir
-                    </button>
-                  </div>
+                  <MenuCuenta
+                    username={username}
+                    desplegable
+                    mostrarTickets={tieneRol('USER')}
+                    alNavegar={cerrarMenus}
+                    alSalir={salir}
+                  />
                 ) : null}
               </div>
             )}
@@ -234,7 +289,7 @@ export default function Layout() {
           {menuMovilAbierto ? (
             <div
               id="menu-movil"
-              className="mt-3 grid w-full gap-1 border-t border-slate-200 pt-3 md:hidden dark:border-slate-800"
+              className="absolute inset-x-0 top-full grid max-h-[calc(100dvh-5rem)] gap-1 overflow-y-auto overscroll-contain rounded-b-2xl border border-violet-100 bg-white p-4 shadow-lg md:hidden dark:border-slate-800 dark:bg-slate-950"
             >
               {enlacesPublicos}
               {enlacesRol}
@@ -243,49 +298,26 @@ export default function Layout() {
                 <>
                   <NavLink
                     to={RUTAS.LOGIN}
-                    className={claseEnlace}
+                    className={claseLogin}
                     onClick={cerrarMenus}
                   >
                     Iniciar sesión
                   </NavLink>
                   <NavLink
                     to={RUTAS.REGISTRO}
-                    className={claseEnlace}
+                    className={claseRegistro}
                     onClick={cerrarMenus}
                   >
                     Registrarse
                   </NavLink>
                 </>
               ) : (
-                <>
-                  <div className="my-2 border-t border-slate-200 dark:border-slate-800" />
-                  <p className="px-3 py-1 text-sm font-semibold text-slate-500 dark:text-slate-400">
-                    @{username}
-                  </p>
-                  <NavLink
-                    to={RUTAS.CUENTA}
-                    className={claseEnlace}
-                    onClick={cerrarMenus}
-                  >
-                    Mi cuenta
-                  </NavLink>
-                  {tieneRol('USER') ? (
-                    <NavLink
-                      to={RUTAS.MIS_TICKETS}
-                      className={claseEnlace}
-                      onClick={cerrarMenus}
-                    >
-                      Mis tickets
-                    </NavLink>
-                  ) : null}
-                  <button
-                    type="button"
-                    onClick={salir}
-                    className={clsx(claseBoton, 'text-left')}
-                  >
-                    Salir
-                  </button>
-                </>
+                <MenuCuenta
+                  username={username}
+                  mostrarTickets={tieneRol('USER')}
+                  alNavegar={cerrarMenus}
+                  alSalir={salir}
+                />
               )}
             </div>
           ) : null}
@@ -296,7 +328,14 @@ export default function Layout() {
         <Outlet />
       </main>
 
-      <footer className="border-t border-slate-200 px-4 py-6 text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400">
+      <footer
+        className={clsx(
+          'border-t px-4 py-6 text-sm',
+          enInicio
+            ? 'border-violet-200 text-[#5b496a] dark:border-slate-800 dark:text-slate-400'
+            : 'border-slate-200 text-slate-500 dark:border-slate-800 dark:text-slate-400',
+        )}
+      >
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 sm:flex-row">
           <p>© 2026 PulsePass · Caso de estudio académico</p>
           <div className="flex gap-4">

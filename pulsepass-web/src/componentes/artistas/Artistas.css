@@ -1,0 +1,308 @@
+.artista-enlace,
+.artista-perfil,
+.portada-artistas {
+  --acento-artista: #7c3aed;
+  --tono-artista: #c4b5fd;
+  --fondo-artista: #231145;
+}
+
+:is(.artista-enlace, .artista-perfil)[data-acento='1'] {
+  --acento-artista: #c02672;
+  --tono-artista: #f9a8d4;
+  --fondo-artista: #431338;
+}
+
+:is(.artista-enlace, .artista-perfil)[data-acento='2'] {
+  --acento-artista: #0f766e;
+  --tono-artista: #5eead4;
+  --fondo-artista: #103636;
+}
+
+:is(.artista-enlace, .artista-perfil)[data-acento='3'] {
+  --acento-artista: #b45309;
+  --tono-artista: #fcd34d;
+  --fondo-artista: #3e2516;
+}
+
+.portada-artistas.portada-seccion {
+  min-height: clamp(10rem, 22vw, 17rem);
+  padding: clamp(1.2rem, 4vw, 3rem);
+  border-color: #845274;
+  border-radius: 1.85rem;
+  background: linear-gradient(118deg, #321834, #65284e 65%, #863b67);
+}
+
+.portada-artistas h1 {
+  color: #fff;
+  font-size: clamp(2.1rem, 6vw, 4.4rem);
+  line-height: 1;
+}
+
+.portada-artistas p {
+  color: #f1e8ff;
+}
+
+.artista-perfil {
+  background: linear-gradient(118deg, #1e142e, var(--fondo-artista));
+}
+
+.artista-perfil h1 {
+  color: white;
+}
+
+.artista-perfil-datos {
+  margin: 0;
+  padding: clamp(1rem, 3vw, 2rem);
+  background: white;
+}
+
+.portada-artistas .ilustracion-seccion {
+  display: block;
+  width: clamp(3.5rem, 18vw, 10rem);
+}
+
+.artista-enlace {
+  display: flex;
+  height: 100%;
+  min-width: 0;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem;
+  border: 1px solid #dfd2f4;
+  border-radius: 1rem;
+  background: #fff;
+  color: #221238;
+  box-shadow: 0 0.16rem 0.5rem #39156412;
+}
+
+.artista-enlace:hover {
+  border-color: var(--acento-artista);
+}
+
+.artista-enlace:focus-visible {
+  outline: 2px solid var(--acento-artista);
+  outline-offset: 3px;
+}
+
+.artista-arte {
+  display: grid;
+  flex: none;
+  place-items: center;
+}
+
+.artista-disco {
+  position: relative;
+  isolation: isolate;
+  width: 3rem;
+  aspect-ratio: 1;
+  border: 1px solid color-mix(in srgb, var(--tono-artista) 80%, transparent);
+  background:
+    repeating-radial-gradient(
+      circle,
+      transparent 0 3px,
+      #ffffff29 4px 5px,
+      transparent 6px 8px
+    ),
+    conic-gradient(
+      from 45deg,
+      var(--fondo-artista),
+      var(--acento-artista),
+      #100a20,
+      var(--acento-artista),
+      var(--fondo-artista)
+    );
+  color: #fff;
+  font-family: var(--font-titulo);
+  font-size: 0.8rem;
+}
+
+.artista-disco::before {
+  position: absolute;
+  z-index: -1;
+  inset: 18%;
+  border-radius: inherit;
+  background: var(--fondo-artista);
+  content: '';
+}
+
+.artista-informacion {
+  min-width: 0;
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+
+.artista-nombre {
+  display: block;
+  font-family: var(--font-titulo);
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.artista-datos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.6rem;
+  align-items: baseline;
+  margin-top: 0.3rem;
+  color: #51445f;
+  font-size: 0.8125rem;
+}
+
+.artista-genero {
+  color: var(--acento-artista);
+  font-weight: 700;
+}
+
+.artista-accion {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--acento-artista);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.artista-accion::after {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-block-start: 2px solid;
+  border-inline-end: 2px solid;
+  content: '';
+  transform: rotate(45deg);
+}
+
+.artista-enlace[data-variante='tarjeta'] {
+  overflow: hidden;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+  border-radius: 1.25rem;
+}
+
+.artista-enlace[data-variante='tarjeta'] .artista-arte {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: clamp(10rem, 18vw, 12.5rem);
+  border-bottom: 1px solid var(--tono-artista);
+  background: linear-gradient(
+    115deg,
+    var(--fondo-artista) 11%,
+    var(--acento-artista)
+  );
+}
+
+.artista-enlace[data-variante='tarjeta'] .artista-arte::before {
+  position: absolute;
+  z-index: -1;
+  inset: 12% 36% 12% 12%;
+  border: 1px solid #fff5;
+  border-radius: 0.75rem;
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--tono-artista) 85%, var(--acento-artista)),
+    var(--acento-artista)
+  );
+  content: '';
+  transform: rotate(-13deg);
+}
+
+.artista-enlace[data-variante='tarjeta'] .artista-disco,
+.artista-perfil .artista-disco {
+  width: clamp(5.4rem, 10vw, 7rem);
+  font-size: 1.25rem;
+  box-shadow: 0 0.5rem 1rem #130a2b55;
+}
+
+.artista-enlace[data-variante='tarjeta'] .artista-informacion {
+  padding: 1rem 1.1rem 0.75rem;
+}
+
+.artista-enlace[data-variante='tarjeta'] .artista-disco {
+  margin-inline-start: 24%;
+}
+
+.artista-enlace[data-variante='tarjeta'] .artista-genero {
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  background: var(--color-violet-100);
+}
+
+.artista-enlace[data-variante='tarjeta'] .artista-nombre {
+  font-size: 1.125rem;
+}
+
+.artista-enlace[data-variante='tarjeta'] .artista-accion {
+  margin: 0 1.1rem;
+  padding-block: 0.8rem 1rem;
+  justify-content: space-between;
+  border-top: 1px solid #dfd2f4;
+}
+
+.artista-enlace:hover .artista-accion {
+  text-decoration: underline;
+}
+
+@media (prefers-color-scheme: dark) {
+  .portada-artistas.portada-seccion {
+    background: linear-gradient(118deg, #241428, #4a2645 65%, #652c52);
+  }
+
+  .artista-perfil-datos {
+    background: var(--color-slate-900);
+  }
+
+  .artista-enlace[data-variante='tarjeta'] .artista-genero {
+    background: #302047;
+  }
+
+  .artista-enlace {
+    border-color: var(--color-slate-700);
+    background: var(--color-slate-900);
+    color: var(--color-slate-100);
+    box-shadow: none;
+  }
+
+  .artista-enlace:hover {
+    border-color: var(--tono-artista);
+  }
+
+  .artista-enlace:focus-visible {
+    outline-color: var(--tono-artista);
+  }
+
+  .artista-enlace[data-variante='tarjeta'] .artista-accion {
+    border-top-color: var(--color-slate-700);
+  }
+
+  .artista-datos {
+    color: var(--color-slate-300);
+  }
+
+  .artista-genero,
+  .artista-accion {
+    color: var(--tono-artista);
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .artista-enlace {
+    transition:
+      transform 180ms ease-out,
+      border-color 180ms ease-out;
+  }
+
+  .artista-enlace:hover {
+    transform: translateY(-3px);
+  }
+
+  .artista-enlace .artista-disco {
+    transition: transform 260ms cubic-bezier(0.2, 0.75, 0.3, 1);
+  }
+
+  .artista-enlace:hover .artista-disco {
+    transform: rotate(-7deg) scale(1.06);
+  }
+}

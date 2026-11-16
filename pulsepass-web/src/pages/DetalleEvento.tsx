@@ -1,9 +1,12 @@
+import clsx from 'clsx'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { Link, useLocation, useNavigate, useParams } from 'react-router'
 import { Boton } from '../componentes/Boton'
 import { Modal } from '../componentes/Modal'
+import { EstadoEventoEtiqueta } from '../componentes/eventos/EstadoEventoEtiqueta'
+import { PanelCategoriaEvento } from '../componentes/eventos/PanelCategoriaEvento'
 import { useAuth } from '../funcionalidades/auth/useAuth'
 import { useEventoPorCodigo } from '../funcionalidades/eventos/consultas'
 import { useComprarTicket } from '../funcionalidades/tickets/consultas'
@@ -19,6 +22,9 @@ import {
   obtenerEtiquetaTipoTicket,
 } from '../lib/formatos'
 import { crearRuta, RUTAS } from '../lib/rutas'
+import '../componentes/ExperienciaPulsePass.css'
+import './DetalleEvento.css'
+import { IconoDato } from '../componentes/IconoDato'
 
 const SeleccionEntradaSchema = CompraTicketSchema.pick({ type: true })
 
@@ -143,7 +149,7 @@ export default function DetalleEvento() {
 
     return (
       <section className="mx-auto w-full max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-slate-950 dark:text-white">
+        <h1 className="font-titulo text-3xl font-extrabold text-slate-950 dark:text-white">
           {noDisponible
             ? 'Evento no disponible'
             : 'No pudimos cargar el evento'}
@@ -167,183 +173,207 @@ export default function DetalleEvento() {
   const compraDisponible = evento.status === 'PUBLISHED'
 
   return (
-    <section className="mx-auto w-full max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+    <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
       <Link
         to={RUTAS.EVENTOS}
-        className="font-semibold text-violet-600 hover:text-violet-700"
+        className="inline-flex min-h-11 items-center rounded-lg px-2 text-sm font-semibold text-violet-700 hover:bg-violet-50 focus-visible:outline-2 focus-visible:outline-violet-600 dark:text-violet-300 dark:hover:bg-slate-900"
       >
         ← Volver a eventos
       </Link>
 
-      <article className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-10 dark:border-slate-700 dark:bg-slate-900">
-        <p className="text-sm font-semibold tracking-wider text-violet-600 uppercase dark:text-violet-400">
-          {obtenerEtiquetaCategoria(evento.category)}
-        </p>
-
-        <h1 className="mt-3 text-3xl font-bold text-slate-950 sm:text-4xl dark:text-white">
-          {evento.name}
-        </h1>
-
-        {evento.description !== null && (
-          <p className="mt-5 text-lg text-slate-600 dark:text-slate-300">
-            {evento.description}
-          </p>
+      <div
+        className={clsx(
+          'mt-4 grid gap-5',
+          mostrarPanelCompra &&
+            'lg:grid-cols-[minmax(0,1.55fr)_minmax(19rem,1fr)] lg:items-start',
         )}
-
-        <dl className="mt-8 grid gap-6 sm:grid-cols-2">
-          <div>
-            <dt className="text-sm font-semibold text-slate-500 dark:text-slate-400">
-              Fecha
-            </dt>
-            <dd className="mt-1 text-lg text-slate-950 dark:text-white">
-              <time dateTime={evento.eventDate}>
-                {formatearFechaEvento(evento.eventDate)}
-              </time>
-            </dd>
-          </div>
-
-          <div>
-            <dt className="text-sm font-semibold text-slate-500 dark:text-slate-400">
-              Edad mínima
-            </dt>
-            <dd className="mt-1 text-lg text-slate-950 dark:text-white">
-              {evento.minimumAge === 0
-                ? 'Para todas las edades'
-                : `${evento.minimumAge} años`}
-            </dd>
-          </div>
-
-          <div className="sm:col-span-2">
-            <dt className="text-sm font-semibold text-slate-500 dark:text-slate-400">
-              Sede
-            </dt>
-            <dd className="mt-1">
-              <Link
-                to={crearRuta.detalleSede(evento.venueCode)}
-                className="text-lg font-semibold text-violet-600 hover:text-violet-700 dark:text-violet-400"
-              >
-                {evento.venueName}
-              </Link>
-            </dd>
-          </div>
-        </dl>
-
-        <div className="mt-10">
-          <h2 className="text-2xl font-bold text-slate-950 dark:text-white">
-            Artistas
-          </h2>
-
-          {evento.artists.length === 0 ? (
-            <p className="mt-3 text-slate-600 dark:text-slate-300">
-              Aún no hay artistas asociados a este evento.
-            </p>
-          ) : (
-            <ul className="mt-4 flex flex-wrap gap-3">
-              {evento.artists.map((artista) => (
-                <li key={artista.id}>
-                  <Link
-                    to={crearRuta.detalleArtista(artista.id)}
-                    className="inline-flex rounded-full border border-violet-300 px-4 py-2 font-semibold text-violet-700 hover:bg-violet-50 dark:border-violet-700 dark:text-violet-300 dark:hover:bg-violet-950"
-                  >
-                    {artista.stageName}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </article>
-
-      {mostrarPanelCompra && (
-        <section
-          aria-labelledby="titulo-compra"
-          className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 dark:border-slate-700 dark:bg-slate-900"
-        >
-          <h2
-            id="titulo-compra"
-            className="text-2xl font-bold text-slate-950 dark:text-white"
-          >
-            Compra tu entrada
-          </h2>
-
-          {!compraDisponible ? (
-            <div
-              role="status"
-              className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-5 text-amber-800 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200"
-            >
-              Las entradas no están disponibles para este evento.
-            </div>
-          ) : (
-            <form
-              noValidate
-              onSubmit={(evento) =>
-                void handleSubmit(abrirConfirmacion)(evento)
-              }
-            >
-              <p className="mt-2 text-slate-600 dark:text-slate-300">
-                Selecciona el tipo de entrada. El precio final será calculado de
-                forma segura por PulsePass.
-              </p>
-
-              <fieldset className="mt-6">
-                <legend className="text-sm font-semibold text-slate-700 dark:text-slate-200">
-                  Tipo de entrada
-                </legend>
-
-                <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                  {opcionesTicket.map((opcion) => (
-                    <label
-                      key={opcion.tipo}
-                      className="relative cursor-pointer"
-                    >
-                      <input
-                        type="radio"
-                        {...register('type')}
-                        value={opcion.tipo}
-                        className="peer sr-only"
-                      />
-
-                      <span className="block min-h-24 rounded-xl border border-slate-300 p-4 transition peer-checked:border-indigo-600 peer-checked:bg-indigo-50 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-indigo-600 dark:border-slate-700 dark:peer-checked:border-indigo-400 dark:peer-checked:bg-indigo-950">
-                        <strong className="block text-slate-950 dark:text-white">
-                          {opcion.nombre}
-                        </strong>
-                        <span className="mt-1 block text-sm text-slate-600 dark:text-slate-300">
-                          {opcion.descripcion}
-                        </span>
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
-              {errors.type && (
-                <p
-                  role="alert"
-                  className="mt-2 text-sm text-red-700 dark:text-red-300"
-                >
-                  Selecciona un tipo de entrada válido.
+      >
+        <article className="evento-ficha tarjeta-operacion overflow-hidden rounded-3xl border border-violet-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
+          <header className="evento-titular">
+            <div className="evento-titular-texto">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <p className="rounded-full bg-violet-100 px-2.5 py-1 text-xs font-semibold text-violet-800 uppercase dark:bg-violet-950 dark:text-violet-200">
+                  {obtenerEtiquetaCategoria(evento.category)}
                 </p>
-              )}
-
-              {sesion.estado !== 'autenticado' && (
-                <p className="mt-5 text-sm text-slate-600 dark:text-slate-300">
-                  Debes iniciar sesión para completar la compra.
-                </p>
-              )}
-
-              <div
-                data-barra-compra-movil
-                className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] sm:static sm:mt-6 sm:border-0 sm:bg-transparent sm:p-0 dark:border-slate-700 dark:bg-slate-950 sm:dark:bg-transparent"
-              >
-                <Boton type="submit" className="w-full sm:w-auto">
-                  {sesion.estado === 'autenticado'
-                    ? 'Comprar entrada'
-                    : 'Iniciar sesión para comprar'}
-                </Boton>
+                <EstadoEventoEtiqueta estado={evento.status} />
               </div>
-            </form>
-          )}
-        </section>
-      )}
+
+              <h1 className="evento-titulo">{evento.name}</h1>
+            </div>
+            <PanelCategoriaEvento
+              categoria={evento.category}
+              className="evento-portada-categoria"
+            />
+          </header>
+          <div className="p-5 sm:p-7">
+            {evento.description !== null && (
+              <p className="mt-4 max-w-prose leading-relaxed text-slate-600 dark:text-slate-300">
+                {evento.description}
+              </p>
+            )}
+
+            <dl className="mt-6 grid gap-3 sm:grid-cols-2">
+              <div className="rounded-xl border border-violet-100 bg-violet-50/60 p-3.5 dark:border-slate-700 dark:bg-slate-950">
+                <dt className="text-sm font-semibold text-slate-500 dark:text-slate-400">
+                  <IconoDato tipo="fecha" />
+                  Fecha
+                </dt>
+                <dd className="mt-1 text-lg text-slate-950 dark:text-white">
+                  <time dateTime={evento.eventDate}>
+                    {formatearFechaEvento(evento.eventDate)}
+                  </time>
+                </dd>
+              </div>
+
+              <div className="rounded-xl border border-violet-100 bg-violet-50/60 p-3.5 dark:border-slate-700 dark:bg-slate-950">
+                <dt className="text-sm font-semibold text-slate-500 dark:text-slate-400">
+                  <IconoDato tipo="edad" />
+                  Edad mínima
+                </dt>
+                <dd className="mt-1 text-lg text-slate-950 dark:text-white">
+                  {evento.minimumAge === 0
+                    ? 'Para todas las edades'
+                    : `${evento.minimumAge} años`}
+                </dd>
+              </div>
+
+              <div className="rounded-xl border border-violet-100 bg-violet-50/60 p-3.5 sm:col-span-2 dark:border-slate-700 dark:bg-slate-950">
+                <dt className="text-sm font-semibold text-slate-500 dark:text-slate-400">
+                  <IconoDato tipo="lugar" />
+                  Sede
+                </dt>
+                <dd className="mt-1">
+                  <Link
+                    to={crearRuta.detalleSede(evento.venueCode)}
+                    className="text-lg font-semibold text-violet-600 hover:text-violet-700 dark:text-violet-400"
+                  >
+                    {evento.venueName}
+                  </Link>
+                </dd>
+              </div>
+            </dl>
+
+            <div className="mt-7 border-t border-violet-100 pt-5 dark:border-slate-700">
+              <h2 className="font-titulo text-xl font-extrabold text-[#241044] dark:text-white">
+                Artistas
+              </h2>
+
+              {evento.artists.length === 0 ? (
+                <p className="mt-3 text-slate-600 dark:text-slate-300">
+                  Aún no hay artistas asociados a este evento.
+                </p>
+              ) : (
+                <ul className="mt-4 flex flex-wrap gap-3">
+                  {evento.artists.map((artista) => (
+                    <li key={artista.id}>
+                      <Link
+                        to={crearRuta.detalleArtista(artista.id)}
+                        className="inline-flex rounded-full border border-violet-300 px-4 py-2 font-semibold text-violet-700 hover:bg-violet-50 dark:border-violet-700 dark:text-violet-300 dark:hover:bg-violet-950"
+                      >
+                        {artista.stageName}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        </article>
+
+        {mostrarPanelCompra && (
+          <section
+            aria-labelledby="titulo-compra"
+            className="evento-compra tarjeta-operacion rounded-3xl border border-violet-200 bg-white p-5 shadow-sm sm:p-6 dark:border-slate-700 dark:bg-slate-900"
+          >
+            <h2
+              id="titulo-compra"
+              className="font-titulo text-xl font-extrabold text-[#241044] dark:text-white"
+            >
+              Compra tu entrada
+            </h2>
+
+            {!compraDisponible ? (
+              <div
+                role="status"
+                className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-5 text-amber-800 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200"
+              >
+                Las entradas no están disponibles para este evento.
+              </div>
+            ) : (
+              <form
+                noValidate
+                onSubmit={(evento) =>
+                  void handleSubmit(abrirConfirmacion)(evento)
+                }
+              >
+                <p className="mt-2 text-slate-600 dark:text-slate-300">
+                  Selecciona el tipo de entrada. El precio final será calculado
+                  de forma segura por PulsePass.
+                </p>
+
+                <fieldset className="mt-6">
+                  <legend className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+                    Tipo de entrada
+                  </legend>
+
+                  <div className="mt-3 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-1">
+                    {opcionesTicket.map((opcion) => (
+                      <label
+                        key={opcion.tipo}
+                        className="relative cursor-pointer"
+                      >
+                        <input
+                          type="radio"
+                          {...register('type')}
+                          value={opcion.tipo}
+                          className="peer sr-only"
+                        />
+
+                        <span className="evento-opcion block min-h-11 rounded-xl border border-slate-300 bg-white p-3 transition-colors peer-checked:border-violet-600 peer-checked:bg-violet-100 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-violet-600 dark:border-slate-700 dark:bg-slate-950 dark:peer-checked:border-violet-400 dark:peer-checked:bg-violet-950">
+                          <strong className="block text-slate-950 dark:text-white">
+                            {opcion.nombre}
+                          </strong>
+                          <span className="mt-1 block text-sm text-slate-600 dark:text-slate-300">
+                            {opcion.descripcion}
+                          </span>
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+                {errors.type && (
+                  <p
+                    role="alert"
+                    className="mt-2 text-sm text-red-700 dark:text-red-300"
+                  >
+                    Selecciona un tipo de entrada válido.
+                  </p>
+                )}
+
+                {sesion.estado !== 'autenticado' && (
+                  <p className="mt-5 text-sm text-slate-600 dark:text-slate-300">
+                    Debes iniciar sesión para completar la compra.
+                  </p>
+                )}
+
+                <div
+                  data-barra-compra-movil
+                  className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] md:static md:mt-6 md:border-0 md:bg-transparent md:p-0 dark:border-slate-700 dark:bg-slate-950 md:dark:bg-transparent"
+                >
+                  <Boton
+                    type="submit"
+                    className="w-full rounded-full! bg-violet-700! hover:bg-violet-800!"
+                  >
+                    {sesion.estado === 'autenticado'
+                      ? 'Comprar entrada'
+                      : 'Iniciar sesión para comprar'}
+                  </Boton>
+                </div>
+              </form>
+            )}
+          </section>
+        )}
+      </div>
 
       <Modal
         abierto={puedeComprar && confirmacionAbierta}

@@ -1,3 +1,4 @@
+import '../componentes/ExperienciaPulsePass.css'
 import { Link, useParams } from 'react-router'
 import { useTicket } from '../funcionalidades/tickets/consultas'
 import {
@@ -7,6 +8,8 @@ import {
   obtenerEtiquetaTipoTicket,
 } from '../lib/formatos'
 import { crearRuta, RUTAS } from '../lib/rutas'
+import './Entradas.css'
+import { IconoDato } from '../componentes/IconoDato'
 
 export default function ConfirmacionCompra() {
   const { ticketCode = '' } = useParams()
@@ -53,31 +56,45 @@ export default function ConfirmacionCompra() {
 
   return (
     <section className="mx-auto w-full max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
-      <article className="overflow-hidden rounded-2xl border border-emerald-200 bg-white shadow-sm dark:border-emerald-900 dark:bg-slate-900">
-        <header className="bg-emerald-600 p-8 text-center text-white">
+      <article className="tarjeta-operacion overflow-hidden rounded-3xl border border-emerald-200 bg-white dark:border-emerald-900 dark:bg-slate-900">
+        <header className="entrada-cabecera-confirmacion p-6 text-center text-white sm:p-8">
           <div
             aria-hidden="true"
-            className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white text-3xl font-bold text-emerald-600"
+            className="entrada-sello mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white text-3xl font-bold text-emerald-700"
           >
-            ✓
+            <svg
+              viewBox="0 0 24 24"
+              className="size-8"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              focusable="false"
+            >
+              <path d="m5 12 4 4L19 6" />
+            </svg>
           </div>
-          <h1 className="mt-5 text-3xl font-bold">¡Compra confirmada!</h1>
+          <h1 className="titulo-pulsepass mt-5 text-3xl font-extrabold">
+            ¡Compra confirmada!
+          </h1>
           <p className="mt-2 text-emerald-50">
             Tu entrada ya está disponible en PulsePass.
           </p>
         </header>
 
-        <div className="p-6 sm:p-8">
-          <h2 className="text-2xl font-bold text-slate-950 dark:text-white">
+        <div className="entrada-talon p-6 sm:p-8">
+          <h2 className="titulo-pulsepass text-2xl font-extrabold text-slate-950 dark:text-white">
             {ticket.eventName}
           </h2>
 
-          <dl className="mt-6 grid gap-5 sm:grid-cols-2">
+          <dl className="entrada-datos mt-6 grid gap-3 sm:grid-cols-2">
             <div>
               <dt className="text-sm text-slate-500 dark:text-slate-400">
+                <IconoDato tipo="codigo" />
                 Código del ticket
               </dt>
-              <dd className="mt-1 font-bold break-all text-slate-950 dark:text-white">
+              <dd className="mt-1 font-mono font-bold break-all text-slate-950 dark:text-white">
                 {ticket.ticketCode}
               </dd>
             </div>
@@ -93,6 +110,7 @@ export default function ConfirmacionCompra() {
 
             <div>
               <dt className="text-sm text-slate-500 dark:text-slate-400">
+                <IconoDato tipo="entrada" />
                 Tipo
               </dt>
               <dd className="mt-1 font-semibold text-slate-950 dark:text-white">
@@ -102,6 +120,7 @@ export default function ConfirmacionCompra() {
 
             <div>
               <dt className="text-sm text-slate-500 dark:text-slate-400">
+                <IconoDato tipo="precio" />
                 Precio
               </dt>
               <dd className="mt-1 font-semibold text-slate-950 dark:text-white">
@@ -111,6 +130,7 @@ export default function ConfirmacionCompra() {
 
             <div className="sm:col-span-2">
               <dt className="text-sm text-slate-500 dark:text-slate-400">
+                <IconoDato tipo="fecha" />
                 Fecha de compra
               </dt>
               <dd className="mt-1 font-semibold text-slate-950 dark:text-white">
@@ -132,6 +152,13 @@ export default function ConfirmacionCompra() {
               className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-5 py-2.5 font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
             >
               Ver todos mis tickets
+            </Link>
+
+            <Link
+              to={RUTAS.EVENTOS}
+              className="inline-flex min-h-11 items-center justify-center rounded-lg px-4 font-semibold text-violet-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 sm:col-span-2 dark:text-violet-300"
+            >
+              Seguir explorando
             </Link>
           </div>
         </div>

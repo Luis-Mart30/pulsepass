@@ -144,6 +144,9 @@ describe('Layout y navegación por rol', () => {
       screen.getByRole('link', { name: 'Validar ingreso' }),
     ).toHaveAttribute('href', '/staff/validacion')
     expect(
+      screen.getByRole('link', { name: 'Tickets pagados' }),
+    ).toHaveAttribute('href', '/staff/validacion#tickets-pagados')
+    expect(
       screen.queryByRole('link', {
         name: 'Administrar eventos',
       }),
