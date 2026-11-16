@@ -1,0 +1,197 @@
+.portada-sedes.portada-seccion,
+.sede-perfil {
+  background: linear-gradient(114deg, #112b39 13%, #205059 63%, #28666a);
+}
+
+.portada-sedes.portada-seccion {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  min-height: clamp(10.5rem, 19vw, 16rem);
+  overflow: hidden;
+  padding: clamp(1.2rem, 4.5vw, 3.5rem);
+  border-color: #3d7779;
+  border-radius: 1.85rem;
+}
+
+.portada-sedes h1,
+.sede-perfil h1 {
+  color: #fff;
+}
+
+.portada-sedes h1 {
+  font-size: clamp(2.1rem, 6vw, 4.6rem);
+  line-height: 1;
+}
+
+.portada-sedes p {
+  color: #e0faf5;
+  text-wrap: pretty;
+}
+
+.sede-arte {
+  display: grid;
+  width: clamp(4.25rem, 15vw, 9.5rem);
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid #c4eee74d;
+  border-radius: 32%;
+  background: linear-gradient(145deg, #2b686a, #183c4c);
+  transform: rotate(8deg);
+}
+
+.sede-arte .sede-arte-pin {
+  width: 68%;
+  aspect-ratio: 1;
+  border: 1px solid #f4d58d66;
+  border-radius: 32%;
+  background: #183541;
+  color: #ffe19a;
+  transform: rotate(-8deg);
+}
+
+.sede-ciudad {
+  background: #d8f4ee;
+  color: #164e50;
+}
+
+.sede-tarjeta {
+  display: grid;
+  min-width: 0;
+  height: 100%;
+  grid-template-rows: auto 1fr;
+  border: 1px solid var(--color-violet-200);
+  border-radius: 1.25rem;
+  background: #fff;
+  box-shadow: 0 0.3rem 1rem #3212670e;
+}
+
+.sede-tarjeta:hover {
+  border-color: var(--color-violet-500);
+}
+
+.sede-tarjeta:focus-visible {
+  outline: 2px solid var(--color-violet-600);
+  outline-offset: 3px;
+}
+
+.sede-mapa {
+  display: grid;
+  min-height: clamp(9.5rem, 18vw, 13rem);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  place-items: center;
+  border-radius: calc(1.25rem - 1px) calc(1.25rem - 1px) 0 0;
+  background: linear-gradient(135deg, #142634, #225761 69%, #277a75);
+}
+
+.sede-mapa::before,
+.sede-mapa::after {
+  position: absolute;
+  z-index: -1;
+  width: 78%;
+  height: 94%;
+  content: '';
+  clip-path: polygon(0 34%, 57% 4%, 100% 32%, 100% 65%, 44% 98%, 0 66%);
+}
+
+.sede-mapa::before {
+  inset: auto auto -13% -9%;
+  background: linear-gradient(145deg, #76cbbb6e, #17314676);
+}
+
+.sede-mapa::after {
+  inset: -15% -15% auto auto;
+  background: linear-gradient(145deg, #c4f1cf5c, #245a6770);
+}
+
+.sede-mapa .sede-pin {
+  border: 1px solid #ffffff75;
+  border-radius: 1.35rem;
+  background: #18323f;
+  color: #ffe298;
+  box-shadow:
+    0 0 0 0.6rem #b4f4dc2b,
+    0 0 0 1.2rem #b4f4dc22;
+}
+
+.sede-tarjeta:hover .sede-accion {
+  text-decoration: underline;
+}
+
+.sedes-lista:has(> :only-child) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 40rem) {
+  .sedes-lista > :only-child .sede-tarjeta {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    grid-template-rows: 1fr;
+  }
+
+  .sedes-lista > :only-child .sede-mapa {
+    border-radius: calc(1.25rem - 1px) 0 0 calc(1.25rem - 1px);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .portada-sedes.portada-seccion,
+  .sede-perfil {
+    background: linear-gradient(114deg, #102431 13%, #1b414b 63%, #215457);
+  }
+
+  .sede-tarjeta {
+    border-color: var(--color-slate-700);
+    background: var(--color-slate-900);
+    box-shadow: none;
+  }
+
+  .sede-ciudad {
+    background: #183c40;
+    color: #aff4e4;
+  }
+
+  .sede-tarjeta:hover {
+    border-color: #78cfbc;
+  }
+
+  .sede-tarjeta:focus-visible {
+    outline-color: var(--color-violet-300);
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .sede-tarjeta {
+    transition:
+      transform 180ms ease-out,
+      border-color 180ms ease-out;
+  }
+
+  .sede-tarjeta:hover {
+    transform: translateY(-3px);
+  }
+
+  .sede-tarjeta .sede-pin {
+    transition: transform 260ms cubic-bezier(0.2, 0.75, 0.3, 1);
+  }
+
+  .sede-tarjeta:hover .sede-pin {
+    transform: translateY(-0.35rem) rotate(-5deg);
+  }
+}
+
+.sede-perfil .portada-ficha {
+  padding: clamp(1rem, 3vw, 2rem);
+}
+
+.sede-perfil-datos {
+  margin: 0;
+  padding: clamp(1rem, 3vw, 2rem);
+  background: white;
+}
+
+@media (prefers-color-scheme: dark) {
+  .sede-perfil-datos {
+    background: var(--color-slate-900);
+  }
+}

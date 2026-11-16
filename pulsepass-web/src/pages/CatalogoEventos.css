@@ -1,0 +1,120 @@
+.portada-seccion.catalogo-portada {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(4rem, 29%);
+  align-items: center;
+  overflow: hidden;
+  min-height: 12.5rem;
+  padding: clamp(1.3rem, 5vw, 4rem);
+  padding-block-end: clamp(2.5rem, 6vw, 4.25rem);
+  border-color: #673b91;
+  border-radius: 1.85rem;
+  background: linear-gradient(120deg, #201139 17%, #421f72 64%, #673890);
+  box-shadow: 0 0.65rem 2rem #3a226c22;
+}
+
+.catalogo-portada h1 {
+  max-width: 10ch;
+  color: #fff;
+  font-size: clamp(1.95rem, 6vw, 4.8rem);
+  line-height: 0.99;
+  letter-spacing: -0.055em;
+}
+
+.catalogo-portada h1 span {
+  display: block;
+  color: #ffd767;
+}
+
+.catalogo-portada p {
+  max-width: 40ch;
+  color: #f2e8ff;
+  text-wrap: pretty;
+}
+
+.catalogo-arte {
+  width: 100%;
+  max-width: 19rem;
+  height: auto;
+  justify-self: end;
+  pointer-events: none;
+}
+
+.catalogo-filtros {
+  position: relative;
+  margin-inline: clamp(0.65rem, 3vw, 2.5rem);
+  margin-block-start: -1.35rem;
+  padding: clamp(0.7rem, 2vw, 1.2rem);
+  border: 1px solid var(--color-violet-200);
+  border-radius: 1.45rem;
+  background: #fff;
+  box-shadow: 0 0.7rem 1.9rem #40236220;
+}
+
+.catalogo-resultados {
+  background: #efe4ff;
+  color: #552299;
+}
+
+.catalogo-busqueda {
+  position: relative;
+}
+
+.catalogo-busqueda::before,
+.catalogo-busqueda::after {
+  position: absolute;
+  top: 50%;
+  color: var(--color-slate-500);
+  pointer-events: none;
+  content: '';
+}
+
+.catalogo-busqueda::before {
+  inset-inline-start: 0.95rem;
+  width: 0.85rem;
+  height: 0.85rem;
+  border: 1.8px solid currentColor;
+  border-radius: 50%;
+  transform: translateY(-60%);
+}
+
+.catalogo-busqueda::after {
+  inset-inline-start: 1.61rem;
+  width: 0.37rem;
+  height: 1.75px;
+  border-radius: 999px;
+  background: currentColor;
+  transform: translateY(0.26rem) rotate(45deg);
+}
+
+.catalogo-busqueda input {
+  padding-inline-start: 2.5rem;
+}
+
+@media (min-width: 48rem) {
+  .portada-seccion.catalogo-portada {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 39%);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .portada-seccion.catalogo-portada {
+    background: linear-gradient(120deg, #18102a 17%, #38205d 64%, #56337c);
+    box-shadow: none;
+  }
+
+  .catalogo-filtros {
+    border-color: #4a3666;
+    background: #161229;
+    box-shadow: 0 0.7rem 1.9rem #0004;
+  }
+
+  .catalogo-resultados {
+    background: #2f2046;
+    color: #e7ccff;
+  }
+
+  .catalogo-busqueda::before,
+  .catalogo-busqueda::after {
+    color: var(--color-violet-200);
+  }
+}

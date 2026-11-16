@@ -1,0 +1,317 @@
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { MemoryRouter, Route, Routes, useParams } from 'react-router'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  useMarcarTicketUsado,
+  useTicket,
+} from '../funcionalidades/tickets/consultas'
+import type { Ticket } from '../funcionalidades/tickets/tipos'
+import { ApiError } from '../lib/http'
+import ValidacionIngreso from './ValidacionIngreso'
+
+vi.mock('../funcionalidades/tickets/consultas')
+
+const ticketPagado: Ticket = {
+  id: 1,
+  ticketCode: 'TKT-STAFF-001',
+  type: 'GENERAL',
+  price: 90000,
+  status: 'PAID',
+  purchaseDate: '2026-11-15T19:00:00',
+  userEmail: 'titular@pulsepass.test',
+  eventCode: 'EVT-001',
+  eventName: 'Festival del Caribe',
+}
+
+const mutateAsync = vi.fn()
+const reset = vi.fn()
+
+function configurarTicket(ticket: Ticket) {
+  vi.mocked(useTicket).mockImplementation(
+    (codigo) =>
+      ({
+        data: codigo.length > 0 ? ticket : undefined,
+        isPending: false,
+        isError: false,
+        error: null,
+      }) as unknown as ReturnType<typeof useTicket>,
+  )
+}
+
+async function buscarCodigo() {
+  const usuario = userEvent.setup()
+
+  await usuario.type(
+    screen.getByLabelText('Código del ticket'),
+    'TKT-STAFF-001',
+  )
+  await usuario.click(
+    screen.getByRole('button', {
+      name: 'Buscar ticket',
+    }),
+  )
+
+  return usuario
+}
+
+function ResultadoEvento() {
+  const { eventCode } = useParams()
+  return <h1>Tickets pagados de {eventCode}</h1>
+}
+
+function renderizarPagina(ruta = '/staff/validacion') {
+  return render(
+    <MemoryRouter initialEntries={[ruta]}>
+      <Routes>
+        <Route path="/staff/validacion" element={<ValidacionIngreso />} />
+        <Route
+          path="/staff/eventos/:eventCode/tickets"
+          element={<ResultadoEvento />}
+        />
+      </Routes>
+    </MemoryRouter>,
+  )
+}
+
+describe('página de validación de ingreso', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    configurarTicket(ticketPagado)
+
+    vi.mocked(useMarcarTicketUsado).mockReturnValue({
+      mutateAsync,
+      isPending: false,
+      reset,
+    } as unknown as ReturnType<typeof useMarcarTicketUsado>)
+  })
+
+  it('enfoca el código del evento al entrar desde Tickets pagados', () => {
+    renderizarPagina('/staff/validacion#tickets-pagados')
+
+    expect(screen.getByLabelText('Código del evento')).toHaveFocus()
+  })
+
+  it('valida el código del evento y permite abrir sus tickets pagados', async () => {
+    renderizarPagina()
+    const usuario = userEvent.setup()
+
+    await usuario.click(
+      screen.getByRole('button', { name: 'Ver tickets pagados' }),
+    )
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Ingresa el código del evento.',
+    )
+
+    await usuario.type(screen.getByLabelText('Código del evento'), ' EVT-001 ')
+    await usuario.click(
+      screen.getByRole('button', { name: 'Ver tickets pagados' }),
+    )
+
+    expect(
+      await screen.findByRole('heading', {
+        name: 'Tickets pagados de EVT-001',
+      }),
+    ).toBeInTheDocument()
+  })
+
+  it('muestra un ticket pagado como entrada válida', async () => {
+    renderizarPagina()
+
+    expect(screen.getByLabelText('Código del ticket')).toHaveFocus()
+
+    await buscarCodigo()
+
+    expect(
+      screen.getByRole('heading', {
+        name: 'Entrada válida',
+      }),
+    ).toBeInTheDocument()
+
+    expect(
+      screen.getByRole('button', {
+        name: 'Marcar como usado',
+      }),
+    ).toBeInTheDocument()
+  })
+
+  it('valida el código obligatorio sin ejecutar la consulta', async () => {
+    renderizarPagina()
+
+    await userEvent.setup().click(
+      screen.getByRole('button', {
+        name: 'Buscar ticket',
+      }),
+    )
+
+    expect(
+      await screen.findByText('Ingresa el código del ticket.'),
+    ).toBeInTheDocument()
+    expect(useTicket).toHaveBeenLastCalledWith('')
+  })
+
+  it('permite buscar el ticket con la tecla Enter', async () => {
+    renderizarPagina()
+
+    await userEvent
+      .setup()
+      .type(screen.getByLabelText('Código del ticket'), 'TKT-STAFF-001{Enter}')
+
+    expect(
+      screen.getByRole('heading', {
+        name: 'Entrada válida',
+      }),
+    ).toBeInTheDocument()
+  })
+
+  it('rechaza un ticket que ya fue utilizado', async () => {
+    configurarTicket({
+      ...ticketPagado,
+      status: 'USED',
+    })
+
+    renderizarPagina()
+
+    await buscarCodigo()
+
+    expect(
+      screen.getByRole('heading', {
+        name: 'Entrada ya utilizada',
+      }),
+    ).toBeInTheDocument()
+
+    expect(
+      screen.getByText('Este ticket ya fue utilizado anteriormente.'),
+    ).toBeInTheDocument()
+
+    expect(
+      screen.queryByRole('button', {
+        name: 'Marcar como usado',
+      }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('rechaza un ticket cancelado', async () => {
+    configurarTicket({
+      ...ticketPagado,
+      status: 'CANCELLED',
+    })
+
+    renderizarPagina()
+
+    await buscarCodigo()
+
+    expect(
+      screen.getByRole('heading', {
+        name: 'Entrada cancelada',
+      }),
+    ).toBeInTheDocument()
+
+    expect(screen.getByText(/no permitas el ingreso/i)).toBeInTheDocument()
+  })
+
+  it('muestra ticket no encontrado para una respuesta 404', async () => {
+    vi.mocked(useTicket).mockImplementation(
+      (codigo) =>
+        ({
+          data: undefined,
+          isPending: false,
+          isError: codigo.length > 0,
+          error: codigo.length > 0 ? new ApiError(404, 'No encontrado') : null,
+        }) as unknown as ReturnType<typeof useTicket>,
+    )
+
+    renderizarPagina()
+
+    await buscarCodigo()
+
+    expect(
+      screen.getByRole('heading', {
+        name: 'Ticket no encontrado',
+      }),
+    ).toBeInTheDocument()
+  })
+
+  it('marca correctamente el ticket como usado', async () => {
+    const ticketUsado: Ticket = {
+      ...ticketPagado,
+      status: 'USED',
+    }
+
+    mutateAsync.mockResolvedValue(ticketUsado)
+
+    renderizarPagina()
+
+    const usuario = await buscarCodigo()
+
+    await usuario.click(
+      screen.getByRole('button', {
+        name: 'Marcar como usado',
+      }),
+    )
+
+    expect(mutateAsync).toHaveBeenCalledWith('TKT-STAFF-001')
+
+    expect(
+      await screen.findByText('Ingreso validado correctamente.'),
+    ).toBeInTheDocument()
+
+    expect(screen.getByLabelText('Código del ticket')).toHaveValue('')
+    expect(screen.getByLabelText('Código del ticket')).toHaveFocus()
+
+    expect(
+      screen.getByRole('heading', {
+        name: 'Entrada ya utilizada',
+      }),
+    ).toBeInTheDocument()
+  })
+
+  it('muestra el conflicto si el estado cambió al validar', async () => {
+    mutateAsync.mockRejectedValue(new ApiError(409, 'El ticket ya fue usado'))
+
+    renderizarPagina()
+
+    const usuario = await buscarCodigo()
+
+    await usuario.click(
+      screen.getByRole('button', {
+        name: 'Marcar como usado',
+      }),
+    )
+
+    expect(
+      await screen.findByText('El ticket ya fue usado'),
+    ).toBeInTheDocument()
+
+    expect(
+      screen.getByRole('button', {
+        name: 'Marcar como usado',
+      }),
+    ).toBeInTheDocument()
+  })
+
+  it('muestra sin permisos para una respuesta 403', async () => {
+    vi.mocked(useTicket).mockImplementation(
+      (codigo) =>
+        ({
+          data: undefined,
+          isPending: false,
+          isError: codigo.length > 0,
+          error: codigo.length > 0 ? new ApiError(403, 'Prohibido') : null,
+        }) as unknown as ReturnType<typeof useTicket>,
+    )
+
+    renderizarPagina()
+
+    await buscarCodigo()
+
+    expect(
+      screen.getByRole('heading', {
+        name: 'Sin permisos',
+      }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText('No tienes permisos para consultar este ticket.'),
+    ).toBeInTheDocument()
+  })
+})
