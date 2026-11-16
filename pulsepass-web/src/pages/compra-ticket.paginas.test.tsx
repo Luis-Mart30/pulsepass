@@ -156,7 +156,7 @@ describe('flujo de compra de tickets', () => {
       }),
     )
 
-    expect(screen.getByText('Página de ingreso')).toBeInTheDocument()
+    expect(await screen.findByText('Página de ingreso')).toBeInTheDocument()
     expect(mutateAsync).not.toHaveBeenCalled()
   })
 
